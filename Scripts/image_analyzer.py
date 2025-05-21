@@ -271,23 +271,17 @@ class ImageAnalyzer:
                             for k, v in exif_data.items():
                                 tag_name = useful_tags.get(k)
                                 if tag_name:
-                                    # --- SYNTAX CORRECTION HERE ---
                                     if isinstance(v, bytes):
                                         try:
-                                            # Decode bytes, ignore errors, strip null bytes
                                             v = v.decode('utf-8', errors='ignore').strip('\x00')
-                                        except Exception:
-                                            # Fallback to string representation if decoding fails
-                                            v = str(v)
-                                    # --- END CORRECTION ---
-                                    # Add to subset, ensuring value is string and stripped
+                                        except UnicodeDecodeError:
+                                            v = str(v) # Fallback for non-utf8 bytes
                                     exif_subset[tag_name] = str(v).strip()
                             if exif_subset:
                                  metadata["exif_basic"] = exif_subset
                 except UnidentifiedImageError: # Catch specific PIL error
                      logger.warning(f"PIL UnidentifiedImageError for {metadata['filename']}")
                 except Exception as exif_e:
-                    # Log general exif errors less verbosely unless debugging
                     logger.debug(f"Could not extract EXIF data for {metadata['filename']}: {exif_e}")
 
         except Exception as meta_e:

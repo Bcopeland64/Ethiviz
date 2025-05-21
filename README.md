@@ -1,184 +1,150 @@
-# EthiViz - Cultural Bias Analysis Platform
+# EthiViz - Cultural Bias Analysis Platform (React + Flask Edition)
 
-EthiViz is a comprehensive platform for analyzing cultural bias in both text and image data through multiple ethical traditions, including Western, Ubuntu, Confucian, and Islamic perspectives.
+EthiViz is a comprehensive platform for analyzing cultural bias in both text and image data. It leverages multiple ethical traditions, including Western, Ubuntu, Confucian, and Islamic perspectives, to provide a nuanced understanding of potential biases. This version of EthiViz features a decoupled architecture with a React frontend and a Flask (Python) backend API.
+
+## Overview
+
+The platform allows users to upload text or image data, which is then processed by the backend API. The analysis results, including bias scores, diversity metrics, and ethical alignment scores, are then presented in an interactive web interface powered by React.
 
 ## Features
 
-- **Multi-tradition Ethical Analysis**: Analyze data through different cultural and ethical frameworks
-- **Text & Image Analysis**: Process both textual and visual content for bias detection
-- **Lightweight Image Processing**: Tiered feature extraction approach for computational efficiency
-- **Interactive Visualizations**: Rich, interactive dashboards using D3.js and Plotly
-- **Diversity Metrics**: Shannon entropy-based diversity calculations across multiple dimensions
-- **Batch Processing**: Efficient processing of multiple images and text samples
-- **Graceful Dependency Management**: Works with minimal dependencies but leverages advanced libraries when available
-- **Streamlit UI**: Modern, sleek dark-themed user interface for intuitive analysis
+- **Decoupled Architecture**: Modern React frontend with a robust Flask backend API for analysis.
+- **Asynchronous Job Processing**: Handles potentially long-running analyses without blocking the UI.
+- **Multi-tradition Ethical Analysis**: Analyze data through Western, Ubuntu, Confucian, and Islamic ethical frameworks.
+- **Text & Image Analysis**: Process both textual (CSV, TXT, JSON, XLSX) and visual content (JPG, PNG, WEBP, GIF).
+- **Bias and Diversity Metrics**: Calculates various scores including bias, diversity index, and alignment with different ethical traditions.
+- **Lightweight Image Processing**: Tiered feature extraction for images, balancing efficiency and detail.
+- **Interactive Frontend**: (Future Goal) Rich, interactive dashboards and visualizations for exploring results. Currently displays raw JSON and basic summaries.
+- **API for Programmatic Access**: The backend API can be used by other services or for batch processing.
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+- **Python**: Version 3.8+ (for the backend API server). Includes `pip` for package management.
+- **Node.js**: Version 16.x or higher (for the React frontend). Includes `npm` for package management.
+- **Git**: For cloning the repository.
 
 ## Installation
 
-### Using the Setup Scripts (Recommended)
+Follow these steps to set up the EthiViz platform:
 
-#### On Linux/macOS:
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/ethiviz.git
-cd ethiviz
+1.  **Clone the Repository:**
+    ```bash
+    git clone https://github.com/yourusername/ethiviz.git # Replace with actual repo URL
+    cd ethiviz
+    ```
 
-# Make the setup script executable and run it
-chmod +x setup.sh
-./setup.sh
+2.  **Backend Setup (Flask API):**
+    *   Navigate to the project root directory (`ethiviz`).
+    *   Create and activate a Python virtual environment (recommended):
+        ```bash
+        python -m venv venv
+        # On macOS/Linux:
+        source venv/bin/activate
+        # On Windows:
+        # venv\Scripts\activate.bat
+        ```
+    *   Install Python dependencies:
+        ```bash
+        pip install -r requirements.txt
+        ```
+    *   Download the spaCy model (required for text analysis):
+        ```bash
+        python -m spacy download en_core_web_sm 
+        # Or en_core_web_md for potentially better accuracy but larger size
+        ```
 
-# Activate the virtual environment
-source activate-ethiviz.sh
+3.  **Frontend Setup (React App):**
+    *   Navigate to the frontend project directory:
+        ```bash
+        cd project 
+        ```
+    *   Install Node.js dependencies:
+        ```bash
+        npm install
+        ```
+    *   Return to the project root directory:
+        ```bash
+        cd ..
+        ```
 
-# Run the application
-streamlit run app.py
-```
+## Running the Application
 
-#### On Windows:
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/ethiviz.git
-cd ethiviz
+To use EthiViz, both the backend API server and the frontend React application must be running concurrently.
 
-# Run the setup script
-setup.bat
+**1. Start the Backend API Server (Flask):**
+   *   Ensure you are in the project root directory (`ethiviz`).
+   *   Activate your Python virtual environment if you haven't already.
+   *   Run the Flask API server:
+    ```bash
+    python Scripts/api_server.py
+    ```
+   The API server will typically start on `http://localhost:5001`. Check the console output for the exact URL.
 
-# Activate the virtual environment
-activate-ethiviz.bat
+**2. Start the Frontend Application (React):**
+   *   Open a **new terminal window or tab**.
+   *   Navigate to the frontend project directory:
+    ```bash
+    cd project
+    ```
+   *   Start the React development server:
+    ```bash
+    npm run dev
+    ```
+   The React frontend will typically start on `http://localhost:5173` (Vite default). Check the console output for the exact URL.
 
-# Run the application
-streamlit run app.py
-```
+**3. Access EthiViz:**
+   Once both servers are running, open the frontend URL (e.g., `http://localhost:5173`) in your web browser.
 
-### Manual Installation
+**Important Notes:**
+- **Concurrent Execution**: Both servers must remain running.
+- **API URL Configuration**: The React frontend is configured to connect to the API server at `http://localhost:5001`. If your API server runs on a different port, update the `API_BASE_URL` constant in `project/src/components/ConfigPanel.tsx`.
+- **CORS**: The Flask server is configured with `Flask-CORS` to allow requests from `http://localhost:5173` (common Vite default). If your React app runs on a different port, you may need to adjust the CORS settings in `Scripts/api_server.py` for production environments.
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/ethiviz.git
-cd ethiviz
+## API Details
 
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate.bat
+The Flask backend provides a RESTful API for analysis tasks. Key endpoints include:
 
-# Install dependencies
-pip install -r requirements.txt
+*   `POST /api/analyze`: Submits data (text or image files) for analysis.
+    *   Expects `multipart/form-data`.
+    *   Key form fields: `analysis_type` ('text', 'image', 'text_and_image'), `data_source_type` ('upload', 'sample'), `selected_traditions` (list), `advanced_options` (JSON string).
+    *   File fields: `text_file` (if `analysis_type` includes 'text' and `data_source_type` is 'upload'), `image_files` (if `analysis_type` includes 'image' and `data_source_type` is 'upload').
+    *   Returns: `202 Accepted` with a `job_id` and `status_url`.
+*   `GET /api/analyze/status/{job_id}`: Checks the status of an analysis job (`pending`, `processing`, `completed`, `failed`).
+*   `GET /api/analyze/results/{job_id}`: Retrieves the results for a completed job.
+*   `GET /api/sample-data`: Lists available sample datasets (Note: full sample data loading functionality in the backend is currently a placeholder).
+*   `GET /`: Health check for the API server.
 
-# Download spaCy model (required for text analysis)
-python -m spacy download en_core_web_md
-```
+For more detailed information on request/response formats, refer to the source code in `Scripts/api_server.py`.
 
-## Usage
+## Core Analysis Capabilities
 
-### Streamlit Interface
+- **Ethical Traditions**: Analyzes data through Western, Ubuntu, Confucian, and Islamic ethical lenses.
+- **Image Analysis Features**: Includes skin tone analysis (Fitzpatrick scale approximation), tiered feature extraction (color histograms, HOG, deep learning), diversity calculations (Shannon entropy), and basic cultural element detection.
+- **Text Analysis Features**: Utilizes NLP techniques (via spaCy/NLTK) for tokenization, sentiment analysis (if transformers are available), and identification of keywords related to ethical frameworks and cultural markers.
 
-The easiest way to use EthiViz is through its interactive Streamlit interface:
+## Visualizations (React Frontend)
 
-```bash
-# Launch the Streamlit app 
-python run.py
-# Or directly with streamlit
-streamlit run app.py
-```
+The React frontend currently displays:
+- Raw JSON output of analysis results.
+- Basic summaries of text and image analysis (e.g., bias score, diversity index, number of images).
+- Placeholders for future integration of more detailed charts and interactive visualizations.
 
-This opens a web interface where you can:
-- Upload text data (CSV, Excel) and images
-- Use included sample text data with multiple ethical traditions 
-- Use included sample images for demonstration
-- Select ethical traditions to include in the analysis
-- Configure advanced settings like feature extraction level
-- Run analyses and view interactive results
-- Save results to a specified output directory
+(The original Streamlit application contained more mature visualizations like radar charts, demographic distributions, etc. These are planned for re-implementation or new implementation in the React frontend.)
 
-### Command Line Interface
+## Legacy Streamlit Interface
 
-For batch processing or integration with other tools:
+This project also contains an older Streamlit-based interface which offers a different user experience and a more developed set of visualizations. For instructions on how to set up and run the Streamlit version, please see [STREAMLIT_GUIDE.md](./STREAMLIT_GUIDE.md).
 
-```bash
-# Analyze text data
-python run.py --text-data path/to/textdata.csv
+## Requirements Overview
 
-# Analyze images
-python run.py --image-dir path/to/image/directory
-
-# Analyze both text and images
-python run.py --text-data path/to/textdata.csv --image-dir path/to/image/directory
-
-# Specify ethical traditions to use
-python run.py --text-data path/to/textdata.csv --traditions western,ubuntu,confucian,islamic
-
-# Set image analysis feature extraction level
-python run.py --image-dir path/to/image/directory --feature-level medium
-
-# Specify output directory and dashboard port
-python run.py --text-data path/to/textdata.csv --output-dir ./my_results --port 8080
-```
-
-### Python API
-
-For programmatic use and custom applications:
-
-```python
-from text_analyzer import TextAnalyzer
-from image_analyzer import ImageAnalyzer
-from visualization import create_dashboard
-
-# Text analysis
-text_analyzer = TextAnalyzer(traditions=['western', 'ubuntu', 'confucian', 'islamic'])
-text_results = text_analyzer.analyze('path/to/data.csv')
-
-# Image analysis
-image_analyzer = ImageAnalyzer(feature_level='medium')
-image_paths = ['path/to/image1.jpg', 'path/to/image2.jpg']
-image_results = image_analyzer.analyze_batch(image_paths)
-
-# Create dashboard
-create_dashboard(text_results=text_results, image_results=image_results, port=8050)
-```
-
-## Ethical Traditions
-
-EthiViz analyzes data through multiple ethical traditions:
-
-1. **Western Ethics**: Based on principles like autonomy, beneficence, non-maleficence, and justice
-2. **Ubuntu Ethics**: "I am because we are" - focuses on community, relationality, and shared humanity
-3. **Confucian Ethics**: Emphasizes harmony, proper relationships, and virtues like benevolence and reciprocity
-4. **Islamic Ethics**: Balances individual and community rights, emphasizing justice, fairness, and human dignity
-
-## Image Analysis
-
-The image analysis functionality includes:
-
-- **Skin Tone Analysis**: Fitzpatrick scale approximation to analyze representation diversity
-- **Feature Extraction**: Tiered approach with color histograms, HOG features, and deep learning
-- **Diversity Calculations**: Shannon entropy-based metrics for skin tone, gender, age distribution
-- **Cultural Element Detection**: Identification of cultural signifiers and their distribution
-
-## Visualizations
-
-The platform provides rich interactive visualizations:
-
-- **Metric Cards**: At-a-glance summary of key metrics
-- **Comparative Charts**: Compare scores across ethical traditions
-- **Demographic Analysis**: Visualize demographic distributions in images
-- **Radar Charts**: Multi-dimensional ethical analysis
-- **Image Gallery**: View analyzed images with their metrics
-- **Combined Analysis**: Compare text and image results
-
-## Requirements
-
-- Python 3.8+
-- NumPy, Pandas, SciPy
-- Streamlit, Plotly (for visualization)
-- Pillow (required for basic image processing)
-- OpenCV (optional - enables medium-level feature extraction)
-- TensorFlow (optional - enables advanced feature extraction)
-- SpaCy (with at least en_core_web_md model)
+- **Backend**: Python 3.8+, Flask, Flask-CORS, spaCy, NLTK, Pillow. Optional: OpenCV, TensorFlow for advanced image features. (See `requirements.txt` for full list).
+- **Frontend**: Node.js, React, Vite, Axios, Tailwind CSS. (See `project/package.json` for full list).
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please feel free to submit a Pull Request. Ensure your contributions align with the project's goals and coding standards.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.

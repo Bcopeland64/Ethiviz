@@ -122,70 +122,81 @@ def create_tradition_radar_chart(data, traditions):
     """Create a radar chart comparing ethical tradition scores."""
     categories = [t.capitalize() for t in traditions]
     values = [pd.to_numeric(data.get(f"{trad}_ethics_score", 0), errors='coerce') for trad in traditions]
-    values = [v if pd.notna(v) else 0.0 for v in values]
-    fig = go.Figure(); fig.add_trace(go.Scatterpolar(r=values, theta=categories, fill='toself', name='Ethics Scores', line_color='#4D69FF', fillcolor='rgba(77, 105, 255, 0.3)'))
-    fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 10], showline=False, gridcolor='#444'), angularaxis=dict(gridcolor='#444')), showlegend=False, margin=dict(l=40, r=40, t=50, b=40), height=350, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#FAFAFA')
-    return fig
+    values = [round(float(v), 2) if pd.notna(v) else 0.0 for v in values] # Ensure float and round
 
-# --- create_d3_visualization CORRECTED ---
-def create_d3_visualization(container_id, data, title="D3 Visualization"):
-    """Create a D3.js visualization with interactivity."""
-    # Data validation
-    if not isinstance(data, list):
-        if isinstance(data, dict): data = [data]
-        else: logger.warning(f"Unsupported D3 data type: {type(data)}."); return f"<div class='d3-container'><h3>{title}</h3><p>Error: Invalid data.</p></div>"
-    vis_data = []; traditions = ['western', 'ubuntu', 'confucian', 'islamic']; item_id_counter = 0
-    for item in data:
-        if not isinstance(item, dict): continue
-        entry = {"id": "item" + str(item_id_counter)}; has_data = False
-        if "type" in item: entry["type"] = item["type"]
+    # Return JSON-serializable dictionary
+    return {
+        "type": "radar",
+        "categories": categories,
+        "series": [
+            {"name": "Ethics Scores", "data": values}
+        ],
+        "options": { # Suggested options for frontend rendering
+            "title": "Ethical Tradition Scores",
+            "yaxis": {"min": 0, "max": 10}
+        }
+    }
+
+# --- create_d3_visualization MODIFIED ---
+def create_d3_visualization_data(data_input, title="D3 Visualization Data"): # Renamed and modified
+    """Prepare JSON-serializable data for a D3.js (or similar) bar chart visualization."""
+    if not isinstance(data_input, list):
+        if isinstance(data_input, dict): data_input = [data_input]
+        else:
+            logger.warning(f"Unsupported D3 data type: {type(data_input)} for {title}.")
+            return {"error": "Invalid data type for visualization.", "title": title, "data": []}
+
+    vis_data = []
+    traditions = ['western', 'ubuntu', 'confucian', 'islamic']
+    item_id_counter = 0
+
+    for item in data_input:
+        if not isinstance(item, dict):
+            logger.warning(f"Skipping non-dict item in D3 data: {item} for {title}")
+            continue
+
+        entry = {"id": "item" + str(item_id_counter)}
+        has_data = False
+        if "type" in item: entry["type"] = item["type"] # Preserve original type if exists
+
         for tradition in traditions:
-            key = f"{tradition}_ethics_score"; score = item.get(key)
+            key = f"{tradition}_ethics_score"
+            score = item.get(key)
             numeric_score = pd.to_numeric(score, errors='coerce')
-            entry[tradition] = 0.0 if pd.isna(numeric_score) else float(numeric_score)
-            if entry[tradition] > 0: has_data = True
-        if has_data: vis_data.append(entry); item_id_counter += 1
-    if not vis_data: logger.warning("No valid data for D3 viz."); return f"<div class='d3-container'><h3>{title}</h3><p>No data available.</p></div>"
-    try: json_data = json.dumps(vis_data)
-    except TypeError as e: logger.error(f"D3 JSON Error: {e}"); return f"<div class='d3-container'><h3>{title}</h3><p>Error: {e}.</p></div>"
+            # Ensure scores are float and rounded, default to 0.0 if NaN
+            entry[tradition] = round(float(numeric_score), 2) if pd.notna(numeric_score) else 0.0
+            if entry[tradition] > 0: # Consider a score of 0 as valid data for averaging
+                has_data = True
 
-    # HTML and JavaScript
-    html = f"""
-    <div class="d3-container"><div id="{container_id}" style="width: 100%; height: 400px; min-height: 300px;"></div></div>
-    <script>
-    (function() {{ /* D3 Code with transitions and tooltips */
-        const containerId = '{container_id}'; const container = document.getElementById(containerId); if (!container) {{ console.error('D3 container not found:', containerId); return; }}
-        const data = {json_data}; if (!data || data.length === 0) {{ container.innerHTML = '<p style="color: #AAAAAA; text-align: center; margin-top: 50px;">No data available.</p>'; return; }}
-        // --- CORRECTED CONSOLE LOG ---
-        console.log("D3 data for " + containerId + ":", data);
-        // --- END CORRECTION ---
-        const width = container.clientWidth > 0 ? container.clientWidth : 600; const height = 400; const margin={{top: 50, right: 30, bottom: 50, left: 50}}; const innerWidth = width - margin.left - margin.right; const innerHeight = height - margin.top - margin.bottom;
-        const tooltip = d3.select('body').append('div').attr('id', 'tooltip-' + containerId).style('position', 'absolute').style('visibility', 'hidden').style('background-color', 'rgba(40, 40, 40, 0.9)').style('color', '#FAFAFA').style('border', '1px solid #555').style('border-radius', '4px').style('padding', '8px 12px').style('font-size', '12px').style('pointer-events', 'none').style('z-index', '10');
-        d3.select('#' + containerId).select('svg').remove();
-        const svg = d3.select('#' + containerId).append('svg').attr('viewBox', `0 0 ${{width}} ${{height}}`).attr('preserveAspectRatio', 'xMidYMid meet').style('width', '100%').style('height', 'auto');
-        const g = svg.append('g').attr('transform', `translate(${{margin.left}}, ${{margin.top}})`);
-        const traditions = ['western', 'ubuntu', 'confucian', 'islamic']; const colors = ['#4D69FF', '#00CC96', '#EF553B', '#AB63FA'];
-        const xScale = d3.scaleBand().domain(traditions).range([0, innerWidth]).padding(0.3);
-        const yScale = d3.scaleLinear().domain([0, 10]).nice().range([innerHeight, 0]);
-        const colorScale = d3.scaleOrdinal().domain(traditions).range(colors);
-        g.append('g').attr('class', 'x-axis axis').attr('transform', `translate(0, ${{innerHeight}})`).call(d3.axisBottom(xScale).tickFormat(d => d.charAt(0).toUpperCase() + d.slice(1))).selectAll('text').style('fill', '#AAAAAA').style('font-size', '11px');
-        g.append('g').attr('class', 'y-axis axis').call(d3.axisLeft(yScale)).selectAll('text').style('fill', '#AAAAAA');
-        g.append('text').attr('transform', 'rotate(-90)').attr('y', 0 - margin.left).attr('x', 0 - (innerHeight / 2)).attr('dy', '1em').style('text-anchor', 'middle').style('fill', '#AAAAAA').style('font-size', '12px').text('Ethics Score');
-        const averages = traditions.map(tradition => {{ const values = data.map(d => d[tradition] !== undefined ? d[tradition] : 0); return {{ tradition: tradition, average: d3.mean(values) || 0 }}; }});
-        console.log("D3 averages for " + containerId + ":", averages); // Also corrected here
-        const bars = g.selectAll('.bar').data(averages.filter(d => d.average >= 0)).enter().append('rect').attr('class', 'bar').attr('x', d => xScale(d.tradition)).attr('width', xScale.bandwidth()).attr('fill', d => colorScale(d.tradition)).attr('y', d => yScale(0)).attr('height', 0).attr('opacity', 0.8)
-            .on('mouseover', function(event, d) {{ d3.select(this).transition().duration(100).attr('opacity', 1.0); tooltip.style('visibility', 'visible').html(`<strong>${{d.tradition.charAt(0).toUpperCase() + d.tradition.slice(1)}}</strong><br>Avg Score: ${{d.average.toFixed(2)}}`); }})
-            .on('mousemove', function(event, d) {{ tooltip.style('top', (event.pageY - 10) + 'px').style('left', (event.pageX + 10) + 'px'); }})
-            .on('mouseout', function(event, d) {{ d3.select(this).transition().duration(100).attr('opacity', 0.8); tooltip.style('visibility', 'hidden'); }});
-        bars.transition().duration(750).delay((d, i) => i * 75).ease(d3.easeCubicOut).attr('y', d => yScale(d.average)).attr('height', d => innerHeight - yScale(d.average));
-        g.selectAll('.label').data(averages.filter(d => d.average >= 0)).enter().append('text').attr('class', 'label').attr('x', d => xScale(d.tradition) + xScale.bandwidth() / 2).attr('y', d => yScale(0)).attr('text-anchor', 'middle').style('fill', '#FAFAFA').style('font-size', '10px').attr('opacity', 0).text(d => d.average.toFixed(1))
-             .transition().duration(600).delay((d, i) => 300 + i * 75).ease(d3.easeCubicOut).attr('y', d => yScale(d.average) - 6).attr('opacity', d => d.average > 0.1 ? 1 : 0);
-        svg.append('text').attr('x', width / 2).attr('y', margin.top / 2 + 5).attr('text-anchor', 'middle').style('fill', '#FAFAFA').style('font-size', '16px').style('font-weight', 'bold').text('{title}');
-    }})();
-    </script>
-    """
-    return html
-# --- END create_d3_visualization CORRECTION ---
+        # Add entry if it has any valid score, or even if all scores are 0 (to represent the item)
+        vis_data.append(entry)
+        item_id_counter += 1
+
+    if not vis_data:
+        logger.info(f"No processable data for D3 viz '{title}'. Input may have been empty or non-numeric.")
+        # Return structure indicating no data, rather than HTML string
+        return {"title": title, "data": [], "message": "No data available for visualization."}
+
+    # Calculate averages for the traditions based on the processed vis_data
+    averages = []
+    for tradition in traditions:
+        values = [d.get(tradition, 0.0) for d in vis_data if isinstance(d.get(tradition), (int, float))]
+        avg_score = round(float(np.mean(values)), 2) if values else 0.0
+        averages.append({"tradition": tradition.capitalize(), "average": avg_score})
+
+    # Return a dictionary containing the processed data and averages, ready for JSON serialization
+    return {
+        "title": title,
+        "type": "bar_chart_traditions", # Indicate chart type for frontend
+        "categories": [t.capitalize() for t in traditions], # For x-axis labels
+        "average_scores": averages, # Data for bars
+        "raw_items": vis_data, # Optional: include individual item scores if needed by frontend
+        "options": { # Suggested options for frontend rendering
+             "yAxisLabel": "Ethics Score",
+             "domain": [0, 10]
+        }
+    }
+# --- END create_d3_visualization MODIFIED ---
 
 
 def format_metric_card(title, value, description, icon="📊"):
@@ -195,27 +206,74 @@ def format_metric_card(title, value, description, icon="📊"):
     return html
 
 def run_text_analysis(text_data_input, traditions, advanced_options):
-    """Runs text analysis."""
-    if not HAS_TEXT_ANALYZER: st.error("TextAnalyzer module not available."); return None
+    """Runs text analysis. Decoupled from Streamlit."""
+    if not HAS_TEXT_ANALYZER:
+        logger.error("TextAnalyzer module not available.")
+        # Raise an exception or return an error object for API use
+        raise ImportError("TextAnalyzer module not available.")
     try:
-        analyzer = TextAnalyzer(traditions=traditions, spacy_model=advanced_options.get("nlp_model", "en_core_web_sm"), max_tokens=advanced_options.get("max_tokens", 10000))
-        progress_bar = st.progress(0); status_text = st.empty(); status_text.text("Initializing text analysis..."); progress_bar.progress(10)
-        status_text.text("Analyzing text data..."); results = analyzer.analyze(text_data_input); progress_bar.progress(90)
-        status_text.text("Finalizing results..."); progress_bar.progress(100); time.sleep(0.5); status_text.empty(); progress_bar.empty()
-        return results
-    except Exception as e: logger.error(f"Error in text analysis: {e}", exc_info=True); st.error(f"Text analysis error: {e}"); return None
+        # Log parameters
+        logger.info(f"Initializing TextAnalyzer with traditions: {traditions}, model: {advanced_options.get('nlp_model', 'en_core_web_sm')}, max_tokens: {advanced_options.get('max_tokens', 10000)}")
+
+        analyzer = TextAnalyzer(
+            traditions=traditions,
+            spacy_model=advanced_options.get("nlp_model", "en_core_web_sm"),
+            max_tokens=advanced_options.get("max_tokens", 10000)
+            # Add other relevant params like use_transformers if they become configurable
+        )
+        logger.info("Starting text analysis...")
+        results = analyzer.analyze(text_data_input) # This should return TextAnalysisResult or list of them
+        logger.info("Text analysis complete.")
+
+        # Ensure results are serializable if they are custom objects
+        if isinstance(results, list):
+            return [res.to_dict() if hasattr(res, 'to_dict') else res for res in results]
+        elif hasattr(results, 'to_dict'):
+            return results.to_dict()
+        return results # Should already be a dict or list of dicts if analyzer.analyze is updated
+
+    except Exception as e:
+        logger.error(f"Error in text analysis: {e}", exc_info=True)
+        # Propagate exception for API to handle, or return specific error structure
+        raise RuntimeError(f"Text analysis failed: {e}")
+
 
 def run_image_analysis(image_paths, feature_level, traditions, batch_size, use_pretrained_models=False): # Added use_pretrained_models
-    """Runs image analysis."""
-    if not HAS_IMAGE_ANALYZER: st.error("ImageAnalyzer module not available."); return None
-    if not image_paths: st.warning("No image paths provided."); return None
+    """Runs image analysis. Decoupled from Streamlit."""
+    if not HAS_IMAGE_ANALYZER:
+        logger.error("ImageAnalyzer module not available.")
+        raise ImportError("ImageAnalyzer module not available.")
+    if not image_paths:
+        logger.warning("No image paths provided for analysis.")
+        return {} # Return empty dict or appropriate error structure
+
     try:
-        analyzer = ImageAnalyzer(feature_extraction_method=feature_level, use_pretrained_models=use_pretrained_models, cultural_context={"traditions": traditions}, batch_size=batch_size)
-        progress_bar = st.progress(0); status_text = st.empty(); status_text.text("Initializing image analysis..."); progress_bar.progress(10)
-        status_text.text(f"Analyzing {len(image_paths)} images..."); results = analyzer.batch_process_images(image_paths); progress_bar.progress(90)
-        status_text.text("Finalizing results..."); progress_bar.progress(100); time.sleep(0.5); status_text.empty(); progress_bar.empty()
-        return results
-    except Exception as e: logger.error(f"Error in image analysis: {e}", exc_info=True); st.error(f"Image analysis error: {e}"); return None
+        logger.info(f"Initializing ImageAnalyzer with method: {feature_level}, use_pretrained: {use_pretrained_models}, traditions: {traditions}, batch_size: {batch_size}")
+        analyzer = ImageAnalyzer(
+            feature_extraction_method=feature_level,
+            use_pretrained_models=use_pretrained_models,
+            cultural_context={"traditions": traditions}, # Ensure this is how ImageAnalyzer expects it
+            batch_size=batch_size
+        )
+        logger.info(f"Starting image analysis for {len(image_paths)} images...")
+        results = analyzer.batch_process_images(image_paths) # This should return Dict[str, ImageAnalysisResult]
+        logger.info("Image analysis complete.")
+
+        # Ensure results are serializable (ImageAnalysisResult should have to_dict)
+        serializable_results = {}
+        if isinstance(results, dict):
+            for path, result_obj in results.items():
+                if hasattr(result_obj, 'to_dict'):
+                    serializable_results[path] = result_obj.to_dict()
+                else:
+                    serializable_results[path] = result_obj # Assume it's already a dict or error string
+            return serializable_results
+        return results # Or raise error for unexpected format
+
+    except Exception as e:
+        logger.error(f"Error in image analysis: {e}", exc_info=True)
+        raise RuntimeError(f"Image analysis failed: {e}")
+
 
 def safe_mean(series):
     """Calculates mean of a series, ignoring non-numeric and returning NaN."""
@@ -225,40 +283,108 @@ def safe_mean(series):
 def display_text_results(results):
     """Displays text analysis results."""
     # (Same as previous corrected version, including radar chart fix)
-    if not results: st.warning("No text analysis results available"); return
+    if not results:
+        logger.warning("No text analysis results available to display.")
+        st.warning("No text analysis results available")
+        return
+
+    # Ensure results are in list-of-dicts format
     results_list_of_dicts = []
-    if isinstance(results, list): valid_results = [res for res in results if res and hasattr(res, 'to_dict')]; results_list_of_dicts = [res.to_dict() for res in valid_results] if valid_results else []
-    elif hasattr(results, 'to_dict'): results_list_of_dicts = [results.to_dict()]
-    else: st.error(f"Unexpected text results format: {type(results)}"); return
-    if not results_list_of_dicts: st.warning("No valid text results to display."); return
-    df = pd.DataFrame(results_list_of_dicts); logger.info(f"Displaying text results. DF shape: {df.shape}")
+    if isinstance(results, list): # Already a list, presumed list of dicts from run_text_analysis
+        results_list_of_dicts = results
+    elif isinstance(results, dict): # Single result object (dict)
+        results_list_of_dicts = [results]
+    else:
+        logger.error(f"Unexpected text results format for display: {type(results)}")
+        st.error(f"Unexpected text results format: {type(results)}")
+        return
+
+    if not results_list_of_dicts:
+        st.warning("No valid text results to display.")
+        return
+
+    df = pd.DataFrame(results_list_of_dicts)
+    logger.info(f"Displaying text results. DF shape: {df.shape}")
+
+    # Metric cards (Streamlit specific, keep for now)
     st.markdown("<div class='metric-container'>", unsafe_allow_html=True)
-    if 'bias_score' in df.columns: avg_bias = safe_mean(df['bias_score']); bias_desc = "Low" if avg_bias < 3 else ("Moderate" if avg_bias < 7 else "High") if pd.notna(avg_bias) else "Unknown"; st.markdown(format_metric_card("Avg. Bias Score", avg_bias if pd.notna(avg_bias) else "N/A", f"{bias_desc} potential bias", "⚖️"), unsafe_allow_html=True)
-    if 'diversity_index' in df.columns: avg_diversity = safe_mean(df['diversity_index']); st.markdown(format_metric_card("Avg. Diversity Index", avg_diversity if pd.notna(avg_diversity) else "N/A", "Representation balance", "🌈"), unsafe_allow_html=True)
+    if 'bias_score' in df.columns:
+        avg_bias = safe_mean(df['bias_score'])
+        bias_desc = "Low" if avg_bias < 3 else ("Moderate" if avg_bias < 7 else "High") if pd.notna(avg_bias) else "Unknown"
+        st.markdown(format_metric_card("Avg. Bias Score", avg_bias if pd.notna(avg_bias) else "N/A", f"{bias_desc} potential bias", "⚖️"), unsafe_allow_html=True)
+    if 'diversity_index' in df.columns:
+        avg_diversity = safe_mean(df['diversity_index'])
+        st.markdown(format_metric_card("Avg. Diversity Index", avg_diversity if pd.notna(avg_diversity) else "N/A", "Representation balance", "🌈"), unsafe_allow_html=True)
     traditions = ['western', 'ubuntu', 'confucian', 'islamic']
     for tradition in traditions:
         col_name = f'{tradition}_ethics_score'
-        if col_name in df.columns: avg_score = safe_mean(df[col_name]); st.markdown(format_metric_card(f"{tradition.capitalize()} Score", avg_score if pd.notna(avg_score) else "N/A", "Ethical alignment", "🧠"), unsafe_allow_html=True)
+        if col_name in df.columns:
+            avg_score = safe_mean(df[col_name])
+            st.markdown(format_metric_card(f"{tradition.capitalize()} Score", avg_score if pd.notna(avg_score) else "N/A", "Ethical alignment", "🧠"), unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
+
     tab1, tab2, tab3 = st.tabs(["Ethical Traditions", "Bias Analysis", "Raw Data"])
+
     with tab1:
-        st.subheader("Ethical Traditions Analysis"); col1, col2 = st.columns([3, 2])
-        with col1: # Box Plot
-            tradition_fig = go.Figure(); available_traditions = [t for t in traditions if f'{t}_ethics_score' in df.columns]
+        st.subheader("Ethical Traditions Analysis")
+        col1, col2 = st.columns([3, 2])
+        with col1: # Box Plot (Streamlit specific, keep for now)
+            tradition_fig = go.Figure()
+            available_traditions = [t for t in traditions if f'{t}_ethics_score' in df.columns]
             for tradition in available_traditions:
                  y_data = pd.to_numeric(df[f'{tradition}_ethics_score'], errors='coerce').dropna()
-                 if not y_data.empty: tradition_fig.add_trace(go.Box(y=y_data, name=tradition.capitalize(), boxmean=True, marker_color={'western': '#4D69FF', 'ubuntu': '#00CC96', 'confucian': '#EF553B', 'islamic': '#AB63FA'}.get(tradition, '#CCCCCC')))
-            tradition_fig.update_layout(title="Distribution of Ethical Perspective Scores", yaxis_title="Ethics Score", xaxis_title="Ethical Tradition", template="plotly_dark", height=400, margin=dict(l=20, r=20, t=40, b=20), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)'); st.plotly_chart(tradition_fig, use_container_width=True)
-        with col2: # Radar chart
-            avg_scores_dict = {f"{trad}_ethics_score": safe_mean(df[f"{trad}_ethics_score"]) for trad in available_traditions if f"{trad}_ethics_score" in df.columns}; avg_scores_dict = {k: v for k, v in avg_scores_dict.items() if pd.notna(v)}
+                 if not y_data.empty:
+                     tradition_fig.add_trace(go.Box(y=y_data, name=tradition.capitalize(), boxmean=True, marker_color={'western': '#4D69FF', 'ubuntu': '#00CC96', 'confucian': '#EF553B', 'islamic': '#AB63FA'}.get(tradition, '#CCCCCC')))
+            tradition_fig.update_layout(title="Distribution of Ethical Perspective Scores", yaxis_title="Ethics Score", xaxis_title="Ethical Tradition", template="plotly_dark", height=400, margin=dict(l=20, r=20, t=40, b=20), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+            st.plotly_chart(tradition_fig, use_container_width=True)
+
+        with col2: # Radar chart (Streamlit specific, uses old create_tradition_radar_chart)
+            avg_scores_dict = {f"{trad}_ethics_score": safe_mean(df[f"{trad}_ethics_score"]) for trad in available_traditions if f"{trad}_ethics_score" in df.columns}
+            avg_scores_dict = {k: v for k, v in avg_scores_dict.items() if pd.notna(v)}
             if avg_scores_dict:
-                 tradition_names = [key.replace("_ethics_score", "") for key in avg_scores_dict.keys()]; radar_fig = create_tradition_radar_chart(avg_scores_dict, tradition_names); radar_fig.update_layout(title="Average Ethics Scores"); st.plotly_chart(radar_fig, use_container_width=True)
-            else: st.info("Could not calculate average scores for radar chart.")
-        # D3 chart
-        st.markdown("---"); st.markdown("<h3>Interactive Comparison (D3.js)</h3>", unsafe_allow_html=True)
-        container_id = "d3_viz_text_" + str(int(time.time() * 1000)); d3_data = df.to_dict(orient="records"); d3_html = create_d3_visualization(container_id, d3_data, title="Text Ethics Scores (D3.js)"); st.components.v1.html(d3_html, height=450, scrolling=False)
-    with tab2: # Bias Analysis
-        st.subheader("Bias Analysis"); col1, col2 = st.columns(2)
+                 # For Streamlit, we still call the old Plotly-generating function or adapt create_tradition_radar_chart to return fig for st
+                 # This part needs care: for API, create_tradition_radar_chart returns dict. For st, it needs a fig.
+                 # Quick fix for now: use the new data function and then build fig locally for st.
+                 tradition_names_for_radar = [key.replace("_ethics_score", "") for key in avg_scores_dict.keys()]
+                 radar_data_for_st = create_tradition_radar_chart(avg_scores_dict, tradition_names_for_radar) # This now returns a dict
+                 
+                 # Convert dict back to Plotly fig for Streamlit display
+                 st_radar_fig = go.Figure()
+                 st_radar_fig.add_trace(go.Scatterpolar(
+                     r=radar_data_for_st["series"][0]["data"],
+                     theta=radar_data_for_st["categories"],
+                     fill='toself', name='Ethics Scores',
+                     line_color='#4D69FF', fillcolor='rgba(77, 105, 255, 0.3')
+                 ))
+                 st_radar_fig.update_layout(
+                     polar=dict(radialaxis=dict(visible=True, range=[0, 10], showline=False, gridcolor='#444'), angularaxis=dict(gridcolor='#444')),
+                     showlegend=False, margin=dict(l=40, r=40, t=50, b=40), height=350,
+                     paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#FAFAFA',
+                     title="Average Ethics Scores"
+                 )
+                 st.plotly_chart(st_radar_fig, use_container_width=True)
+            else:
+                st.info("Could not calculate average scores for radar chart.")
+
+        # D3 chart (Streamlit specific, uses old create_d3_visualization)
+        st.markdown("---")
+        st.markdown("<h3>Interactive Comparison (D3.js)</h3>", unsafe_allow_html=True)
+        container_id = "d3_viz_text_" + str(int(time.time() * 1000))
+        # Prepare data for the D3 component (which expects HTML string from old function)
+        # The new function create_d3_visualization_data returns a dict.
+        # For Streamlit, we need to adapt or use a local D3 component that takes this dict.
+        # For now, let's show the JSON data that would be passed to a JS component.
+        d3_json_payload = create_d3_visualization_data(df.to_dict(orient="records"), title="Text Ethics Scores (D3 Data)")
+        st.json(d3_json_payload) # Display the JSON data that would be used by a frontend D3 component
+        # The old HTML generation is removed as it's part of Streamlit UI coupling.
+        # d3_html = create_d3_visualization(container_id, d3_data_for_viz, title="Text Ethics Scores (D3.js)");
+        # st.components.v1.html(d3_html, height=450, scrolling=False)
+        st.caption("D3.js chart rendering would occur on the frontend with the data above.")
+
+
+    with tab2: # Bias Analysis (Streamlit specific, keep for now)
+        st.subheader("Bias Analysis")
+        col1, col2 = st.columns(2)
         with col1: # Bias Histogram
             if 'bias_score' in df.columns:
                 bias_data = pd.to_numeric(df['bias_score'], errors='coerce').dropna()

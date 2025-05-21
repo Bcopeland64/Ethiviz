@@ -1,435 +1,168 @@
-# EthiViz User Guide
+# EthiViz User Guide (React + Flask Edition)
 
-Welcome to EthiViz, a comprehensive platform for analyzing cultural bias in both text and image data through multiple ethical traditions. This guide will help you navigate the platform's features and functionalities.
+Welcome to EthiViz! This guide will help you use the EthiViz platform, featuring a React-based user interface and a Flask backend API, to analyze cultural bias in text and image data.
 
 ## Table of Contents
 
-1. [Getting Started](#getting-started)
-2. [Command Line Usage](#command-line-usage)
-3. [Python API Usage](#python-api-usage)
-4. [Using the Interactive Dashboard](#using-the-interactive-dashboard)
-5. [Text Analysis](#text-analysis)
-6. [Image Analysis](#image-analysis)
-7. [Interpreting Results](#interpreting-results)
-8. [Advanced Configurations](#advanced-configurations)
-9. [Troubleshooting](#troubleshooting)
-
-## Getting Started
-
-### Installation
-
-1. Ensure you have Python 3.8 or higher installed.
-2. Install the required dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-For optimal performance with image analysis, we recommend installing the optional dependencies:
-
-```bash
-pip install opencv-python tensorflow
-```
-
-### Basic Usage
-
-To run a basic analysis with default settings:
-
-```bash
-python run.py --text-data path/to/textdata.csv --image-dir path/to/image/directory
-```
-
-## Command Line Usage
-
-EthiViz provides a flexible command-line interface with numerous options:
-
-```bash
-python run.py [options]
-```
-
-### Common Options
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `--text-data` | Path to text dataset (CSV, JSON, or Excel) | None |
-| `--image-dir` | Path to directory containing images | None |
-| `--traditions` | Comma-separated list of ethical traditions | western,ubuntu,confucian,islamic |
-| `--feature-level` | Feature extraction level for image analysis | medium |
-| `--batch-size` | Batch size for processing images | 32 |
-| `--output-dir` | Directory to save analysis results | ./results |
-| `--port` | Port for the visualization dashboard | 8050 |
-| `--no-dashboard` | Skip launching the dashboard | False |
-
-### Examples
-
-Analyze text data only:
-```bash
-python run.py --text-data data/articles.csv
-```
-
-Analyze images only with basic feature extraction:
-```bash
-python run.py --image-dir data/marketing_images --feature-level basic
-```
-
-Analyze both with specific ethical traditions:
-```bash
-python run.py --text-data data/social_media.csv --image-dir data/profile_pictures --traditions western,ubuntu
-```
-
-Save results to a custom directory:
-```bash
-python run.py --text-data data/survey.csv --output-dir ./my_analysis_results
-```
-
-Run analysis without launching the dashboard:
-```bash
-python run.py --text-data data/comments.csv --no-dashboard
-```
-
-## Python API Usage
-
-For programmatic integration or custom workflows, you can use the Python API:
-
-```python
-from text_analyzer import TextAnalyzer
-from image_analyzer import ImageAnalyzer
-from visualization import create_dashboard
-
-# Text analysis
-text_analyzer = TextAnalyzer(traditions=['western', 'ubuntu', 'confucian', 'islamic'])
-text_results = text_analyzer.analyze('path/to/data.csv')
-
-# Image analysis
-image_analyzer = ImageAnalyzer(feature_level='medium', batch_size=32)
-image_paths = ['path/to/image1.jpg', 'path/to/image2.jpg']
-image_results = image_analyzer.analyze_batch(image_paths)
-
-# Create dashboard
-create_dashboard(text_results=text_results, image_results=image_results, port=8050)
-```
-
-### Customizing Text Analysis
-
-```python
-analyzer = TextAnalyzer(
-    traditions=['western', 'ubuntu'],  # Only use Western and Ubuntu traditions
-    nlp_model='en_core_web_md',        # Specify SpaCy model
-    max_tokens=10000                    # Limit token count for performance
-)
-```
-
-### Customizing Image Analysis
-
-```python
-analyzer = ImageAnalyzer(
-    feature_level='advanced',           # Use deep learning features
-    traditions=['confucian', 'islamic'], # Only use Confucian and Islamic traditions
-    batch_size=64,                      # Process 64 images at once
-    detect_demographics=True,           # Enable demographic detection
-    detect_cultural_elements=True       # Enable cultural element detection
-)
-
-# Analyze a single image
-result = analyzer.analyze_image('path/to/image.jpg')
-
-# Access specific metrics
-skin_tone_diversity = result['skin_tone_diversity']
-confucian_ethics_score = result['confucian_ethics_score']
-```
-
-## Using the Interactive Dashboard
-
-The interactive dashboard provides comprehensive visualizations of analysis results.
-
-### Dashboard Layout
-
-The dashboard is organized into three main tabs:
-
-1. **Text Analysis**: Visualizations for text data
-2. **Image Analysis**: Visualizations for image data
-3. **Combined Analysis**: Comparative visualizations between text and image results
-
-### Navigating Visualizations
-
-- **Hover** over data points for detailed information
-- Use the **toolbar** in the upper right of each chart for interactions:
-  - Pan: Move around the visualization
-  - Box Select: Select data points
-  - Zoom: Zoom in/out
-  - Download: Save the chart as PNG
-  - Reset: Return to the original view
-
-### Filtering Data
-
-Some visualizations offer filtering options:
-- Use dropdown menus to select specific ethical traditions
-- Adjust sliders to filter data points by score ranges
-- Click on legend items to toggle specific data series
-
-## Text Analysis
-
-### Supported Data Formats
-
-- CSV files
-- JSON files
-- Excel spreadsheets (.xlsx, .xls)
-
-### Key Metrics
-
-- **Ethics Scores**: Assessment of content through different ethical traditions
-- **Bias Score**: Overall measure of potential bias
-- **Diversity Index**: Measure of representation diversity
-- **Sentiment Analysis**: Positive/negative/neutral sentiment detection
-- **Cultural Context Sensitivity**: How content relates to different cultural contexts
-
-## Image Analysis
-
-### Supported Image Formats
-
-- JPEG (.jpg, .jpeg)
-- PNG (.png)
-- GIF (.gif)
-- BMP (.bmp)
-
-### Feature Extraction Levels
-
-1. **Basic** (Uses Pillow)
-   - Color histograms
-   - Basic shape analysis
-   - Simple skin tone detection
-
-2. **Medium** (Requires OpenCV)
-   - HOG features
-   - More accurate skin tone detection
-   - Improved shape and texture analysis
-
-3. **Advanced** (Requires TensorFlow)
-   - Deep learning features
-   - Enhanced demographic detection
-   - Cultural element recognition
-
-### Key Metrics
-
-- **Skin Tone Distribution**: Approximation of Fitzpatrick scale representation
-- **Gender Distribution**: Estimated gender representation
-- **Age Distribution**: Estimated age group representation
-- **Cultural Element Detection**: Identification of cultural symbols, clothing, etc.
-- **Ethics Scores**: Assessment through different ethical traditions
-- **Diversity Index**: Shannon entropy-based measure of representation diversity
-
-## Interpreting Results
-
-### Ethics Scores
-
-Ethics scores range from 0 to 10, where:
-- **0-3**: Potentially problematic from this ethical tradition's perspective
-- **4-6**: Neutral or mixed assessment
-- **7-10**: Aligned with this ethical tradition's principles
-
-### Diversity Index
-
-The diversity index ranges from 0 to 1, where:
-- **0**: No diversity (complete homogeneity)
-- **0.5**: Moderate diversity
-- **1**: Maximum diversity (perfect representation balance)
-
-### Bias Score
-
-Bias scores range from 0 to 10, where:
-- **0-3**: Low potential for bias
-- **4-6**: Moderate potential for bias
-- **7-10**: High potential for bias
-
-### Ethical Traditions Metrics
-
-#### Western Metrics
-
-- **Fairness**: Equal treatment and opportunity across groups
-- **Autonomy**: Respecting individual choice and freedom
-- **Non-maleficence**: Avoiding harm to individuals
-- **Justice**: Distribution of benefits and burdens
-
-#### Ubuntu Metrics
-
-- **Community Harmony**: Impact on group relationships and cohesion
-- **Communal Benefit**: Collective positive outcomes for all groups
-- **Relational Fairness**: How relationships between groups are affected
-- **Shared Dignity**: Recognition of common humanity across groups
-
-#### Confucian Metrics
-
-- **Role Appropriateness**: Alignment with social roles and expectations
-- **Social Harmony**: Maintenance of balanced social relationships
-- **Reciprocity**: Balance of giving and receiving across groups
-- **Ritual Propriety**: Adherence to cultural appropriateness
-
-#### Islamic Metrics
-
-- **Adl (Justice)**: Fairness in distribution and treatment
-- **Ihsan (Excellence)**: Going beyond bare minimum in ethical treatment
-- **Karama (Dignity)**: Preserving human dignity across all groups
-- **Maslaha (Public Interest)**: Benefit to the collective community
-
-## Advanced Configurations
-
-### Performance Optimization
-
-For large datasets:
-- Use `--batch-size` to adjust processing chunk size
-- Select appropriate `--feature-level` based on computational resources
-- Use `--no-dashboard` to skip the interactive visualization
-- Consider using a subset of ethical traditions with `--traditions`
-
-### Processing Multiple Files
-
-You can process multiple files by using wildcards in bash:
-
-```bash
-# Create a list of image files
-find data/marketing_images -name "*.jpg" > image_list.txt
-
-# Process images in batches
-python run.py --image-dir data/marketing_images --batch-size 50
-```
-
-### Customizing Visualization Appearance
-
-You can customize dashboard appearance by modifying the visualization.py file:
-
-```python
-# In visualization.py
-# Change color scheme
-color_scheme = {
-    'western': '#003366',
-    'ubuntu': '#006633',
-    'confucian': '#660033',
-    'islamic': '#333366'
+1.  [Introduction](#introduction)
+2.  [Getting Started](#getting-started)
+3.  [Using the EthiViz Dashboard (React UI)](#using-the-ethiviz-dashboard-react-ui)
+    *   [Dashboard Overview](#dashboard-overview)
+    *   [Step 1: Select Analysis Type](#step-1-select-analysis-type)
+    *   [Step 2: Provide Your Data](#step-2-provide-your-data)
+    *   [Step 3: Configure Analysis](#step-3-configure-analysis)
+    *   [Step 4: Run Analysis](#step-4-run-analysis)
+    *   [Monitoring Job Status](#monitoring-job-status)
+4.  [Viewing and Interpreting Results](#viewing-and-interpreting-results)
+    *   [Current Results Display](#current-results-display)
+    *   [Understanding the JSON Output](#understanding-the-json-output)
+    *   [Future Visualizations](#future-visualizations)
+5.  [API Usage (Brief Overview)](#api-usage-brief-overview)
+6.  [Troubleshooting](#troubleshooting)
+7.  [Legacy Streamlit Interface](#legacy-streamlit-interface)
+
+## 1. Introduction
+
+EthiViz is a platform designed to help users identify and understand potential cultural biases in their data. It analyzes content through multiple ethical lenses: Western, Ubuntu, Confucian, and Islamic traditions. This version utilizes a modern web application structure with a React frontend for user interaction and a Flask backend API for processing analysis jobs.
+
+## 2. Getting Started
+
+Before using EthiViz, you need to set up and run both the backend API server and the frontend React application.
+
+*   **Installation**: Please refer to the main [README.md](../README.md) for detailed installation instructions, including prerequisites (Python, Node.js) and steps to set up the backend and frontend environments.
+*   **Running the Application**:
+    1.  Start the **Backend API Server** (Flask) as described in `README.md` (typically `python Scripts/api_server.py`).
+    2.  Start the **Frontend Application** (React) in a separate terminal as described in `README.md` (typically `cd project && npm run dev`).
+    3.  Once both servers are running, open the frontend URL (usually `http://localhost:5173`) in your web browser.
+
+## 3. Using the EthiViz Dashboard (React UI)
+
+The EthiViz dashboard allows you to configure and run your analyses.
+
+### Dashboard Overview
+
+The interface primarily consists of:
+
+*   **Configuration Panel (Sidebar)**: On the left (can be toggled), where you set up your analysis parameters, upload data, and start the analysis.
+*   **Main Content Area**: On the right, where analysis results, loading messages, or errors are displayed.
+
+### Step 1: Select Analysis Type
+
+In the Configuration Panel:
+*   Locate the "Analysis Type" section.
+*   Choose between:
+    *   **Text**: For analyzing textual data.
+    *   **Image**: For analyzing image data.
+    *   You can also select "Analyze Text & Image Together?" if you have selected either Text or Image first, to perform a combined analysis.
+
+### Step 2: Provide Your Data
+
+Under the "Data Source" section:
+
+*   **Upload Your Data**:
+    1.  Select "Upload Your Data".
+    2.  A file upload area will appear.
+    3.  **For Text Analysis**: Click "browse files" or drag and drop your text file (e.g., CSV, TXT, XLSX, JSON) into the designated area. The selected file name and size will appear.
+        *   Ensure your text file (if CSV/XLSX) contains a column named "text" for the content to be analyzed.
+    4.  **For Image Analysis**: Click "browse files" or drag and drop your image files (e.g., JPG, PNG, WEBP) into the area. You can select multiple image files. Selected image names and sizes will be listed.
+    5.  **For Text & Image Analysis**: Provide both text and image files as described above.
+*   **Use Sample Data**:
+    1.  Select "Use Sample Data".
+    2.  **(Note: UI for selecting specific sample datasets is currently a work-in-progress in the React frontend. The backend has placeholder logic for `sample_text_1`. Image sample selection is not yet implemented in the UI-backend flow).**
+        *   If you select "Text" or "Text & Image" analysis with "Sample Data", it will attempt to use a predefined sample text if the backend supports the default ID (`sample_text_1`).
+
+### Step 3: Configure Analysis
+
+*   **Ethical Traditions**:
+    *   In the "Traditions" section, select the ethical frameworks (Western, Ubuntu, Confucian, Islamic) you want to include in the analysis. By default, all are selected. Click to toggle selection.
+*   **Advanced Options**:
+    *   Expand the "Advanced Options" section to view current analysis parameters (e.g., max tokens for text, feature level for images).
+    *   **(Note: The UI to modify these advanced options directly in the React frontend is currently a placeholder. The API uses default values or values set in `ConfigPanel.tsx`'s initial state if not modified via API directly).**
+
+### Step 4: Run Analysis
+
+*   Once you have configured your analysis type, data, and traditions, click the **"Run Analysis"** button at the bottom of the Configuration Panel.
+*   The button will be disabled if required inputs are missing (e.g., no analysis type selected, or no file uploaded when "Upload Your Data" is chosen).
+
+### Monitoring Job Status
+
+*   After clicking "Run Analysis":
+    *   The button will show a loading state (e.g., "Analyzing...").
+    *   A "Job Submitted: <job_id_prefix>..." message will appear in the Configuration Panel, indicating the unique ID for your analysis job.
+    *   The Main Content area will display a loading indicator: "Analysis in progress...".
+*   The application polls the backend API to check the job status. You might see status updates like "pending" or "processing" in the ConfigPanel if implemented, or simply wait for the main content area to update.
+
+## 4. Viewing and Interpreting Results
+
+### Current Results Display
+
+Once the analysis is complete, the Main Content area will update to show "Analysis Results":
+
+*   **Summaries (Placeholders)**:
+    *   If text analysis was performed, a "Text Analysis" section will show basic metrics like "Bias Score" and "Diversity Index". If multiple text items were processed (e.g., from a CSV), it might list these metrics for each item.
+    *   If image analysis was performed, an "Image Analysis" section will show the number of images processed and may list basic metrics (like "Diversity Index") for a few sample images.
+*   **Raw JSON Output**:
+    *   A key part of the current results display is the "Raw JSON Output". This section shows the complete, detailed results from the backend API in a structured JSON format. This is the primary way to access all analyzed metrics currently.
+
+### Understanding the JSON Output
+
+The JSON output will typically have a structure like:
+
+```json
+{
+  "text_analysis": { // If text analysis was run
+    "bias_score": 5.0,
+    "diversity_index": 6.5,
+    "western_ethics_score": 7.0,
+    // ... other text metrics and metadata ...
+  },
+  "image_analysis": { // If image analysis was run
+    "path/to/your/image1.jpg": {
+      "diversity_index": 4.5,
+      "western_ethics_score": 2.0,
+      // ... other image metrics and metadata for image1 ...
+    },
+    "path/to/your/image2.png": {
+      // ... metrics for image2 ...
+    }
+  }
 }
-
-# Apply to visualizations
-fig.update_traces(marker_color=color_scheme[tradition])
 ```
+*   `text_analysis`: Contains scores and data related to the text analysis. If the input was a single text or file with one text, this will be an object. If it was a file with multiple texts, this might be an array of objects.
+*   `image_analysis`: Contains a dictionary where keys are image filenames (or paths as processed by the backend) and values are objects containing the analysis for each image.
+*   Refer to the main `README.md` or `STREAMLIT_GUIDE.md` for more details on interpreting specific scores like bias, diversity, and ethical alignment scores, as the underlying metrics are the same.
 
-## Troubleshooting
+### Future Visualizations
 
-### Common Issues
+The React frontend is planned to include more sophisticated and interactive visualizations (e.g., radar charts, bar charts, demographic distributions) based on the JSON data. Currently, these are not yet implemented in the React UI. The JSON output provides the data that will feed these future charts.
 
-**Issue**: Dashboard shows "No results available"
-**Solution**: Ensure your data paths are correct and the files contain valid data
+## 5. API Usage (Brief Overview)
 
-**Issue**: Image analysis is slow
-**Solution**: Use a smaller batch size or lower feature extraction level
+The EthiViz backend provides a RESTful API that the React frontend uses. Advanced users or developers can also interact with this API directly. Key endpoints include:
 
-**Issue**: Missing dependencies error
-**Solution**: Run `pip install -r requirements.txt` to install required packages
+*   `POST /api/analyze`: Submit analysis jobs.
+*   `GET /api/analyze/status/{job_id}`: Check job status.
+*   `GET /api/analyze/results/{job_id}`: Get job results.
+*   `GET /api/sample-data`: List available sample data (currently placeholder).
 
-**Issue**: Memory errors with large datasets
-**Solution**: Process data in smaller chunks or reduce feature extraction complexity
+Refer to the "API Details" section in the main `README.md` for more information.
 
-### Getting Help
+## 6. Troubleshooting
 
-If you encounter problems not covered in this guide:
-- Check the project README for additional information
-- Look for error messages in the console output
-- Review the logs in the output directory
+*   **"Failed to fetch", "Network Error", or API errors in ConfigPanel/MainContent**:
+    *   Ensure the Flask API backend server is running (execute `python Scripts/api_server.py`).
+    *   Verify the `API_BASE_URL` in `project/src/components/ConfigPanel.tsx` (default `http://localhost:5001`) matches where your API server is running.
+    *   Check your browser's developer console (usually F12) for more detailed error messages or CORS issues.
+*   **"Analysis Failed" message in MainContent**:
+    *   This indicates an error during the backend processing. The message might provide details. Check the Flask API server's console output for more detailed logs and Python tracebacks.
+*   **File Upload Issues**:
+    *   Ensure your files meet the allowed types (e.g., CSV, TXT for text; JPG, PNG for images).
+    *   For CSV/Excel text uploads, ensure there is a column named "text".
+*   **Analysis Timeout**:
+    *   If an analysis job takes too long, the frontend might time out its polling. The job may still be running on the server. You can check the server logs. For very large datasets, consider using the API programmatically or the legacy command-line interface if available.
 
-## Visualization Types
+## 7. Legacy Streamlit Interface
 
-The EthiViz dashboard includes several key visualization types:
-
-### Text Analysis Visualizations
-
-- **Ethics Scores Box Plots**: Compare scores across different ethical traditions
-- **Bias Distribution Histogram**: Distribution of bias scores across the dataset
-- **Diversity vs. Bias Scatter Plot**: Relationship between diversity and bias metrics
-
-### Image Analysis Visualizations
-
-- **Skin Tone Distribution Chart**: Shows representation across skin tone categories
-- **Gender Distribution Chart**: Display gender representation in images
-- **Diversity Index Bar Chart**: Diversity scores by image
-- **Ethics Scores by Tradition**: Compare how images score across ethical traditions
-- **Image Gallery**: Display of analyzed images with their key metrics
-
-### Combined Analysis Visualizations
-
-- **Text vs. Image Bias Comparison**: Box plots comparing bias scores
-- **Diversity Index Comparison**: Compares diversity between text and image data
-- **Ethics Score Comparison**: Comparison of ethical perspectives across data types
-
-## Ethical Traditions
-
-EthiViz analyzes data through multiple ethical traditions:
-
-### Western Ethics
-
-Based on principles like autonomy, beneficence, non-maleficence, and justice. Western ethics prioritizes individual rights, fairness, and equal treatment.
-
-### Ubuntu Ethics
-
-Stems from the African philosophy of "I am because we are." Ubuntu ethics emphasizes communal relationships, shared humanity, and collective well-being over individual interests.
-
-### Confucian Ethics
-
-Focuses on proper relationships, social harmony, and virtues. Confucian ethics emphasizes role fulfillment, hierarchical relationships, and the importance of societal order.
-
-### Islamic Ethics
-
-Centers on justice, dignity, and community welfare. Islamic ethics balances individual rights with societal obligations and emphasizes the inherent dignity of all people.
-
-## Using the Streamlit Interface
-
-EthiViz now includes a modern, intuitive Streamlit interface that makes it easy to analyze data without writing code.
-
-### Starting the Application
-
-To launch the Streamlit interface:
-
-```bash
-streamlit run app.py
-```
-
-This will open a web browser with the EthiViz application.
-
-### Interface Layout
-
-The interface consists of:
-
-1. **Sidebar**: Contains all input controls and analysis settings
-   - Data source selection
-   - Ethical tradition selection
-   - Advanced options
-   - Run button
-
-2. **Main Area**: Displays analysis results in a tabbed interface
-   - Text Analysis tab
-   - Image Analysis tab
-   - Combined Analysis tab
-
-### Workflow
-
-1. **Select Data Sources**:
-   - For text data: Upload a CSV/Excel file or use sample data
-   - For image data: Upload images or use sample images
-
-2. **Configure Analysis**:
-   - Select which ethical traditions to include
-   - Adjust advanced options if needed (feature level, batch size, etc.)
-
-3. **Run Analysis**:
-   - Click the "Run Analysis" button
-   - A progress bar will show analysis status
-
-4. **Explore Results**:
-   - Navigate between tabs to view different aspects of the analysis
-   - Interact with visualizations (hover, zoom, download)
-   - View raw data tables
-
-### Data Upload Guidelines
-
-- **Text Data**: CSV or Excel files with text content
-- **Images**: JPG, JPEG, PNG, or GIF files
-- **File Size**: Keep individual files under 200MB for best performance
+This project also contains an older Streamlit-based interface which offers a different user experience and a more developed set of visualizations. For instructions on how to set up and run the Streamlit version, please see [STREAMLIT_GUIDE.md](./STREAMLIT_GUIDE.md).
 
 ---
