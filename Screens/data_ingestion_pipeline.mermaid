@@ -1,0 +1,152 @@
+graph TD
+    classDef mainProcess fill:#333333,stroke:#555555,stroke-width:2px,color:#FFFFFF,font-weight:bold
+    classDef subProcess fill:#444444,stroke:#666666,stroke-width:1px,color:#FFFFFF
+    classDef dataStore fill:#225588,stroke:#336699,stroke-width:1px,color:#FFFFFF
+    classDef dataType fill:#882222,stroke:#993333,stroke-width:1px,color:#FFFFFF
+    
+    %% Main Data Sources
+    TextInput[Text Data Inputs] :::dataType
+    ImageInput[Image Data Inputs] :::dataType
+    
+    %% Input Types
+    TI1[CSV/Excel Files] :::dataType
+    TI2[Text Files] :::dataType
+    TI3[Direct Text Input] :::dataType
+    
+    II1[Image Files] :::dataType
+    II2[Image Directories] :::dataType
+    II3[Image Datasets] :::dataType
+    
+    %% Main Processing Nodes
+    Collection[Data Collection] :::mainProcess
+    Validation[Data Validation] :::mainProcess
+    Preprocessing[Data Preprocessing] :::mainProcess
+    Analysis[Ethical Analysis] :::mainProcess
+    MetricsGen[Metrics Generation] :::mainProcess
+    Results[Results Storage] :::dataStore
+    
+    %% Text Processing
+    TextPrep[Text Preprocessing] :::subProcess
+    TPTokenize[Tokenization] :::subProcess
+    TPNormalize[Normalization] :::subProcess
+    TPLemmatize[Lemmatization] :::subProcess
+    
+    %% Image Processing
+    ImagePrep[Image Preprocessing] :::subProcess
+    IPLoad[Image Loading] :::subProcess
+    IPResize[Resizing] :::subProcess
+    IPFeatures[Feature Extraction] :::subProcess
+    
+    %% Analysis Components
+    TextAnalysis[Text Analysis] :::subProcess
+    TAWestern[Western Framework] :::subProcess
+    TAUbuntu[Ubuntu Framework] :::subProcess
+    TAConfucian[Confucian Framework] :::subProcess
+    TAIslamic[Islamic Framework] :::subProcess
+    
+    ImageAnalysis[Image Analysis] :::subProcess
+    IAColor[Color Analysis] :::subProcess
+    IASkinTone[Skin Tone Detection] :::subProcess
+    IAGender[Gender Estimation] :::subProcess
+    IACultural[Cultural Elements] :::subProcess
+    
+    %% Metrics Components
+    TextMetrics[Text Metrics] :::subProcess
+    TMBias[Bias Score] :::subProcess
+    TMDiversity[Diversity Index] :::subProcess
+    TMEthics[Ethics Scores] :::subProcess
+    
+    ImageMetrics[Image Metrics] :::subProcess
+    IMRepresentation[Representation Metrics] :::subProcess
+    IMDiversity[Visual Diversity] :::subProcess
+    IMCultural[Cultural Context] :::subProcess
+    
+    %% Results Storage
+    RS1[JSON Results] :::dataStore
+    RS2[CSV Exports] :::dataStore
+    
+    %% Connections - Main Flow
+    TextInput --> Collection
+    ImageInput --> Collection
+    Collection --> Validation
+    Validation --> Preprocessing
+    Preprocessing --> Analysis
+    Analysis --> MetricsGen
+    MetricsGen --> Results
+    
+    %% Text Input Types
+    TextInput --- TI1
+    TextInput --- TI2
+    TextInput --- TI3
+    
+    %% Image Input Types
+    ImageInput --- II1
+    ImageInput --- II2
+    ImageInput --- II3
+    
+    %% Preprocessing Branch
+    Preprocessing --> TextPrep
+    Preprocessing --> ImagePrep
+    
+    %% Text Preprocessing Detail
+    TextPrep --> TPTokenize --> TPNormalize --> TPLemmatize
+    
+    %% Image Preprocessing Detail
+    ImagePrep --> IPLoad --> IPResize --> IPFeatures
+    
+    %% Analysis Branch
+    Analysis --> TextAnalysis
+    Analysis --> ImageAnalysis
+    
+    %% Text Analysis Detail
+    TextAnalysis --> TAWestern
+    TextAnalysis --> TAUbuntu
+    TextAnalysis --> TAConfucian
+    TextAnalysis --> TAIslamic
+    
+    %% Image Analysis Detail
+    ImageAnalysis --> IAColor
+    ImageAnalysis --> IASkinTone
+    ImageAnalysis --> IAGender
+    ImageAnalysis --> IACultural
+    
+    %% Metrics Branch
+    MetricsGen --> TextMetrics
+    MetricsGen --> ImageMetrics
+    
+    %% Text Metrics Detail
+    TextMetrics --> TMBias
+    TextMetrics --> TMDiversity
+    TextMetrics --> TMEthics
+    
+    %% Image Metrics Detail
+    ImageMetrics --> IMRepresentation
+    ImageMetrics --> IMDiversity
+    ImageMetrics --> IMCultural
+    
+    %% Results Storage Detail
+    Results --- RS1
+    Results --- RS2
+    
+    %% Batch Processing
+    BatchText[Text Batch Processing] :::subProcess
+    BatchImage[Image Batch Processing] :::subProcess
+    
+    TI1 -.-> BatchText
+    TI2 -.-> BatchText
+    BatchText -.-> TextPrep
+    
+    II1 -.-> BatchImage
+    II2 -.-> BatchImage
+    BatchImage -.-> ImagePrep
+    
+    %% Dependency Tiers
+    subgraph "Dependency Tiers"
+        Lightweight[Lightweight Processing\nMinimal Dependencies] :::subProcess
+        Standard[Standard Processing\nNLP & OpenCV] :::subProcess
+        Advanced[Advanced Processing\nDeep Learning] :::subProcess
+    end
+    
+    Preprocessing -.-> Lightweight
+    Preprocessing -.-> Standard
+    Preprocessing -.-> Advanced

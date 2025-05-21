@@ -1,0 +1,58 @@
+graph TD
+    classDef mainComponent fill:#333333,stroke:#555555,stroke-width:2px,color:#FFFFFF,font-weight:bold
+    classDef subComponent fill:#444444,stroke:#666666,stroke-width:1px,color:#FFFFFF
+    classDef dataFlow fill:none,stroke:#888888,stroke-width:1px,color:#AAAAAA,stroke-dasharray: 5 5
+
+    %% Main Architecture Components
+    UI[User Interface]:::mainComponent
+    Analyzer[Text & Image Analyzer]:::mainComponent
+    VM[Visualization Manager]:::mainComponent
+    DB[Data Storage]:::mainComponent
+
+    %% Sub-components
+    UI1[Web Interface]:::subComponent
+    UI2[Data Input & Processing]:::subComponent
+    UI3[Settings & Config]:::subComponent
+
+    TA1[NLP Processing]:::subComponent
+    TA2[Ethical Frameworks]:::subComponent
+    TA3[Bias Detection]:::subComponent
+
+    IA1[Feature Extraction]:::subComponent
+    IA2[Demographic Analysis]:::subComponent
+    IA3[Cultural Context]:::subComponent
+
+    VM1[Data Visualization]:::subComponent
+    VM2[Comparative Analysis]:::subComponent
+    VM3[Bias Insights]:::subComponent
+
+    DB1[Results Storage]:::subComponent
+    DB2[Historical Analysis]:::subComponent
+
+    %% Simplified Data Flow
+    UI --> Analyzer
+    Analyzer --> VM
+    VM --> DB
+    DB --> UI
+
+    %% UI Sub-component connections
+    UI --- UI1
+    UI --- UI2
+    UI --- UI3
+
+    %% Analyzer Sub-component connections
+    Analyzer --- TA1
+    Analyzer --- TA2
+    Analyzer --- TA3
+    Analyzer --- IA1
+    Analyzer --- IA2
+    Analyzer --- IA3
+
+    %% Visualization Manager Sub-component connections
+    VM --- VM1
+    VM --- VM2
+    VM --- VM3
+
+    %% Data Storage Sub-component connections
+    DB --- DB1
+    DB --- DB2

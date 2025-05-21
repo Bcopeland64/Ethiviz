@@ -1,0 +1,95 @@
+graph TD
+    classDef mainComponent fill:#333333,stroke:#555555,stroke-width:2px,color:#FFFFFF,font-weight:bold
+    classDef subComponent fill:#444444,stroke:#666666,stroke-width:1px,color:#FFFFFF
+    classDef dataFlow fill:none,stroke:#888888,stroke-width:1px,color:#AAAAAA,stroke-dasharray: 5 5
+
+    %% Main Architecture Components
+    UI[User Interface<br>Streamlit Frontend]:::mainComponent
+    TA[Text Analyzer<br>Ethical Framework Analysis]:::mainComponent
+    IA[Image Analyzer<br>Multi-dimensional Bias Detection]:::mainComponent
+    VM[Visualization Manager<br>Insight Generation]:::mainComponent
+    DB[Data Storage<br>Analysis Results & Reports]:::mainComponent
+
+    %% Sub-components
+    UI1[Web Interface<br>Interactive Dashboard]:::subComponent
+    UI2[Data Input<br>Upload & Processing]:::subComponent
+    UI3[Settings<br>Analysis Configuration]:::subComponent
+
+    TA1[NLP Processing<br>Textual Analysis]:::subComponent
+    TA2[Ethical Frameworks<br>Multiple Traditions]:::subComponent
+    TA3[Bias Detection<br>Cultural Markers]:::subComponent
+
+    IA1[Feature Extraction<br>Image Processing]:::subComponent
+    IA2[Demographic Analysis<br>Representation Detection]:::subComponent
+    IA3[Cultural Context<br>Visual Markers]:::subComponent
+
+    VM1[Data Visualization<br>Plotly & D3.js]:::subComponent
+    VM2[Comparative Analysis<br>Tradition Comparison]:::subComponent
+    VM3[Bias Insights<br>Ethical Recommendations]:::subComponent
+
+    DB1[Results Storage<br>JSON & CSV]:::subComponent
+    DB2[Historical Analysis<br>Trend Tracking]:::subComponent
+
+    %% Connections between components
+    UI --> TA
+    UI --> IA
+    TA --> VM
+    IA --> VM
+    VM --> DB
+    DB --> UI
+
+    %% User Interface sub-components
+    UI --- UI1
+    UI --- UI2
+    UI --- UI3
+
+    %% Text Analyzer sub-components
+    TA --- TA1
+    TA --- TA2
+    TA --- TA3
+
+    %% Image Analyzer sub-components
+    IA --- IA1
+    IA --- IA2
+    IA --- IA3
+
+    %% Visualization Manager sub-components
+    VM --- VM1
+    VM --- VM2
+    VM --- VM3
+
+    %% Data Storage sub-components
+    DB --- DB1
+    DB --- DB2
+
+    %% Data flow
+    TextData[Text Data<br>Documents, CSVs, Input]:::dataFlow
+    ImageData[Image Data<br>Image Files, Datasets]:::dataFlow
+    Results[Analysis Results<br>Scores & Metrics]:::dataFlow
+    Visualizations[Visualizations<br>Graphs & Charts]:::dataFlow
+
+    TextData --> UI2
+    ImageData --> UI2
+    UI2 --> TA1
+    UI2 --> IA1
+    TA3 --> Results
+    IA3 --> Results
+    Results --> VM1
+    VM1 --> Visualizations
+    Visualizations --> UI1
+
+    %% Additional detailed flows
+    TA1 --> TA2 --> TA3
+    IA1 --> IA2 --> IA3
+    VM1 --> VM2 --> VM3
+
+    %% Core ethical frameworks
+    EF1[Western<br>Individual Rights & Liberty]:::subComponent
+    EF2[Ubuntu<br>Community & Relationships]:::subComponent
+    EF3[Confucian<br>Harmony & Hierarchy]:::subComponent
+    EF4[Islamic<br>Justice & Compassion]:::subComponent
+
+    TA2 --- EF1
+    TA2 --- EF2
+    TA2 --- EF3
+    TA2 --- EF4
