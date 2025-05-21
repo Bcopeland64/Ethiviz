@@ -191,9 +191,10 @@ def run_analysis_job(job_id, analysis_type, data_inputs, selected_traditions, ad
         app.logger.error(f"Job {job_id} failed: Runtime error - {rt_error}", exc_info=True)
     except Exception as e:
         jobs[job_id]["status"] = "failed"
-    jobs[job_id]["error"] = f"An unexpected error occurred during analysis: {str(e)}"
-    # Log the full traceback for unexpected errors
-    app.logger.exception(f"Job {job_id} failed with unexpected error: {e}")
+        # The following line was missing indentation
+        jobs[job_id]["error"] = f"An unexpected error occurred during analysis: {str(e)}"
+        # Log the full traceback for unexpected errors
+        app.logger.exception(f"Job {job_id} failed with unexpected error: {e}")
     finally:
         jobs[job_id]["end_time"] = time.time()
         jobs[job_id]["duration_seconds"] = jobs[job_id]["end_time"] - jobs[job_id].get("start_time", jobs[job_id]["end_time"])
@@ -383,111 +384,24 @@ def get_analysis_results(job_id):
                                    details=f"Current job status: {job['status']}. Error: {job.get('error')}")
     
     # Optional: Clean up uploaded files (consider moving to a separate cleanup mechanism for production)
-    # ... (cleanup logic remains the same) ...
-            data_inputs_summary = job.get("data_inputs_summary", {})
-    if data_inputs_summary.get("source_type") == "upload":
-        text_file_path = job.get("data_inputs",{}).get("text_input")
-        if text_file_path and os.path.exists(text_file_path):
-            try: os.remove(text_file_path); app.logger.info(f"Cleaned up text file: {text_file_path}")
-            except Exception as e_clean: app.logger.error(f"Error cleaning text file {text_file_path}: {e_clean}")
-
-        image_file_paths = job.get("data_inputs",{}).get("image_paths", [])
-        for p in image_file_paths:
-            if os.path.exists(p):
-                try: os.remove(p); app.logger.info(f"Cleaned up image file: {p}")
-                except Exception as e_clean: app.logger.error(f"Error cleaning image file {p}: {e_clean}")
-                
-    return jsonify({
-        "job_id": job_id,
-        "status": job["status"],
-        "analysis_type": job.get("analysis_type"),
-        "results": job.get("result")
-    })
-
-
-if __name__ == '__main__':
-    app.logger.info(f"EthiViz API Server starting...")
-        "job_id": job_id,
-        "status": "pending",
-        "analysis_type": analysis_type,
-        "data_inputs_summary": {k: (v if k != "image_paths" else f"{len(v)} images") for k,v in data_inputs.items()}, # Avoid logging full paths list for now
-        "selected_traditions": selected_traditions,
-        "advanced_options": advanced_options,
-        "submission_time": time.time()
-    }
-    
-    app.logger.info(f"Job {job_id} created. Initial status: pending. Starting analysis thread.")
-    thread = threading.Thread(target=run_analysis_job, args=(
-        job_id,
-        analysis_type,
-        data_inputs, # Pass the actual paths or sample identifiers
-        selected_traditions,
-        advanced_options
-    ))
-    thread.daemon = True # Allows main program to exit even if threads are running
-    thread.start()
-
-    status_url = request.url_root + f"api/analyze/status/{job_id}"
-    return jsonify({
-        "message": "Analysis job submitted.",
-        "job_id": job_id,
-        "status": "pending",
-        "status_url": status_url
-    }), 202
-
-
-@app.route('/api/analyze/status/<job_id>', methods=['GET'])
-def get_analysis_status(job_id):
-    """Returns the status of an analysis job."""
-    job = jobs.get(job_id)
-    if not job:
-        return jsonify({"error": "Job not found"}), 404
-
-    response = {
-        "job_id": job_id,
-        "status": job["status"],
-        "submission_time": job.get("submission_time"),
-        "start_time": job.get("start_time"),
-        "end_time": job.get("end_time"),
-        "duration_seconds": job.get("duration_seconds")
-    }
-    if job["status"] == "completed":
-        response["message"] = "Analysis completed."
-        response["results_url"] = request.url_root + f"api/analyze/results/{job_id}"
-        # Optionally include a summary or snippet of results here if desired
-    elif job["status"] == "failed":
-        response["error_message"] = job.get("error", "Unknown error")
-    elif job["status"] == "processing":
-        response["message"] = "Analysis is currently in progress."
-        # Could add progress percentage if tracked by run_analysis_job
-    elif job["status"] == "pending":
-        response["message"] = "Analysis job is pending execution."
-        
-    return jsonify(response)
-
-@app.route('/api/analyze/results/<job_id>', methods=['GET'])
-def get_analysis_results(job_id):
-    """Returns the results of a completed analysis job."""
-    job = jobs.get(job_id)
-    if not job:
-        return jsonify({"error": "Job not found"}), 404
-    if job["status"] != "completed":
-        return jsonify({"error": "Job not yet completed or failed.", "status": job["status"]}), 422 # Unprocessable Entity or another appropriate code
-    
-    # Clean up uploaded files after results are retrieved (optional)
-    # This is a simple cleanup; more robust would be TTL or user-initiated deletion
     data_inputs_summary = job.get("data_inputs_summary", {})
     if data_inputs_summary.get("source_type") == "upload":
-        text_file_path = job.get("data_inputs",{}).get("text_input")
+        text_file_path = job.get("data_inputs", {}).get("text_input")
         if text_file_path and os.path.exists(text_file_path):
-            try: os.remove(text_file_path); app.logger.info(f"Cleaned up text file: {text_file_path}")
-            except Exception as e_clean: app.logger.error(f"Error cleaning text file {text_file_path}: {e_clean}")
+            try:
+                os.remove(text_file_path)
+                app.logger.info(f"Cleaned up text file: {text_file_path}")
+            except Exception as e_clean:
+                app.logger.error(f"Error cleaning text file {text_file_path}: {e_clean}")
 
-        image_file_paths = job.get("data_inputs",{}).get("image_paths", [])
+        image_file_paths = job.get("data_inputs", {}).get("image_paths", [])
         for p in image_file_paths:
             if os.path.exists(p):
-                try: os.remove(p); app.logger.info(f"Cleaned up image file: {p}")
-                except Exception as e_clean: app.logger.error(f"Error cleaning image file {p}: {e_clean}")
+                try:
+                    os.remove(p)
+                    app.logger.info(f"Cleaned up image file: {p}")
+                except Exception as e_clean:
+                    app.logger.error(f"Error cleaning image file {p}: {e_clean}")
                 
     return jsonify({
         "job_id": job_id,
@@ -495,6 +409,10 @@ def get_analysis_results(job_id):
         "analysis_type": job.get("analysis_type"),
         "results": job.get("result")
     })
+# Lines from 414 to 483 (original numbering) containing the
+# erroneous 'if __name__ == "__main__":' block and duplicated routes
+# have been removed.
+# The code now transitions to the correct 'if __name__ == "__main__":' block.
 
 
 if __name__ == '__main__':

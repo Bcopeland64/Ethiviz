@@ -354,8 +354,8 @@ def display_text_results(results):
                      r=radar_data_for_st["series"][0]["data"],
                      theta=radar_data_for_st["categories"],
                      fill='toself', name='Ethics Scores',
-                     line_color='#4D69FF', fillcolor='rgba(77, 105, 255, 0.3')
-                 ))
+                     line_color='#4D69FF', fillcolor='rgba(77, 105, 255, 0.3)')
+                 ) # Removed one closing parenthesis here
                  st_radar_fig.update_layout(
                      polar=dict(radialaxis=dict(visible=True, range=[0, 10], showline=False, gridcolor='#444'), angularaxis=dict(gridcolor='#444')),
                      showlegend=False, margin=dict(l=40, r=40, t=50, b=40), height=350,
