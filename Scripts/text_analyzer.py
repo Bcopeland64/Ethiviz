@@ -128,7 +128,6 @@ class TextAnalysisResult:
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert result to dictionary for serialization"""
-        # Use dataclasses.asdict for automatic conversion
         return asdict(self)
 
 class TextAnalyzer:

@@ -70,29 +70,88 @@ python -m spacy download en_core_web_md
 
 ## Usage
 
-### Streamlit Interface
+EthiViz can be run in different modes: as a Streamlit application (original UI), or as a decoupled frontend/backend application.
 
-The easiest way to use EthiViz is through its interactive Streamlit interface:
+### Mode 1: Streamlit Interface (Original)
+
+The easiest way to use EthiViz's original UI is through its interactive Streamlit interface:
 
 ```bash
+# Ensure you are in the root directory of the project
+# Activate your Python virtual environment if you created one
+# e.g., source venv/bin/activate or venv\Scripts\activate.bat
+
 # Launch the Streamlit app 
-python run.py
-# Or directly with streamlit
-streamlit run app.py
+python Scripts/run.py 
+# Or directly with streamlit:
+# streamlit run Scripts/app.py
 ```
 
-This opens a web interface where you can:
+This opens a web interface (usually on port 8501) where you can:
 - Upload text data (CSV, Excel) and images
-- Use included sample text data with multiple ethical traditions 
-- Use included sample images for demonstration
-- Select ethical traditions to include in the analysis
-- Configure advanced settings like feature extraction level
+- Use included sample text data
+- Use included sample images
+- Select ethical traditions for analysis
+- Configure advanced settings
 - Run analyses and view interactive results
-- Save results to a specified output directory
+- Save results.
 
-### Command Line Interface
+### Mode 2: Decoupled Frontend (React) and Backend (Flask API)
 
-For batch processing or integration with other tools:
+This mode allows for a more modern web application experience. The backend API server handles analysis requests, and the React frontend provides the user interface.
+
+**1. Running the Backend API Server (Flask):**
+
+```bash
+# Ensure you are in the root directory of the project
+# Activate your Python virtual environment
+# e.g., source venv/bin/activate or venv\Scripts\activate.bat
+
+# Install/update Python dependencies
+pip install -r requirements.txt
+
+# Run the Flask API server
+python Scripts/api_server.py
+```
+The Flask API server will typically start on `http://localhost:5001`. Check the console output for the exact URL.
+
+**2. Running the Frontend Application (React):**
+
+```bash
+# Open a new terminal window or tab
+# Navigate to the frontend project directory
+cd project
+
+# Install frontend dependencies (if you haven't already)
+npm install
+
+# Start the React development server
+npm run dev
+```
+The React frontend will typically start on `http://localhost:5173` (Vite default) or `http://localhost:3000` (Create React App default). Check your console output.
+
+**Important:**
+- Both the backend API server and the frontend application must be running concurrently to use the decoupled mode.
+- Ensure the API base URL in the frontend matches the URL where your Flask API server is running. This is typically defined as `API_BASE_URL` in `project/src/components/ConfigPanel.tsx` (default `http://localhost:5001`).
+- The Flask server has CORS enabled for `http://localhost:5173` (common Vite default). If your React app runs on a different port, you might need to adjust the CORS configuration in `Scripts/api_server.py` for production.
+
+Once both are running, open the frontend URL (e.g., `http://localhost:5173`) in your browser to use the application.
+
+**API Endpoint Summary (Decoupled Mode):**
+
+The Flask backend exposes the following main API endpoints:
+
+*   `POST /api/analyze`: Submits data (text or image files) for analysis. Expects `multipart/form-data` with parameters like `analysis_type`, `data_source_type`, `selected_traditions`, and files. Returns a job ID and status URL.
+*   `GET /api/analyze/status/{job_id}`: Checks the status of an ongoing or completed analysis job.
+*   `GET /api/analyze/results/{job_id}`: Retrieves the full analysis results for a completed job.
+*   `GET /api/sample-data`: Lists available sample datasets that can be used (currently placeholder, full functionality for loading these samples in backend is pending).
+*   `GET /`: A simple health check endpoint for the API server.
+
+For detailed request/response formats, refer to the implementation in `Scripts/api_server.py`.
+
+### Command Line Interface (for batch processing via original run.py)
+
+For batch processing or integration with other tools using the original script:
 
 ```bash
 # Analyze text data
