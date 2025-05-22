@@ -1,30 +1,3 @@
-import React from 'react';
-import Plot from 'react-plotly.js';
-import { Data } from 'plotly.js';
-
-interface CombinedEthicsChartProps {
-  textResults: any[]; // Array of text analysis objects
-  imageResults: { [imageName: string]: any }; // Dict of image analysis objects
-}
-
-const CombinedEthicsChart: React.FC<CombinedEthicsChartProps> = ({ textResults, imageResults }) => {
-  const imageResultsArray = imageResults ? Object.values(imageResults) : [];
-  const traditions = ['western', 'ubuntu', 'confucian', 'islamic'];
-
-import React from 'react';
-import Plot from 'react-plotly.js';
-import { Data } from 'plotly.js';
-import { calculateAverageScore } from '../../utils/visualizationUtils';
-
-interface CombinedEthicsChartProps {
-  textResults: any[]; // Array of text analysis objects
-  imageResults: { [imageName: string]: any }; // Dict of image analysis objects
-}
-
-const CombinedEthicsChart: React.FC<CombinedEthicsChartProps> = ({ textResults, imageResults }) => {
-  const imageResultsArray = imageResults ? Object.values(imageResults) : [];
-  const traditions = ['western', 'ubuntu', 'confucian', 'islamic'];
-
   if ((!textResults || textResults.length === 0) && imageResultsArray.length === 0) {
     return <p className="text-sm text-gray-500">No data for combined ethics chart.</p>;
   }
