@@ -21,11 +21,6 @@ const MetricCard: React.FC<TextMetricProps> = ({ title, value, description, icon
 
 interface TextMetricsProps {
   // Assuming textResults is an array of objects, each representing an analyzed text item
-  // If it can be a single object, the component should handle that too.
-  textResults: any | any[]; 
-}
-
-const TextMetrics: React.FC<TextMetricsProps> = ({ textResults }) => {
 import React from 'react';
 import { TrendingUp, Zap, Scale, ShieldCheck, Users, BookOpen, Globe } from 'lucide-react'; // Example icons
 import { calculateAverageScore } from '../../utils/visualizationUtils';
@@ -49,6 +44,8 @@ const MetricCard: React.FC<TextMetricProps> = ({ title, value, description, icon
 );
 
 interface TextMetricsProps {
+  // Assuming textResults is an array of objects, each representing an analyzed text item
+  // If it can be a single object, the component should handle that too.
   textResults: any | any[]; 
 }
 

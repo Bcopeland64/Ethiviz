@@ -20,12 +20,6 @@ const MetricCard: React.FC<MetricCardProps> = ({ title, value, description, icon
   </div>
 );
 
-interface ImageMetricsProps {
-  // imageResults is a dictionary: { [imageName: string]: analysisObject }
-  imageResults: { [imageName: string]: any };
-}
-
-const ImageMetrics: React.FC<ImageMetricsProps> = ({ imageResults }) => {
 import React from 'react';
 import { TrendingUp, Zap, Scale, ShieldCheck, Users, BookOpen, Globe, Image as ImageIcon } from 'lucide-react'; // Example icons
 import { calculateAverageScore } from '../../utils/visualizationUtils';
@@ -50,6 +44,7 @@ const MetricCard: React.FC<MetricCardProps> = ({ title, value, description, icon
 );
 
 interface ImageMetricsProps {
+  // imageResults is a dictionary: { [imageName: string]: analysisObject }
   imageResults: { [imageName: string]: any };
 }
 

@@ -1,28 +1,3 @@
-import React from 'react';
-import Plot from 'react-plotly.js';
-import { Data } from 'plotly.js';
-
-interface CombinedDiversityBiasChartProps {
-  textResults: any[];
-  imageResults: { [imageName: string]: any };
-}
-
-const CombinedDiversityBiasChart: React.FC<CombinedDiversityBiasChartProps> = ({ textResults, imageResults }) => {
-  const imageResultsArray = imageResults ? Object.values(imageResults) : [];
-
-import React from 'react';
-import Plot from 'react-plotly.js';
-import { Data } from 'plotly.js';
-import { calculateAverageScore } from '../../utils/visualizationUtils';
-
-interface CombinedDiversityBiasChartProps {
-  textResults: any[];
-  imageResults: { [imageName: string]: any };
-}
-
-const CombinedDiversityBiasChart: React.FC<CombinedDiversityBiasChartProps> = ({ textResults, imageResults }) => {
-  const imageResultsArray = imageResults ? Object.values(imageResults) : [];
-
    if ((!textResults || textResults.length === 0) && imageResultsArray.length === 0) {
     return <p className="text-sm text-gray-500">No data for combined diversity/bias chart.</p>;
   }
