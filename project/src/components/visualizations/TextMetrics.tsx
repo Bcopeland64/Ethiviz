@@ -1,5 +1,8 @@
+// Timestamp: 2024-05-22 15:13:09 UTC (This will be replaced by actual execution time)
+// Ensuring all imports are at the top and file structure is correct.
 import React from 'react';
 import { TrendingUp, Zap, Scale, ShieldCheck, Users, BookOpen, Globe } from 'lucide-react'; // Example icons
+import { calculateAverageScore } from '../../utils/visualizationUtils';
 
 interface TextMetricProps {
   title: string;
@@ -18,8 +21,6 @@ const MetricCard: React.FC<TextMetricProps> = ({ title, value, description, icon
     </div>
   </div>
 );
-
-import { calculateAverageScore } from '../../utils/visualizationUtils';
 
 interface TextMetricsProps {
   // Assuming textResults is an array of objects, each representing an analyzed text item

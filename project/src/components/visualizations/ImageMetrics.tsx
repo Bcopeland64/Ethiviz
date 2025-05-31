@@ -20,6 +20,8 @@ const MetricCard: React.FC<MetricCardProps> = ({ title, value, description, icon
   </div>
 );
 
+// This import was originally between MetricCard and ImageMetricsProps.
+// It's fine here, as long as it's not another React import.
 import { calculateAverageScore } from '../../utils/visualizationUtils';
 
 interface ImageMetricsProps {
@@ -32,8 +34,6 @@ const ImageMetrics: React.FC<ImageMetricsProps> = ({ imageResults }) => {
   
   const formatScore = (score: number | null) => score !== null ? score.toFixed(2) : "N/A";
 
-  // Note: For imageResults, the actual analysis data might be nested under an 'analysis' key in each item.
-  // The calculateAverageScore function's isImageArray=true flag handles this.
   const totalImages = resultsArray.length;
   const avgDiversityIndex = formatScore(calculateAverageScore(resultsArray, 'diversity_index', true));
   const avgBiasScore = formatScore(calculateAverageScore(resultsArray, 'bias_score', true));
