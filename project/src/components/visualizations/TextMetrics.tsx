@@ -19,29 +19,7 @@ const MetricCard: React.FC<TextMetricProps> = ({ title, value, description, icon
   </div>
 );
 
-interface TextMetricsProps {
-  // Assuming textResults is an array of objects, each representing an analyzed text item
-import React from 'react';
-import { TrendingUp, Zap, Scale, ShieldCheck, Users, BookOpen, Globe } from 'lucide-react'; // Example icons
 import { calculateAverageScore } from '../../utils/visualizationUtils';
-
-interface TextMetricProps {
-  title: string;
-  value: string | number;
-  description?: string;
-  icon?: React.ReactNode;
-}
-
-const MetricCard: React.FC<TextMetricProps> = ({ title, value, description, icon }) => (
-  <div className="bg-white p-4 shadow rounded-lg flex items-start space-x-3">
-    {icon && <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white">{icon}</div>}
-    <div>
-      <p className="text-sm font-medium text-gray-500 truncate">{title}</p>
-      <p className="mt-1 text-2xl font-semibold text-gray-900">{value}</p>
-      {description && <p className="text-xs text-gray-400">{description}</p>}
-    </div>
-  </div>
-);
 
 interface TextMetricsProps {
   // Assuming textResults is an array of objects, each representing an analyzed text item
