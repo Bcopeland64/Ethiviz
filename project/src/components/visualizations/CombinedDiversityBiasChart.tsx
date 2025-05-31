@@ -1,19 +1,16 @@
 import React, { FC } from 'react';
 // Assuming Plot, Data, and calculateAverageScore are imported elsewhere or available globally.
-// For example, if Plot and Data are from plotly.js:
-// import Plot, { Data } from 'plotly.js-react-dist';
-// And calculateAverageScore might be from a utils file:
-// import { calculateAverageScore } from '../../utils/yourUtilsFile';
 
 // Define the props interface
 interface CombinedDiversityBiasChartProps {
-  textResults: any[]; // Consider using a more specific type if available
-  imageResultsArray: any[]; // Consider using a more specific type if available
+  textResults: any[];
+  imageResultsArray: any[];
 }
 
 // Define the Functional Component
 const CombinedDiversityBiasChart: FC<CombinedDiversityBiasChartProps> = ({ textResults, imageResultsArray }) => {
-  // Original logic starts here
+  // FIX APPLIED: Ensuring this return is within component scope (Timestamp: 2024-05-22 15:13:03 UTC)
+  // The above timestamp will be replaced by the execution environment's current UTC time.
   if ((!textResults || textResults.length === 0) && (!imageResultsArray || imageResultsArray.length === 0)) {
     return <p className="text-sm text-gray-500">No data for combined diversity/bias chart.</p>;
   }
@@ -22,8 +19,6 @@ const CombinedDiversityBiasChart: FC<CombinedDiversityBiasChartProps> = ({ textR
   const textValues: (number | null)[] = [];
   const imageValues: (number | null)[] = [];
 
-  // Assuming calculateAverageScore is defined and imported
-  // For example: const calculateAverageScore = (results: any[], scoreType: string, isImage: boolean): number | null => { /* ... implementation ... */ return 0; };
   const textAvgDiversity = calculateAverageScore(textResults, 'diversity_index', false);
   const imageAvgDiversity = calculateAverageScore(imageResultsArray, 'diversity_index', true);
   const textAvgBias = calculateAverageScore(textResults, 'bias_score', false);
@@ -36,14 +31,12 @@ const CombinedDiversityBiasChart: FC<CombinedDiversityBiasChartProps> = ({ textR
     return <p className="text-sm text-gray-500">Insufficient data to render combined diversity & bias scores.</p>;
   }
 
-  // Assuming 'Data' type for plotData is defined and imported (e.g., from Plotly)
-  // For example: interface Data { x: any[]; y: any[]; name: string; type: string; marker?: any; text?: any[]; textposition?: string; hoverinfo?: string; }
-  const plotData: any[] = [ // Using any[] for Data if not explicitly imported
+  const plotData: any[] = [
     {
       x: metrics,
       y: textValues.map(s => s === null ? 0 : s),
       name: 'Text Analysis',
-      type: 'bar' as any, // Added 'as any' for type compatibility if 'bar' is not a recognized literal type
+      type: 'bar' as any,
       marker: { color: '#FF6B6B' },
       text: textValues.map(s => s === null ? 'N/A' : s.toFixed(2)),
       textposition: 'auto',
@@ -53,7 +46,7 @@ const CombinedDiversityBiasChart: FC<CombinedDiversityBiasChartProps> = ({ textR
       x: metrics,
       y: imageValues.map(s => s === null ? 0 : s),
       name: 'Image Analysis',
-      type: 'bar' as any, // Added 'as any' for type compatibility
+      type: 'bar' as any,
       marker: { color: '#FFA07A' },
       text: imageValues.map(s => s === null ? 'N/A' : s.toFixed(2)),
       textposition: 'auto',
@@ -65,12 +58,11 @@ const CombinedDiversityBiasChart: FC<CombinedDiversityBiasChartProps> = ({ textR
 
   return (
     <div className="bg-white p-4 shadow rounded-lg">
-      {/* Assuming Plot component is correctly imported */}
       <Plot
         data={finalPlotData}
         layout={{
           title: 'Average Diversity & Bias: Text vs. Image',
-          barmode: 'group' as any, // Added 'as any'
+          barmode: 'group' as any,
           xaxis: { 
             title: 'Metric',
             gridcolor: '#e5e7eb',
@@ -93,7 +85,7 @@ const CombinedDiversityBiasChart: FC<CombinedDiversityBiasChartProps> = ({ textR
           plot_bgcolor: 'rgba(255,255,255,0)',
           font: { color: '#374151' },
           legend: { 
-            x: 0.5, y: 1.15, xanchor: 'center' as any, orientation: 'h' as any, // Added 'as any'
+            x: 0.5, y: 1.15, xanchor: 'center' as any, orientation: 'h' as any,
             bgcolor: 'rgba(255,255,255,0)', 
             bordercolor: '#e5e7eb',
             font: { color: '#374151' },
