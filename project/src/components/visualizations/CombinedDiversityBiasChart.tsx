@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import Plot from 'react-plotly.js';
 import { calculateAverageScore } from '../../utils/visualizationUtils';
 import { TextAnalysisItem, ImageAnalysisItem } from '../../utils/types';
@@ -8,10 +8,10 @@ interface CombinedDiversityBiasChartProps {
   imageResults: { [imageName: string]: ImageAnalysisItem };
 }
 
-const CombinedDiversityBiasChart: React.FC<CombinedDiversityBiasChartProps> = ({ textResults, imageResults }) => {
+const CombinedDiversityBiasChart: FC<CombinedDiversityBiasChartProps> = ({ textResults, imageResults }) => {
   const imageResultsArray = imageResults ? Object.values(imageResults) : [];
 
-  if ((!textResults || textResults.length === 0) && imageResultsArray.length === 0) {
+  if ((!textResults || textResults.length === 0) && (!imageResultsArray || imageResultsArray.length === 0)) {
     return <p className="text-sm text-gray-500">No data for combined diversity/bias chart.</p>;
   }
 
@@ -31,14 +31,14 @@ const CombinedDiversityBiasChart: React.FC<CombinedDiversityBiasChartProps> = ({
     return <p className="text-sm text-gray-500">Insufficient data to render combined diversity & bias scores.</p>;
   }
 
-  const plotData = [
+  const plotData: any[] = [
     {
       x: metrics,
       y: textValues.map(s => s === null ? 0 : s),
       name: 'Text Analysis',
-      type: 'bar',
+      type: 'bar' as any,
       marker: { color: '#FF6B6B' },
-      text: textValues.map(s => s === null ? 'N/A' : s!.toFixed(2)),
+      text: textValues.map(s => s === null ? 'N/A' : s.toFixed(2)),
       textposition: 'auto',
       hoverinfo: 'x+y+name'
     },
@@ -46,9 +46,9 @@ const CombinedDiversityBiasChart: React.FC<CombinedDiversityBiasChartProps> = ({
       x: metrics,
       y: imageValues.map(s => s === null ? 0 : s),
       name: 'Image Analysis',
-      type: 'bar',
+      type: 'bar' as any,
       marker: { color: '#FFA07A' },
-      text: imageValues.map(s => s === null ? 'N/A' : s!.toFixed(2)),
+      text: imageValues.map(s => s === null ? 'N/A' : s.toFixed(2)),
       textposition: 'auto',
       hoverinfo: 'x+y+name'
     }
@@ -62,7 +62,7 @@ const CombinedDiversityBiasChart: React.FC<CombinedDiversityBiasChartProps> = ({
         data={finalPlotData}
         layout={{
           title: 'Average Diversity & Bias: Text vs. Image',
-          barmode: 'group',
+          barmode: 'group' as any,
           xaxis: { 
             title: 'Metric',
             gridcolor: '#e5e7eb',
@@ -85,7 +85,7 @@ const CombinedDiversityBiasChart: React.FC<CombinedDiversityBiasChartProps> = ({
           plot_bgcolor: 'rgba(255,255,255,0)',
           font: { color: '#374151' },
           legend: { 
-            x: 0.5, y: 1.15, xanchor: 'center', orientation: 'h',
+            x: 0.5, y: 1.15, xanchor: 'center' as any, orientation: 'h' as any,
             bgcolor: 'rgba(255,255,255,0)', 
             bordercolor: '#e5e7eb',
             font: { color: '#374151' },
