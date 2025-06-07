@@ -1,10 +1,11 @@
 import React from 'react';
 import CombinedEthicsChart from './CombinedEthicsChart';
 import CombinedDiversityBiasChart from './CombinedDiversityBiasChart';
+import { TextAnalysisItem, ImageAnalysisItem } from '../../utils/types';
 
 interface CombinedAnalysisVisualsProps {
-  textResults: any[]; // Array of text analysis objects
-  imageResults: { [imageName: string]: any }; // Dict of image analysis objects
+  textResults: TextAnalysisItem[];
+  imageResults: { [imageName: string]: ImageAnalysisItem };
 }
 
 const CombinedAnalysisVisuals: React.FC<CombinedAnalysisVisualsProps> = ({ textResults, imageResults }) => {
@@ -21,8 +22,8 @@ const CombinedAnalysisVisuals: React.FC<CombinedAnalysisVisualsProps> = ({ textR
       <h2 className="text-2xl font-semibold text-purple-700 mb-6">Combined Analysis Visualizations</h2>
       
       <CombinedEthicsChart 
-        textResults={textResults || []} // Pass empty array if null/undefined
-        imageResults={imageResults || {}} // Pass empty object if null/undefined
+        textResults={textResults || []}
+        imageResults={imageResults || {}}
       />
       
       <hr className="my-8 border-gray-300" />

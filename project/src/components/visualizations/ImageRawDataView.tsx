@@ -1,7 +1,8 @@
 import React from 'react';
+import { ImageAnalysisItem } from '../../utils/types';
 
 interface ImageRawDataViewProps {
-  imageResults: { [imageName: string]: any }; // Expects imageName -> { analysis: {...}, ... }
+  imageResults: { [imageName: string]: ImageAnalysisItem };
 }
 
 const ImageRawDataView: React.FC<ImageRawDataViewProps> = ({ imageResults }) => {
@@ -47,7 +48,7 @@ const ImageRawDataView: React.FC<ImageRawDataViewProps> = ({ imageResults }) => 
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {resultsArray.map(([imageName, imageData], index) => {
-              const analysisData = imageData.analysis || {}; // Ensure analysis object exists
+              const analysisData = imageData.analysis || {};
               return (
                 <tr key={imageName || index}>
                   {availableColumns.map(col => {
@@ -57,7 +58,7 @@ const ImageRawDataView: React.FC<ImageRawDataViewProps> = ({ imageResults }) => 
                       const displayName = imageData.original_path || imageName;
                       cellValue = displayName.substring(0,50) + (displayName.length > 50 ? "..." : "");
                     } else {
-                      cellValue = analysisData[col.key];
+                      cellValue = analysisData[col.key as keyof typeof analysisData];
                     }
                     
                     if (typeof cellValue === 'number') {

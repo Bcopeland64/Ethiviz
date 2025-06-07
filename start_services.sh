@@ -3,11 +3,11 @@
 set -e
 
 echo "Starting backend service..."
-if [ ! -f "Scripts/run.py" ]; then
-    echo "Error: Backend script Scripts/run.py not found!"
+if [ ! -f "Scripts/api_server.py" ]; then
+    echo "Error: Backend script Scripts/api_server.py not found!"
     exit 1
 fi
-python Scripts/run.py &
+python3 Scripts/api_server.py &
 sleep 10
 
 echo "Starting frontend service..."

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Menu, X, Settings, Search, Sparkles } from 'lucide-react';
+import { Menu, X, Settings, Search, Sparkles, AlertTriangle } from 'lucide-react';
 import ConfigPanel from './components/ConfigPanel';
 import MainContent from './components/MainContent';
+import { AnalysisResults } from './utils/types';
 
 const API_BASE_URL = 'http://localhost:5001'; // Ensure this matches your API server
 const POLLING_INTERVAL = 3000; // 3 seconds
@@ -15,21 +16,22 @@ function App() {
   // Lifted state
   const [jobId, setJobId] = useState<string | null>(null);
   const [statusUrl, setStatusUrl] = useState<string | null>(null); // Store the full status URL from API response
-  const [analysisResults, setAnalysisResults] = useState<any | null>(null); // 'any' for now
+  const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [pollingAttempts, setPollingAttempts] = useState(0);
+  const [e2eMode, setE2eMode] = useState(false);
 
   // --- START E2E Test Data Injection ---
   const E2E_TEST_MODE = true; // Set to true to use static data
 
   // Current data for E2E test (can be switched by changing currentTestData assignment)
-  const comprehensiveData = { /* ... existing comprehensiveData ... */ }; 
-  const textOnlyData = { /* ... existing textOnlyData ... */ };
-  const imageOnlyData = { /* ... existing imageOnlyData ... */ };
-  const emptyData = null;
+  const comprehensiveData: AnalysisResults = { /* ... existing comprehensiveData ... */ }; 
+  const textOnlyData: AnalysisResults = { /* ... existing textOnlyData ... */ };
+  const imageOnlyData: AnalysisResults = { /* ... existing imageOnlyData ... */ };
+  const emptyData: AnalysisResults | null = null;
   
-  const missingFieldsData = {
+  const missingFieldsData: AnalysisResults = {
     text_analysis: [
       { text_id: "txt_miss_001", original_text: "Text with missing bias.", diversity_index: 0.7, western_ethics_score: 7, /* ubuntu_ethics_score: null, */ confucian_ethics_score: 6, islamic_ethics_score: 5 }, // bias_score missing, ubuntu explicitly null (or remove key)
       { text_id: "txt_miss_002", original_text: "Complete text item.", bias_score: 0.4, diversity_index: 0.6, western_ethics_score: 5, ubuntu_ethics_score: 7, confucian_ethics_score: 5, islamic_ethics_score: 8 },
@@ -52,7 +54,7 @@ function App() {
     }
   };
 
-  const currentTestData = missingFieldsData; // <--- SWITCH TEST DATA HERE
+  const currentTestData: AnalysisResults = missingFieldsData; // <--- SWITCH TEST DATA HERE
   // --- END E2E Test Data Injection ---
 
 
@@ -67,10 +69,8 @@ function App() {
   };
 
   const handleAnalysisStart = () => {
-    if (E2E_TEST_MODE) {
-      // In E2E test mode, we might want to switch between different test data sets here
-      // For now, it just prevents API calls.
-      setAnalysisResults(comprehensiveData); // Default to comprehensive for initial view
+    if (e2eMode) {
+      setAnalysisResults(currentTestData);
       setIsLoading(false);
       setError(null);
       return;
@@ -80,8 +80,8 @@ function App() {
     // JobId and StatusUrl will be set by ConfigPanel through props
   };
 
-  const handleAnalysisComplete = (results: any) => {
-    if (E2E_TEST_MODE) return;
+  const handleAnalysisComplete = (results: AnalysisResults) => {
+    if (e2eMode) return;
     setAnalysisResults(results);
     setIsLoading(false);
     setJobId(null); // Clear job ID once completed and results fetched
@@ -90,7 +90,7 @@ function App() {
   };
 
   const handleAnalysisError = (errorMessage: string) => {
-    if (E2E_TEST_MODE) return;
+    if (e2eMode) return;
     setError(errorMessage);
     setIsLoading(false);
     setJobId(null); // Clear job ID on error
@@ -135,6 +135,8 @@ function App() {
             handleAnalysisError(data.error_message || 'Analysis job failed.');
           } else if (data.status === 'processing' || data.status === 'pending') {
             setPollingAttempts(prev => prev + 1);
+          } else {
+            handleAnalysisError('Unknown job status from API.');
           }
         } catch (err: any) {
           console.error("Error during polling:", err);
@@ -171,6 +173,13 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* E2E Mode Banner & Toggle */}
+      <div className="w-full bg-yellow-100 text-yellow-800 px-4 py-2 flex items-center gap-4 border-b border-yellow-300" style={{display: 'flex', alignItems: 'center'}}>
+        <input type="checkbox" id="e2e-toggle" checked={e2eMode} onChange={() => setE2eMode(v => !v)} className="mr-2" />
+        <label htmlFor="e2e-toggle" className="font-semibold cursor-pointer">E2E Test Mode</label>
+        {e2eMode && <span className="ml-4 text-sm">E2E mode is enabled. No real API calls will be made.</span>}
+        {e2eMode && <AlertTriangle className="ml-2 text-yellow-500" size={18} />}
+      </div>
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50 backdrop-blur-lg bg-white/80">
         <div className="flex items-center justify-between px-4 py-3">
@@ -218,6 +227,7 @@ function App() {
           onAnalysisError={handleAnalysisError}     // This might not be directly called by ConfigPanel anymore
           setIsLoadingGlobal={setIsLoading}         // ConfigPanel sets global loading
           setJobIdGlobal={setJobDetails}            // ConfigPanel sets job ID and status URL
+          e2eMode={e2eMode}
         />
 
         {/* Main Content */}

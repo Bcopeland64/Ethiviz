@@ -1,37 +1,36 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
+import { TextAnalysisItem } from '../../utils/types';
 
 interface TextScatterPlotsProps {
-  textResults: any[]; // Assuming textResults is an array of analysis objects
+  textResults: TextAnalysisItem[];
 }
 
 const TextScatterPlots: React.FC<TextScatterPlotsProps> = ({ textResults }) => {
-  if (!textResults || textResults.length < 2) { // Need at least 2 points for a meaningful scatter plot
+  if (!textResults || textResults.length < 2) {
     return <p className="text-sm text-gray-500">Insufficient data for scatter plots. At least two data points are required.</p>;
   }
 
-  const unpack = (rows: any[], key: string) => rows.map(row => row ? row[key] : null).filter(val => val !== null && !isNaN(parseFloat(val)));
-  const unpackText = (rows: any[], key: string, displayKey: string) => rows.map(row => row && row[key] ? `${displayKey}: ${row[key]}` : null).filter(val => val !== null);
-
+  const unpack = (rows: TextAnalysisItem[], key: keyof TextAnalysisItem) => rows.map(row => row ? row[key] : null).filter(val => val !== null && !isNaN(parseFloat(String(val))));
+  const unpackText = (rows: TextAnalysisItem[], key: keyof TextAnalysisItem, displayKey: string) => rows.map(row => row && row[key] ? `${displayKey}: ${row[key]}` : null).filter(val => val !== null);
 
   const biasScores = unpack(textResults, 'bias_score');
   const diversityIndices = unpack(textResults, 'diversity_index');
-  const plot1Text = unpackText(textResults, 'id', 'Text ID');
-
+  const plot1Text = unpackText(textResults, 'text_id', 'Text ID');
 
   const westernEthicsScores = unpack(textResults, 'western_ethics_score');
   const ubuntuEthicsScores = unpack(textResults, 'ubuntu_ethics_score');
-  const plot2Text = unpackText(textResults, 'id', 'Text ID');
+  const plot2Text = unpackText(textResults, 'text_id', 'Text ID');
 
   const commonLayoutSettings = {
     height: 400,
-    margin: { l: 60, r: 30, b: 70, t: 70 }, // Adjusted margins
+    margin: { l: 60, r: 30, b: 70, t: 70 },
     paper_bgcolor: 'rgba(255,255,255,0)',
     plot_bgcolor: 'rgba(255,255,255,0)',
-    font: { color: '#374151' }, // Tailwind gray-700
+    font: { color: '#374151' },
     xaxis: {
-      gridcolor: '#e5e7eb', // Tailwind gray-200
-      linecolor: '#d1d5db', // Tailwind gray-300
+      gridcolor: '#e5e7eb',
+      linecolor: '#d1d5db',
       zerolinecolor: '#d1d5db',
     },
     yaxis: {

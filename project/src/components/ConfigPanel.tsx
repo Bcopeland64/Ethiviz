@@ -1,6 +1,7 @@
 import React, { useState, useCallback, ChangeEvent } from 'react';
 import axios from 'axios'; // Import axios
 import { Upload, Image as ImageIcon, FileText, ChevronDown, Settings, Beaker, FileOutput, Wand2, Zap, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { AnalysisResults } from '../utils/types';
 
 // Define types for state
 type AnalysisType = 'text' | 'image' | 'text_and_image' | null;
@@ -13,10 +14,11 @@ interface ConfigPanelProps {
   isOpen: boolean;
   // Props to lift state up to App.tsx or context
   onAnalysisStart: () => void;
-  onAnalysisComplete: (results: any) => void; // 'any' for now, replace with proper type
+  onAnalysisComplete: (results: AnalysisResults) => void;
   onAnalysisError: (error: string) => void;
   setIsLoadingGlobal: (isLoading: boolean) => void; // To control global loading state
   setJobIdGlobal: (jobId: string | null) => void;
+  e2eMode: boolean;
 }
 
 function ConfigPanel({ 
@@ -25,7 +27,8 @@ function ConfigPanel({
   onAnalysisComplete, 
   onAnalysisError,
   setIsLoadingGlobal, // Consume this prop
-  setJobIdGlobal // Consume this prop
+  setJobIdGlobal, // Consume this prop
+  e2eMode
 }: ConfigPanelProps) {
   const [analysisType, setAnalysisType] = useState<AnalysisType>(null);
   const [selectedTraditions, setSelectedTraditions] = useState<string[]>(AVAILABLE_TRADITIONS);
@@ -50,6 +53,21 @@ function ConfigPanel({
   const [expandedOption, setExpandedOption] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
+  // File validation helpers
+  const isValidTextFile = (file: File) => {
+    const allowedTypes = [
+      'text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/json', 'text/plain'
+    ];
+    return allowedTypes.includes(file.type) || file.name.match(/\.(csv|xlsx?|json|txt)$/i);
+  };
+  const isValidImageFile = (file: File) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    return allowedTypes.includes(file.type) || file.name.match(/\.(jpe?g|png|webp|gif)$/i);
+  };
+  const MAX_FILE_SIZE_MB = 10;
+  const isFileSizeOk = (file: File) => file.size <= MAX_FILE_SIZE_MB * 1024 * 1024;
+
   const handleAnalysisTypeChange = (type: AnalysisType) => {
     setAnalysisType(type);
     // Reset files if analysis type changes to something not requiring them
@@ -65,7 +83,19 @@ function ConfigPanel({
 
   const handleTextFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setTextFile(e.target.files[0]);
+      const file = e.target.files[0];
+      if (!isValidTextFile(file)) {
+        setError("Invalid text file type. Allowed: CSV, XLSX, JSON, TXT.");
+        setTextFile(null);
+        return;
+      }
+      if (!isFileSizeOk(file)) {
+        setError(`Text file too large (max ${MAX_FILE_SIZE_MB}MB).`);
+        setTextFile(null);
+        return;
+      }
+      setTextFile(file);
+      setError(null);
     } else {
       setTextFile(null);
     }
@@ -73,7 +103,13 @@ function ConfigPanel({
 
   const handleImageFilesChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setImageFiles(Array.from(e.target.files));
+      const files = Array.from(e.target.files).filter(isValidImageFile).filter(isFileSizeOk);
+      if (files.length !== e.target.files.length) {
+        setError("Some image files were invalid or too large (max 10MB each). Allowed: JPG, PNG, WEBP, GIF.");
+      } else {
+        setError(null);
+      }
+      setImageFiles(files);
     } else {
       setImageFiles([]);
     }
@@ -87,14 +123,12 @@ function ConfigPanel({
     setIsDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       if (analysisType === 'text' || analysisType === 'text_and_image') {
-        // Prioritize text file if multiple dropped, or allow specific drop zones
-        const textF = Array.from(e.dataTransfer.files).find(f => f.type.includes('csv') || f.type.includes('excel') || f.type.includes('text'));
-        if (textF) setTextFile(textF);
-        // Handle image files if relevant
-        const imgFs = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-        if (imgFs.length > 0) setImageFiles(prev => [...prev, ...imgFs].slice(0, 5)); // Limit multiple image uploads for now
+        const textF = Array.from(e.dataTransfer.files).find(isValidTextFile);
+        if (textF && isFileSizeOk(textF)) setTextFile(textF);
+        const imgFs = Array.from(e.dataTransfer.files).filter(isValidImageFile).filter(isFileSizeOk);
+        if (imgFs.length > 0) setImageFiles(prev => [...prev, ...imgFs].slice(0, 5));
       } else if (analysisType === 'image') {
-        const imgFs = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+        const imgFs = Array.from(e.dataTransfer.files).filter(isValidImageFile).filter(isFileSizeOk);
         if (imgFs.length > 0) setImageFiles(prev => [...prev, ...imgFs].slice(0, 5));
       }
       e.dataTransfer.clearData();
@@ -102,7 +136,7 @@ function ConfigPanel({
   }, [analysisType]);
 
   const handleRunAnalysis = async () => {
-    if (isLoading) return;
+    if (isLoading || e2eMode) return;
 
     setIsLoading(true);
     setIsLoadingGlobal(true); // Update global loading state
@@ -419,13 +453,13 @@ function ConfigPanel({
           {/* Run Button */}
           <button 
             onClick={handleRunAnalysis}
-            disabled={isLoading || !analysisType || dataSourceType === 'none' || (dataSourceType === 'upload' && analysisType === 'text' && !textFile) || (dataSourceType === 'upload' && analysisType === 'image' && imageFiles.length === 0) || (dataSourceType === 'upload' && analysisType === 'text_and_image' && (!textFile || imageFiles.length === 0)) }
-            className="relative w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-xl font-medium transition-all duration-300 hover:shadow-xl hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading || e2eMode}
+            className={`relative w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-xl font-medium transition-all duration-300 hover:shadow-xl hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
             <div className="relative flex items-center justify-center gap-2">
               {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Zap size={18} className="transform group-hover:rotate-12 transition-transform duration-300" />}
-              <span>{isLoading ? (jobStatus || 'Analyzing...') : 'Run Analysis'}</span>
+              <span>{e2eMode ? 'E2E Mode Enabled' : isLoading ? 'Analyzing...' : 'Run Analysis'}</span>
             </div>
           </button>
 
