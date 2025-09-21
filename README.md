@@ -2,7 +2,7 @@
 
 ## EthiViz Dashboard
 
-An advanced Ethics Analysis Dashboard that evaluates bias and ethical dimensions in text and image content across multiple cultural frameworks. Built with **React**, **TypeScript**, **Python**, and modern web technologies.
+An advanced ethics analysis dashboard that evaluates bias and ethical dimensions in text and image content across multiple cultural frameworks. Built with **React**, **TypeScript**, **Python**, and modern web technologies.
 
 ---
 
