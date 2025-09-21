@@ -1,4 +1,4 @@
-# EthiViz: The Cross-cultural Bias Detection Tool for Text & Images
+# EthiViz: Cultural Bias Analysis Platform
 
 ## EthiViz Dashboard
 
