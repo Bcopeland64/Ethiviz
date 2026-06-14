@@ -25,13 +25,23 @@ except ImportError:
     from PIL import ImageOps, ImageEnhance # Keep PIL imports here
 
 try:
-    import tensorflow as tf
-    import tensorflow_hub as hub
-    TF_AVAILABLE = True
-    logger.info("TensorFlow and TensorFlow Hub found.")
-except ImportError:
+    import importlib, signal
+
+    def _tf_timeout(signum, frame):
+        raise ImportError("TensorFlow import timed out")
+
+    signal.signal(signal.SIGALRM, _tf_timeout)
+    signal.alarm(5)
+    try:
+        import tensorflow as tf
+        import tensorflow_hub as hub
+        TF_AVAILABLE = True
+        logger.info("TensorFlow and TensorFlow Hub found.")
+    finally:
+        signal.alarm(0)
+except (ImportError, Exception):
     TF_AVAILABLE = False
-    logger.info("TensorFlow or TensorFlow Hub not found. Deep feature extraction disabled.")
+    logger.info("TensorFlow or TensorFlow Hub not available. Deep feature extraction disabled.")
 
 
 # ImageAnalysisResult Dataclass (Same as previous corrected version)

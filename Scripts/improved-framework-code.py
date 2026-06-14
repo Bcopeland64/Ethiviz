@@ -1,8 +1,65 @@
 import pandas as pd
 import numpy as np
+import logging
 from sklearn.metrics import confusion_matrix
 from typing import Dict, List, Tuple, Any, Optional, Callable
 import itertools
+import os
+from dataclasses import dataclass
+
+logger = logging.getLogger('ethiviz.enhanced')
+
+@dataclass
+class TextAnalysisResult:
+    # Define your result fields here
+    bias_score: float
+    diversity_index: float
+    western_ethics_score: float
+    ubuntu_ethics_score: float
+    confucian_ethics_score: float
+    islamic_ethics_score: float
+    # ...add more as needed
+
+    def to_dict(self):
+        return self.__dict__
+
+class HybridTextAnalyzer:
+    def __init__(self, traditions, spacy_model="en_core_web_sm", max_tokens=10000):
+        self.framework = DualEthicsFramework(ethical_traditions=traditions)
+        # ...store other params as needed
+
+    def analyze(self, text_data_input):
+        # Example: text_data_input is a list of texts
+        # For each text, create a dummy DataFrame and analyze
+        results = []
+        for text in text_data_input:
+            # You would extract features, predictions, etc. here
+            # For demonstration, use dummy data
+            df = pd.DataFrame({
+                "gender": ["Male", "Female", "Male"], # Ensure enough rows for analysis
+                "race": ["White", "Black", "Asian"],
+                "predicted": [1, 0, 1],
+                "actual": [1, 1, 0]
+            })
+            analysis = self.framework.analyze_dataset(
+                dataset=df,
+                sensitive_attributes=["gender", "race"],
+                prediction_column="predicted",
+                actual_column="actual"
+            )
+            # Convert analysis to your result format
+            result = TextAnalysisResult(
+                bias_score=0.5,  # Replace with real value
+                diversity_index=0.7,  # Replace with real value
+                western_ethics_score=0.8,
+                ubuntu_ethics_score=0.9,
+                confucian_ethics_score=0.85,
+                islamic_ethics_score=0.88
+            )
+            results.append(result)
+        return results
+
+# Optionally, do the same for HybridImageAnalyzer
 
 class DualEthicsFramework:
     """
@@ -584,11 +641,59 @@ if __name__ == "__main__":
                 print(f"- {rec}")
 
 
+# Dummy classes for VisualizationGenerator and ReportGenerator
+class VisualizationGenerator:
+    def __init__(self, results, output_dir):
+        self.results = results
+        self.output_dir = output_dir
+
+    def generate_all_visualizations(self):
+        print(f"Generating visualizations to {self.output_dir}...")
+        # Placeholder for actual visualization generation logic
+        return {"example_viz.png": os.path.join(self.output_dir, "example_viz.png")}
+
+class ReportGenerator:
+    def __init__(self, results, viz_generator):
+        self.results = results
+        self.viz_generator = viz_generator
+
+    def generate_report(self, output_path):
+        print(f"Generating report to {output_path}...")
+        # Placeholder for actual report generation logic
+        with open(output_path, "w") as f:
+            f.write("Ethical Analysis Report\n")
+            f.write(f"Results: {self.results}\n")
+            f.write(f"Visualizations: {self.viz_generator.generate_all_visualizations()}\n")
+
+
+# Dummy classes for image analysis to allow the run_full_analysis_with_visualizations to run
+class ImageAnalyzer:
+    pass
+
+class ImageVisualizationGenerator:
+    def __init__(self, results, output_dir):
+        self.results = results
+        self.output_dir = output_dir
+
+    def generate_all_visualizations(self):
+        print(f"Generating image visualizations to {self.output_dir}...")
+        return {"example_image_viz.png": os.path.join(self.output_dir, "example_image_viz.png")}
+
+def run_image_analysis_with_visualizations(*args, **kwargs):
+    print("Running dummy image analysis...")
+    return {"status": "image_analysis_completed", "results": "dummy_image_results"}
+
+def generate_image_analysis_report(*args, **kwargs):
+    print("Generating dummy image analysis report...")
+    return "dummy_image_report.html"
+
+
 def run_full_analysis_with_visualizations(
     dataset_path: str,
     sensitive_attributes: List[str] = None,
     prediction_column: str = None,
     actual_column: str = None,
+    domain_context: Optional[str] = None, # Added domain_context to signature
     output_dir: str = "ethical_analysis_output",
     dataset_type: str = "tabular",
     image_column: str = None,
@@ -646,6 +751,7 @@ def run_full_analysis_with_visualizations(
             sensitive_attributes=sensitive_attributes,
             prediction_column=prediction_column,
             actual_column=actual_column,
+            domain_context=domain_context, # Pass domain_context
             output_dir=output_dir
         )
     elif dataset_type.lower() == "image":
@@ -668,6 +774,7 @@ def run_tabular_analysis(
     sensitive_attributes: List[str],
     prediction_column: str,
     actual_column: str,
+    domain_context: Optional[str] = None, # Added domain_context to signature
     output_dir: str = "ethical_analysis_output"
 ):
     """
@@ -716,7 +823,8 @@ def run_tabular_analysis(
         dataset=dataset,
         sensitive_attributes=sensitive_attributes,
         prediction_column=prediction_column,
-        actual_column=actual_column
+        actual_column=actual_column,
+        domain_context=domain_context # Pass domain_context to analyze_dataset
     )
     
     # Generate visualizations
@@ -751,7 +859,7 @@ def run_image_analysis(
     image_path : str
         Path to directory with images or dataset file with image paths
     
-    output_dir : str
+        output_dir : str
         Directory to save results
         
     is_dataset : bool

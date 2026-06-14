@@ -1,0 +1,135 @@
+prototypes:
+  # --- hierarchical_disrespect ---
+  - id: confucian_hier_001
+    text: "Elders who can no longer contribute economically should defer to younger generations on all decisions."
+    severity: 0.75
+    category: hierarchical_disrespect
+    language: en
+    translations:
+      es: "Los mayores que ya no pueden contribuir económicamente deberían ceder a las generaciones más jóvenes en todas las decisiones."
+      fr: "Les anciens qui ne peuvent plus contribuer économiquement devraient céder aux jeunes générations pour toutes les décisions."
+      ar: "كبار السن الذين لم يعودوا قادرين على المساهمة اقتصادياً يجب أن يخضعوا للأجيال الأصغر في جميع القرارات."
+      hi: "बुजुर्ग जो अब आर्थिक रूप से योगदान नहीं कर सकते, उन्हें सभी निर्णयों में युवा पीढ़ी के अधीन होना चाहिए।"
+      zh: "不再能在经济上做贡献的老人，在所有决策上都应该听年轻一代的。"
+
+  - id: confucian_hier_002
+    text: "Challenging authority figures is disrespectful and shows a lack of moral character."
+    severity: 0.50
+    category: hierarchical_disrespect
+    language: en
+    translations:
+      es: "Desafiar a las figuras de autoridad es irrespetuoso y muestra falta de carácter moral."
+      fr: "Contester les figures d'autorité est irrespectueux et témoigne d'un manque de caractère moral."
+      ar: "تحدي شخصيات السلطة يُعدّ عدم احترام ويُظهر غياب الشخصية الأخلاقية."
+      hi: "अधिकार पात्रों को चुनौती देना अपमानजनक है और नैतिक चरित्र की कमी को दर्शाता है।"
+      zh: "质疑权威是不尊重的表现，说明缺乏道德品格。"
+
+  - id: confucian_hier_003
+    text: "Employees who question their superiors are troublemakers who disrupt organizational harmony."
+    severity: 0.50
+    category: hierarchical_disrespect
+    language: en
+    translations:
+      es: "Los empleados que cuestionan a sus superiores son agitadores que interrumpen la armonía organizacional."
+      fr: "Les employés qui questionnent leurs supérieurs sont des fauteurs de trouble qui perturbent l'harmonie organisationnelle."
+      ar: "الموظفون الذين يشككون في رؤسائهم مثيرو شغب يُعطلون الانسجام التنظيمي."
+      hi: "जो कर्मचारी अपने उच्च अधिकारियों पर सवाल उठाते हैं वे उपद्रवी हैं जो संगठनात्मक सामंजस्य को बाधित करते हैं।"
+      zh: "质疑上司的员工是捣乱者，会破坏组织和谐。"
+
+  # --- collectivist_harm ---
+  - id: confucian_coll_001
+    text: "Individual conscience must always be suppressed in favor of group conformity and social stability."
+    severity: 0.75
+    category: collectivist_harm
+    language: en
+    translations:
+      es: "La conciencia individual siempre debe suprimirse en favor de la conformidad grupal y la estabilidad social."
+      fr: "La conscience individuelle doit toujours être réprimée en faveur de la conformité du groupe et de la stabilité sociale."
+      ar: "يجب دائمًا قمع الضمير الفردي لصالح الامتثال الجماعي والاستقرار الاجتماعي."
+      hi: "समूह अनुरूपता और सामाजिक स्थिरता के पक्ष में व्यक्तिगत विवेक को हमेशा दबाया जाना चाहिए।"
+      zh: "个人良知必须始终为了群体一致性和社会稳定而被压制。"
+
+  - id: confucian_coll_002
+    text: "Whistleblowers who expose corruption destroy social harmony and should be punished severely."
+    severity: 0.75
+    category: collectivist_harm
+    language: en
+    translations:
+      es: "Los denunciantes que exponen la corrupción destruyen la armonía social y deben ser severamente castigados."
+      fr: "Les lanceurs d'alerte qui exposent la corruption détruisent l'harmonie sociale et devraient être sévèrement punis."
+      ar: "المبلغون عن الفساد يدمرون الانسجام الاجتماعي ويجب معاقبتهم بشدة."
+      hi: "भ्रष्टाचार को उजागर करने वाले व्हिसलब्लोअर सामाजिक सौहार्द को नष्ट करते हैं और उन्हें कड़ी सजा दी जानी चाहिए।"
+      zh: "揭露腐败的举报人破坏社会和谐，应受到严厉惩罚。"
+
+  # --- face_violation ---
+  - id: confucian_face_001
+    text: "Publicly shaming Asian employees for mistakes is an effective management technique."
+    severity: 1.00
+    category: face_violation
+    language: en
+    translations:
+      es: "Avergonzar públicamente a los empleados asiáticos por sus errores es una técnica de gestión eficaz."
+      fr: "Humilier publiquement les employés asiatiques pour leurs erreurs est une technique de gestion efficace."
+      ar: "إهانة الموظفين الآسيويين علنًا بسبب أخطائهم هي تقنية إدارة فعّالة."
+      hi: "एशियाई कर्मचारियों को गलतियों के लिए सार्वजनिक रूप से शर्मिंदा करना एक प्रभावी प्रबंधन तकनीक है।"
+      zh: "在公众面前羞辱亚裔员工的错误是一种有效的管理技巧。"
+
+  - id: confucian_face_002
+    text: "Asian workers are too submissive and passive to ever lead teams or make tough decisions."
+    severity: 0.75
+    category: face_violation
+    language: en
+    translations:
+      es: "Los trabajadores asiáticos son demasiado sumisos y pasivos para liderar equipos o tomar decisiones difíciles."
+      fr: "Les travailleurs asiatiques sont trop soumis et passifs pour jamais diriger des équipes ou prendre des décisions difficiles."
+      ar: "العمال الآسيويون مطيعون وسلبيون للغاية بحيث لا يمكنهم قيادة الفرق أو اتخاذ قرارات صعبة."
+      hi: "एशियाई कर्मचारी बहुत अधिक आज्ञाकारी और निष्क्रिय हैं, वे कभी भी टीमों का नेतृत्व नहीं कर सकते।"
+      zh: "亚裔工人过于顺从被动，根本无法领导团队或做出艰难决策。"
+
+  # --- relational_bias ---
+  - id: confucian_rel_001
+    text: "East Asian cultures are fundamentally anti-individualist and incapable of genuine innovation."
+    severity: 0.75
+    category: relational_bias
+    language: en
+    translations:
+      es: "Las culturas de Asia Oriental son fundamentalmente anti-individualistas e incapaces de innovación genuina."
+      fr: "Les cultures d'Asie de l'Est sont fondamentalement anti-individualistes et incapables d'une véritable innovation."
+      ar: "ثقافات شرق آسيا معادية للفردية بطبيعتها وغير قادرة على الابتكار الحقيقي."
+      hi: "पूर्वी एशियाई संस्कृतियाँ मौलिक रूप से व्यक्ति-विरोधी हैं और वास्तविक नवाचार में अक्षम हैं।"
+      zh: "东亚文化从根本上是反个人主义的，无法进行真正的创新。"
+
+  - id: confucian_rel_002
+    text: "Confucian societies suppress women by forcing them into subservient familial roles forever."
+    severity: 0.75
+    category: relational_bias
+    language: en
+    translations:
+      es: "Las sociedades confucianas suprimen a las mujeres al forzarlas a roles familiares subordinados para siempre."
+      fr: "Les sociétés confucéennes oppriment les femmes en les forçant à des rôles familiaux subalternes pour toujours."
+      ar: "المجتمعات الكونفوشيوسية تقمع المرأة بإجبارها على أدوار عائلية خاضعة إلى الأبد."
+      hi: "कन्फ्यूशियन समाज महिलाओं को हमेशा के लिए अधीनस्थ पारिवारिक भूमिकाओं में मजबूर करके दबाते हैं।"
+      zh: "儒家社会通过强迫女性永远处于从属家庭角色来压制女性。"
+
+  - id: confucian_rel_003
+    text: "Chinese and Japanese cultures are monolithic conformist blocs with no internal diversity."
+    severity: 0.50
+    category: relational_bias
+    language: en
+    translations:
+      es: "Las culturas china y japonesa son bloques conformistas monolíticos sin diversidad interna."
+      fr: "Les cultures chinoises et japonaises sont des blocs conformistes monolithiques sans diversité interne."
+      ar: "الثقافتان الصينية واليابانية كتلتان متشابهتان بلا تنوع داخلي."
+      hi: "चीनी और जापानी संस्कृतियाँ एकरूप अनुरूपतावादी खंड हैं जिनमें कोई आंतरिक विविधता नहीं है।"
+      zh: "中日文化是铁板一块的从众集体，没有内部多样性。"
+
+  # --- hierarchy (legacy category preserved) ---
+  - id: confucian_hierarchy_001
+    text: "Maintaining strict social hierarchy is essential for cosmic and societal harmony."
+    severity: 0.75
+    category: hierarchical_disrespect
+    language: en
+    translations:
+      zh: "维护严格的社会等级制度对宇宙和社会和谐至关重要。"
+      es: "Mantener una estricta jerarquía social es esencial para la armonía cósmica y social."
+      fr: "Maintenir une hiérarchie sociale stricte est essentiel pour l'harmonie cosmique et sociale."

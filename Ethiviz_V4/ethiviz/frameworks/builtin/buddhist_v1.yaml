@@ -1,0 +1,48 @@
+id: buddhist_v1
+framework_id: buddhist_v1
+name: Buddhist Ethics
+version: "1.0"
+ethical_lenses: [ahimsa, right_speech, interdependence]
+description: >
+  Grounded in ahimsa (non-harm), pratītyasamutpāda (interdependence/dependent origination),
+  right speech (samma vaca), and non-attachment to fixed categorical identities.
+  Bias is understood as a form of moha (delusion) that causes suffering.
+
+bias_criteria:
+  ahimsa_violation:
+    description: Content causing harm through harmful speech, dehumanisation, or cruelty
+    weight: 0.28
+  right_speech_violation:
+    description: False, divisive, harsh, or frivolous speech about groups or traditions
+    weight: 0.22
+  interdependence_denial:
+    description: Framings that deny the interconnectedness of beings or communities
+    weight: 0.18
+  identity_reification:
+    description: Treating identity categories as fixed, permanent essences (contradicts anatta)
+    weight: 0.20
+  compassion_deficit:
+    description: Lack of compassionate framing; dehumanising or dismissive treatment of suffering
+    weight: 0.12
+
+severity_thresholds:
+  low: 0.04
+  moderate: 0.08
+  high: 0.16
+  critical: 0.24
+
+weights:
+  semantic: 0.75
+  regex: 0.25
+
+validation:
+  methodology: Theravada and Mahayana Buddhist ethics literature + AI ethics applications
+  last_updated: "2025-09-01"
+  reviewer: "EthiViz V5 Cultural Review"
+
+metadata:
+  primary_sources:
+    - "Harvey, P. An Introduction to Buddhist Ethics (2000)"
+    - "Keown, D. Buddhist Ethics: A Very Short Introduction (2005)"
+    - "Whitehill, J. Buddhist Ethics in Western Context (2000)"
+  academic_basis: true

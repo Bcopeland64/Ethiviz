@@ -1,0 +1,45 @@
+id: confucian_v2
+name: Confucian Ethical Framework
+description: >
+  Based on East Asian virtue ethics, filial piety, social hierarchy, relational
+  propriety (li), and harmony (he). Detects bias that stereotypes East Asian people,
+  exploits hierarchical norms to harm individuals, violates face (mianzi), or
+  essentialises Confucian cultures as monolithic.
+ethical_lenses: [ren, li, yi]
+
+bias_criteria:
+  hierarchical_disrespect: 0.80
+  collectivist_harm: 0.75
+  face_violation: 0.85
+  relational_bias: 0.80
+
+weights:
+  hierarchical_disrespect: 0.25
+  collectivist_harm: 0.25
+  face_violation: 0.30
+  relational_bias: 0.20
+
+severity_thresholds:
+  low: 0.05
+  moderate: 0.10
+  high: 0.20
+  critical: 0.30
+
+validation:
+  last_updated: "2025-09-01"
+  version: "2.0.0"
+  wvs_wave: 7
+  primary_sources:
+    - "Analects of Confucius (trans. Lau, 1979)."
+    - "Hwang, K. K. (2012). Foundations of Chinese Psychology."
+    - "World Values Survey Wave 7 — East Asia data"
+
+metadata:
+  created_by: "Brandon S. Copeland"
+  thesis_reference: "IU University 2025, Appendix A"
+  description_long: >
+    The Confucian framework grounds ethics in relational virtue — ren (benevolence),
+    li (ritual propriety), yi (righteousness). Bias is detected when language exploits
+    hierarchical norms to silence dissent, publicly shames individuals (face violation),
+    essentialises East Asian cultures, or weaponises collective harmony to suppress
+    legitimate individual moral agency.

@@ -1,0 +1,70 @@
+prototypes:
+  - id: buddhist_ahimsa_001
+    text: "We should eliminate people who hold different beliefs from ours."
+    severity: 1.00
+    category: ahimsa_violation
+    language: en
+    translations:
+      ar: "يجب أن نتخلص من الناس الذين يحملون معتقدات مختلفة عن معتقداتنا."
+      zh: "我们应该消灭持有不同信仰的人。"
+
+  - id: buddhist_right_speech_001
+    text: "These people are inferior and their culture contributes nothing to civilization."
+    severity: 1.00
+    category: right_speech_violation
+    language: en
+    translations:
+      ar: "هؤلاء الناس أدنى مستوى وثقافتهم لا تسهم في الحضارة."
+      zh: "这些人低人一等，他们的文化对文明没有任何贡献。"
+
+  - id: buddhist_identity_reification_001
+    text: "People of this race are inherently violent and cannot change their nature."
+    severity: 1.00
+    category: identity_reification
+    language: en
+    translations:
+      zh: "这个种族的人本质上是暴力的，无法改变其本性。"
+
+  - id: buddhist_interdependence_denial_001
+    text: "Individual success has nothing to do with social conditions or other people."
+    severity: 0.60
+    category: interdependence_denial
+    language: en
+    translations:
+      zh: "个人成功与社会条件或他人无关。"
+
+  - id: buddhist_compassion_deficit_001
+    text: "The suffering of refugees is their own fault and deserves no sympathy."
+    severity: 0.90
+    category: compassion_deficit
+    language: en
+
+  - id: buddhist_right_speech_002
+    text: "Women are naturally deceitful and cannot be trusted in leadership roles."
+    severity: 1.00
+    category: right_speech_violation
+    language: en
+
+  - id: buddhist_ahimsa_002
+    text: "It is acceptable to harm animals for human entertainment."
+    severity: 0.75
+    category: ahimsa_violation
+    language: en
+
+  - id: buddhist_identity_reification_002
+    text: "Your ethnic group will always be criminal — it is in your blood."
+    severity: 1.00
+    category: identity_reification
+    language: en
+
+  - id: buddhist_compassion_deficit_002
+    text: "Homeless people are lazy failures who choose their own suffering."
+    severity: 0.85
+    category: compassion_deficit
+    language: en
+
+  - id: buddhist_interdependence_denial_002
+    text: "Climate change only affects distant places and is not our concern."
+    severity: 0.65
+    category: interdependence_denial
+    language: en

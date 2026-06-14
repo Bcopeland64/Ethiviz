@@ -22,40 +22,8 @@ function App() {
   const [pollingAttempts, setPollingAttempts] = useState(0);
   const [e2eMode, setE2eMode] = useState(false);
 
-  // --- START E2E Test Data Injection ---
-  const E2E_TEST_MODE = true; // Set to true to use static data
-
-  // Current data for E2E test (can be switched by changing currentTestData assignment)
-  const comprehensiveData: AnalysisResults = { /* ... existing comprehensiveData ... */ }; 
-  const textOnlyData: AnalysisResults = { /* ... existing textOnlyData ... */ };
-  const imageOnlyData: AnalysisResults = { /* ... existing imageOnlyData ... */ };
-  const emptyData: AnalysisResults | null = null;
-  
-  const missingFieldsData: AnalysisResults = {
-    text_analysis: [
-      { text_id: "txt_miss_001", original_text: "Text with missing bias.", diversity_index: 0.7, western_ethics_score: 7, /* ubuntu_ethics_score: null, */ confucian_ethics_score: 6, islamic_ethics_score: 5 }, // bias_score missing, ubuntu explicitly null (or remove key)
-      { text_id: "txt_miss_002", original_text: "Complete text item.", bias_score: 0.4, diversity_index: 0.6, western_ethics_score: 5, ubuntu_ethics_score: 7, confucian_ethics_score: 5, islamic_ethics_score: 8 },
-      { text_id: "txt_miss_003", original_text: "Text with no ethics scores.", bias_score: 0.1, diversity_index: 0.5 },
-    ],
-    image_analysis: {
-      "img_miss_001.jpg": {
-        analysis: { bias_score: 0.6, /* diversity_index: null, */ western_ethics_score: 7, object_count: 5 }, 
-        image_url: "https://via.placeholder.com/150/FFC107/000000?Text=Image_X",
-        original_path: "img_miss_001.jpg",
-        skin_tone_distribution: { "light": 0.7, "medium": 0.2 }, 
-        gender_representation: null,
-      },
-      "img_miss_002.png": {
-        analysis: { bias_score: 0.3, diversity_index: 0.7, western_ethics_score: 4, ubuntu_ethics_score: 8, confucian_ethics_score: 6, islamic_ethics_score: 7, face_count: 1 },
-        image_url: "https://via.placeholder.com/150/DC3545/FFFFFF?Text=Image_Y",
-        original_path: "img_miss_002.png",
-        gender_representation: { "man": 0.5, "woman": 0.4 },
-      },
-    }
-  };
-
-  const currentTestData: AnalysisResults = missingFieldsData; // <--- SWITCH TEST DATA HERE
-  // --- END E2E Test Data Injection ---
+  // E2E_TEST_MODE is controlled by the checkbox toggle only — never hardcoded true
+  const E2E_TEST_MODE = false;
 
 
   const resetAnalysisState = () => {
@@ -69,12 +37,7 @@ function App() {
   };
 
   const handleAnalysisStart = () => {
-    if (e2eMode) {
-      setAnalysisResults(currentTestData);
-      setIsLoading(false);
-      setError(null);
-      return;
-    }
+    if (e2eMode) return; // No-op in test mode (no real data to load)
     resetAnalysisState();
     setIsLoading(true);
     // JobId and StatusUrl will be set by ConfigPanel through props
@@ -158,17 +121,6 @@ function App() {
       if (intervalId) clearInterval(intervalId);
     };
   }, [jobId, statusUrl, isLoading, pollingAttempts, E2E_TEST_MODE]); // Added E2E_TEST_MODE and checkJobStatus dependencies
-
-
-  // Effect for initializing E2E test data
-  useEffect(() => {
-    if (E2E_TEST_MODE) {
-      console.log("E2E TEST MODE: Initializing with data:", currentTestData);
-      setAnalysisResults(currentTestData);
-      setIsLoading(false);
-      setError(null);
-    }
-  }, [E2E_TEST_MODE, currentTestData]); // Runs when currentTestData changes
 
 
   return (

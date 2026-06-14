@@ -1,0 +1,49 @@
+id: hindu_v1
+framework_id: hindu_v1
+name: Hindu / Dharmic Ethics
+version: "1.0"
+ethical_lenses: [ahimsa, satya, dharma]
+description: >
+  Grounded in dharmic duty, ahimsa, satya (truthfulness), and the concept of
+  dignity (manava mahatma). Draws from dharmashastra tradition and contemporary
+  Hindu ethics scholarship. Bias is understood as adharma — action contrary to
+  one's duties and the cosmic moral order.
+
+bias_criteria:
+  ahimsa_violation:
+    description: Speech or framing that causes harm, violence, or suffering to any being
+    weight: 0.25
+  satya_violation:
+    description: Falsehood, misrepresentation, or stereotyping that departs from truth
+    weight: 0.22
+  dharmic_disrespect:
+    description: Disrespect toward religious duty, ritual, or role-based dignity
+    weight: 0.20
+  dignity_harm:
+    description: Violation of inherent human dignity (manava mahatma) through degrading content
+    weight: 0.20
+  caste_essentialism:
+    description: Content that reinforces discriminatory caste-based essentialism or hierarchy
+    weight: 0.13
+
+severity_thresholds:
+  low: 0.04
+  moderate: 0.09
+  high: 0.18
+  critical: 0.28
+
+weights:
+  semantic: 0.75
+  regex: 0.25
+
+validation:
+  methodology: Dharmashastra tradition + contemporary Hindu ethics literature
+  last_updated: "2025-09-01"
+  reviewer: "EthiViz V5 Cultural Review"
+
+metadata:
+  primary_sources:
+    - "Flood, G. An Introduction to Hinduism (1996)"
+    - "Perrett, R.W. Hindu Ethics (1998)"
+    - "Bilimoria, P. et al. Indian Ethics (2007)"
+  academic_basis: true

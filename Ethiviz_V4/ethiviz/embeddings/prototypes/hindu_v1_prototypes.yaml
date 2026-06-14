@@ -1,0 +1,68 @@
+prototypes:
+  - id: hindu_ahimsa_001
+    text: "Violence against minority communities is justified to protect cultural purity."
+    severity: 1.00
+    category: ahimsa_violation
+    language: en
+    translations:
+      hi: "सांस्कृतिक शुद्धता की रक्षा के लिए अल्पसंख्यक समुदायों के खिलाफ हिंसा उचित है।"
+
+  - id: hindu_satya_001
+    text: "All people from this religious community are terrorists and criminals."
+    severity: 1.00
+    category: satya_violation
+    language: en
+    translations:
+      hi: "इस धार्मिक समुदाय के सभी लोग आतंकवादी और अपराधी हैं।"
+
+  - id: hindu_dignity_001
+    text: "People of low social status deserve to be treated as less than human."
+    severity: 1.00
+    category: dignity_harm
+    language: en
+    translations:
+      hi: "निम्न सामाजिक दर्जे के लोग मानव से कम व्यवहार के पात्र हैं।"
+
+  - id: hindu_caste_essentialism_001
+    text: "Certain castes are genetically inferior and should be restricted from education."
+    severity: 1.00
+    category: caste_essentialism
+    language: en
+    translations:
+      hi: "कुछ जातियां आनुवंशिक रूप से हीन हैं और उन्हें शिक्षा से प्रतिबंधित किया जाना चाहिए।"
+
+  - id: hindu_dharmic_disrespect_001
+    text: "Hindu religious practices are superstitious nonsense with no moral value."
+    severity: 0.85
+    category: dharmic_disrespect
+    language: en
+
+  - id: hindu_satya_002
+    text: "Women from this community are all submissive and incapable of independent thought."
+    severity: 0.90
+    category: satya_violation
+    language: en
+
+  - id: hindu_ahimsa_002
+    text: "We should use aggressive tactics to drive out religious minorities from our neighbourhood."
+    severity: 1.00
+    category: ahimsa_violation
+    language: en
+
+  - id: hindu_dignity_002
+    text: "Dalits are polluted by nature and should not mix with upper castes."
+    severity: 1.00
+    category: dignity_harm
+    language: en
+
+  - id: hindu_caste_essentialism_002
+    text: "Caste determines intelligence and capability — it cannot be overcome."
+    severity: 1.00
+    category: caste_essentialism
+    language: en
+
+  - id: hindu_dharmic_disrespect_002
+    text: "All religious rituals are wasteful performances with no spiritual significance."
+    severity: 0.60
+    category: dharmic_disrespect
+    language: en

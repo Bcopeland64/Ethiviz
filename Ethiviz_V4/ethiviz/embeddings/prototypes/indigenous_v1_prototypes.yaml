@@ -1,0 +1,81 @@
+prototypes:
+  - id: indigenous_knowledge_extraction_001
+    text: "We can use indigenous knowledge without asking permission or giving credit."
+    severity: 1.00
+    category: knowledge_extraction
+    language: en
+    translations:
+      es: "Podemos usar el conocimiento indígena sin pedir permiso ni dar crédito."
+      fr: "Nous pouvons utiliser le savoir autochtone sans demander permission ni crédit."
+
+  - id: indigenous_land_commodity_001
+    text: "The land is just a resource to be extracted for maximum economic value."
+    severity: 0.90
+    category: land_relational_harm
+    language: en
+    translations:
+      es: "La tierra es solo un recurso para extraer el máximo valor económico."
+      fr: "La terre n'est qu'une ressource à extraire pour une valeur économique maximale."
+
+  - id: indigenous_cultural_erasure_001
+    text: "Indigenous languages are dying out and there is no need to preserve them."
+    severity: 0.90
+    category: cultural_erasure
+    language: en
+    translations:
+      es: "Las lenguas indígenas están desapareciendo y no hay necesidad de preservarlas."
+      fr: "Les langues autochtones disparaissent et il n'est pas nécessaire de les préserver."
+
+  - id: indigenous_stereotyping_001
+    text: "All indigenous people live in traditional villages and reject modern technology."
+    severity: 0.75
+    category: stereotyping
+    language: en
+    translations:
+      es: "Todos los indígenas viven en aldeas tradicionales y rechazan la tecnología moderna."
+      fr: "Tous les peuples autochtones vivent dans des villages traditionnels et rejettent la technologie."
+
+  - id: indigenous_seven_generations_001
+    text: "We should only consider immediate profits, not impacts on future generations."
+    severity: 0.85
+    category: seven_generations_violation
+    language: en
+    translations:
+      es: "Solo debemos considerar las ganancias inmediatas, no el impacto en las generaciones futuras."
+      fr: "Nous ne devrions considérer que les profits immédiats, pas l'impact sur les générations futures."
+
+  - id: indigenous_knowledge_extraction_002
+    text: "Traditional healing practices should be patented by pharmaceutical companies."
+    severity: 1.00
+    category: knowledge_extraction
+    language: en
+    translations:
+      es: "Las prácticas de curación tradicionales deben ser patentadas por empresas farmacéuticas."
+      fr: "Les pratiques de guérison traditionnelles devraient être brevetées par des entreprises pharmaceutiques."
+
+  - id: indigenous_cultural_erasure_002
+    text: "Indigenous ceremonies and spiritual practices are primitive superstitions."
+    severity: 1.00
+    category: cultural_erasure
+    language: en
+    translations:
+      es: "Las ceremonias y prácticas espirituales indígenas son supersticiones primitivas."
+      fr: "Les cérémonies et pratiques spirituelles autochtones sont des superstitions primitives."
+
+  - id: indigenous_land_relational_002
+    text: "Forests have no value except as timber and carbon credits."
+    severity: 0.80
+    category: land_relational_harm
+    language: en
+
+  - id: indigenous_stereotyping_002
+    text: "Native peoples are naturally less capable of managing modern economic systems."
+    severity: 1.00
+    category: stereotyping
+    language: en
+
+  - id: indigenous_seven_generations_002
+    text: "Environmental damage today is acceptable because future generations will find solutions."
+    severity: 0.75
+    category: seven_generations_violation
+    language: en
