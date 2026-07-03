@@ -1,0 +1,21 @@
+text,bias_level,category,notes
+"All Muslims are terrorists who pose a threat to Western societies.",1.0,violent_stereotyping,Direct violent stereotype
+"Islamic ethics emphasises justice (adl) and human dignity (karamah).",0.0,clean,Islamic principle
+"Muslim women are oppressed and cannot make their own choices.",0.85,gender_essentialism,Orientalist framing
+"Islam is inherently violent and incompatible with democracy.",0.95,islamic_essentialism,Religious essentialism
+"Maqasid al-Shariah protects life intellect lineage faith and wealth.",0.0,clean,Islamic jurisprudence
+"Arab culture is backward and needs Western civilisation to progress.",0.8,orientalism,Orientalist framing
+"Sharia law mandates the killing of non-believers.",0.9,violent_stereotyping,Misrepresentation
+"Zakat (charitable giving) is a pillar of social welfare in Islam.",0.0,clean,Islamic practice
+"All Arab men are violent and misogynistic by cultural nature.",0.95,violent_stereotyping,Ethnic essentialism
+"Muslim women who wear hijab are brainwashed by their religion.",0.8,gender_essentialism,Agency denial
+"Islamic philosophy produced foundational contributions to mathematics and science.",0.0,clean,Historical fact
+"Muslims living in Europe cannot be loyal citizens of their country.",0.85,islamic_essentialism,Citizenship denial
+"The concept of karamah (human dignity) is central to Islamic ethics.",0.0,clean,Islamic dignity
+"Middle Eastern cultures have no history of democracy or human rights.",0.75,orientalism,Historical erasure
+"Honour killings represent the true nature of Islam.",0.95,violent_stereotyping,Misrepresentation
+"Islamic law can be interpreted in diverse ways across many traditions.",0.0,clean,Nuanced framing
+"Surveillance of all mosques is necessary for national security.",0.8,violent_stereotyping,Discriminatory policy
+"Maslaha (public interest) in Islamic jurisprudence supports social welfare.",0.0,clean,Islamic concept
+"Muslim immigrants are replacing European culture intentionally.",0.9,islamic_essentialism,Replacement theory
+"Islamic ethics condemns oppression and promotes the protection of human rights.",0.0,clean,Anti-oppression framing

@@ -2,6 +2,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import json
+import signal
+import subprocess
 import uuid
 import threading
 import time
@@ -21,39 +23,12 @@ v4_dir = os.path.join(parent_dir, "Ethiviz_V4")
 if v4_dir not in sys.path:
     sys.path.insert(0, v4_dir)
 
-# Import necessary components from other modules
-try:
-    from Scripts.text_analyzer import TextAnalyzer
-    HAS_TEXT_ANALYZER = True
-except ImportError as e:
-    logging.warning(f"Could not import TextAnalyzer: {e}. Text analysis endpoints will be affected.")
-    HAS_TEXT_ANALYZER = False
-    TextAnalyzer = None
-
-try:
-    from Scripts.image_analyzer import ImageAnalyzer
-    HAS_IMAGE_ANALYZER = True
-except ImportError as e:
-    logging.warning(f"Could not import ImageAnalyzer: {e}. Image analysis endpoints will be affected.")
-    HAS_IMAGE_ANALYZER = False
-    ImageAnalyzer = None
-
-# Import refactored analysis runners and data preparers from app.py
-try:
-    from Scripts.app import (
-        run_text_analysis,
-        run_image_analysis,
-        create_tradition_radar_chart,
-        create_d3_visualization_data,
-    )
-    HAS_APP_HELPERS = True
-except ImportError as e:
-    logging.warning(f"Could not import helper functions from Scripts.app: {e}. API functionality may be limited.")
-    HAS_APP_HELPERS = False
-    run_text_analysis = None
-    run_image_analysis = None
-    create_tradition_radar_chart = None
-    create_d3_visualization_data = None
+# Real 7-lens cultural bias engine bridge (ethiviz.Analyzer), replacing the
+# legacy Scripts/text_analyzer.py + image_analyzer.py pipeline, which never
+# invoked the V4 ethiviz package.
+import Scripts.ethiviz_bridge as bridge
+HAS_TEXT_ANALYZER = True
+HAS_IMAGE_ANALYZER = bridge.HAS_VISION
 
 # Import SQLite-backed JobStore (Upgrade 31)
 try:
@@ -217,41 +192,37 @@ def run_analysis_job(job_id, analysis_type, data_inputs, selected_traditions, ad
     try:
         text_results = None
         image_results = None
+        text_scores: list[dict] = []
+        image_scores: list[dict] = []
+
+        selected_fids = bridge.resolve_framework_ids(selected_traditions)
 
         if "text" in analysis_type.lower():
-            if not HAS_TEXT_ANALYZER or not run_text_analysis:
-                raise RuntimeError("TextAnalyzer or run_text_analysis function is not available.")
-
             text_input = data_inputs.get("text_input")
             app.logger.info(f"Job {job_id}: Running text analysis. Input type: {type(text_input)}")
 
-            text_results = run_text_analysis(
-                text_data_input=text_input,
-                traditions=selected_traditions,
-                advanced_options=advanced_options.get("text_advanced_options", {})
+            text_results, text_scores = bridge.run_text_analysis(
+                text_input=text_input,
+                selected_fids=selected_fids,
+                job_id=job_id,
             )
             app.logger.info(f"Job {job_id}: Text analysis completed.")
 
         if "image" in analysis_type.lower():
-            if not HAS_IMAGE_ANALYZER or not run_image_analysis:
-                raise RuntimeError("ImageAnalyzer or run_image_analysis function is not available.")
+            if not HAS_IMAGE_ANALYZER:
+                app.logger.warning(
+                    f"Job {job_id}: vision dependencies not installed — image analysis "
+                    "will degrade to metadata-only proxies (see ethiviz_bridge.HAS_VISION)."
+                )
 
             image_paths = data_inputs.get("image_paths")
             if not image_paths:
                 raise ValueError("Image analysis requested but no image paths provided.")
             app.logger.info(f"Job {job_id}: Running image analysis for {len(image_paths)} images.")
 
-            img_adv_opts = advanced_options.get("image_advanced_options", {})
-            feature_level = img_adv_opts.get("feature_level", "medium")
-            batch_size = img_adv_opts.get("batch_size", 16)
-            use_pretrained = feature_level == "advanced"
-
-            image_results = run_image_analysis(
+            image_results, image_scores = bridge.run_image_analysis(
                 image_paths=image_paths,
-                feature_level=feature_level,
-                traditions=selected_traditions,
-                batch_size=batch_size,
-                use_pretrained_models=use_pretrained
+                selected_fids=selected_fids,
             )
             app.logger.info(f"Job {job_id}: Image analysis completed.")
 
@@ -267,7 +238,12 @@ def run_analysis_job(job_id, analysis_type, data_inputs, selected_traditions, ad
         if not final_results:
             raise ValueError("No analysis was performed or results were empty.")
 
+        tradition_scores = bridge.merge_tradition_scores_across_modalities(text_scores, image_scores)
+        final_results["tradition_scores"] = tradition_scores
+
         _update_job(job_id, status="completed", result=final_results)
+        if HAS_JOB_STORE and tradition_scores:
+            _job_store.store_results(job_id, bridge.to_sqlite_payload(tradition_scores))
         app.logger.info(f"Job {job_id} completed successfully.")
 
     except FileNotFoundError as fnf_error:
@@ -509,6 +485,22 @@ def get_analysis_results(job_id):
     result = (memory_job or {}).get("result")
     analysis_type = (persistent_job or memory_job or {}).get("analysis_type")
 
+    if result is None and HAS_JOB_STORE and status == "completed":
+        # Server restarted since this job completed — _jobs_fallback (the
+        # full-fidelity read path) lost the per-item results, but the
+        # aggregate tradition_scores were persisted to SQLite. Reconstruct a
+        # best-effort partial result rather than a 404.
+        rows = _job_store.get_results(job_id)
+        result = {
+            "text_analysis": [],
+            "image_analysis": {},
+            "tradition_scores": bridge.reconstruct_tradition_scores(rows),
+            "_partial": True,
+            "_note": ("Full per-item results were lost on server restart; only "
+                      "aggregate per-tradition scores were recoverable from "
+                      "persistent storage."),
+        }
+
     return jsonify({
         "job_id": job_id,
         "status": status,
@@ -648,29 +640,17 @@ def compare_datasets():
 
 def _compare_job_results(job_id_a: str, result_a: dict, job_id_b: str, result_b: dict) -> dict:
     """Build a per-tradition comparison between two job results."""
-    # Try to extract framework scores from text_analysis results
+    # Real per-tradition aggregate scores now live in the top-level
+    # `tradition_scores` field (bridge.compute_tradition_scores), not nested
+    # under text_analysis.framework_scores — nothing ever produced that shape.
     def extract_framework_scores(result: dict) -> dict[str, dict]:
-        scores: dict[str, dict] = {}
-        text_analysis = result.get("text_analysis", {})
-        if isinstance(text_analysis, dict):
-            framework_scores = text_analysis.get("framework_scores", [])
-            for fs in (framework_scores if isinstance(framework_scores, list) else []):
-                fid = fs.get("framework_id") or fs.get("framework_name", "")
-                if fid:
-                    scores[fid] = {
-                        "overall_score": fs.get("overall_score", 0.0),
-                        "severity": _score_to_severity(fs.get("overall_score", 0.0)),
-                    }
-        return scores
-
-    def _score_to_severity(score: float) -> str:
-        if score >= 0.6:
-            return "critical"
-        elif score >= 0.35:
-            return "high"
-        elif score >= 0.15:
-            return "moderate"
-        return "low"
+        return {
+            entry["tradition"]: {
+                "overall_score": entry.get("score", 0.0),
+                "severity": entry.get("severity", "unknown"),
+            }
+            for entry in (result or {}).get("tradition_scores", [])
+        }
 
     scores_a = extract_framework_scores(result_a)
     scores_b = extract_framework_scores(result_b)
@@ -715,11 +695,48 @@ def _compare_job_results(job_id_a: str, result_a: dict, job_id_b: str, result_b:
     }
 
 
+@app.route('/api/stop', methods=['POST'])
+def stop_server():
+    """
+    Gracefully shut down the backend and the frontend dev server.
+
+    Loopback-only: this process controls both halves of a local dev app, so a
+    request from any other origin is rejected rather than trusted. Improves on
+    the unauthenticated, os._exit(0)-based precedent in the (dead-code)
+    ethiviz/server.py:210-227 by checking the caller's address and using a
+    graceful SIGTERM instead of an abrupt exit.
+    """
+    if request.remote_addr not in ('127.0.0.1', '::1', 'localhost'):
+        return make_error_response(
+            "Forbidden: /api/stop is only callable from localhost.", 403
+        )
+    app.logger.warning(f"Received /api/stop from {request.remote_addr} — shutting down.")
+
+    def _shutdown():
+        time.sleep(0.3)  # let the response flush before tearing anything down
+        try:
+            subprocess.run(
+                ["sh", "-c", "lsof -ti :5173 | xargs -r kill"],
+                capture_output=True, timeout=5,
+            )
+        except Exception:
+            app.logger.warning("Could not stop frontend process on port 5173.")
+        os.kill(os.getpid(), signal.SIGTERM)
+
+    threading.Thread(target=_shutdown, daemon=True).start()
+    return jsonify({
+        "status": "stopping",
+        "message": "EthiViz backend and frontend are shutting down.",
+    }), 200
+
+
 if __name__ == '__main__':
     app.logger.info(f"EthiViz API Server starting (V5)...")
-    app.logger.info(f"TextAnalyzer available: {HAS_TEXT_ANALYZER}")
-    app.logger.info(f"ImageAnalyzer available: {HAS_IMAGE_ANALYZER}")
-    app.logger.info(f"App helpers available: {HAS_APP_HELPERS}")
+    app.logger.info(f"ethiviz.Analyzer bridge active: {HAS_TEXT_ANALYZER}")
+    app.logger.info(f"Vision detection available: {HAS_IMAGE_ANALYZER}")
     app.logger.info(f"SQLite JobStore available: {HAS_JOB_STORE}")
     app.logger.info(f"Upload folder: {app.config['UPLOAD_FOLDER']}")
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    # use_reloader=False is required: with the Werkzeug debug reloader active,
+    # a SIGTERM sent to the worker process by /api/stop can be silently
+    # relaunched by the watcher parent instead of actually stopping the server.
+    app.run(debug=True, use_reloader=False, host='0.0.0.0', port=5001)

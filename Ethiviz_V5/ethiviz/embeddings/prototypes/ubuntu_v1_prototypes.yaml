@@ -1,0 +1,137 @@
+prototypes:
+  # --- cultural_erasure ---
+  - id: ubuntu_erasure_001
+    text: "African cultures lack the sophistication necessary for modern governance and democracy."
+    severity: 1.00
+    category: cultural_erasure
+    language: en
+    translations:
+      es: "Las culturas africanas carecen de la sofisticación necesaria para la gobernanza moderna y la democracia."
+      fr: "Les cultures africaines manquent de la sophistication nécessaire pour la gouvernance moderne et la démocratie."
+      ar: "الثقافات الأفريقية تفتقر إلى التطور اللازم للحوكمة الحديثة والديمقراطية."
+      hi: "अफ्रीकी संस्कृतियों में आधुनिक शासन और लोकतंत्र के लिए आवश्यक परिष्कार का अभाव है।"
+      zh: "非洲文化缺乏现代治理和民主所需的复杂性。"
+
+  - id: ubuntu_erasure_002
+    text: "Traditional African knowledge systems are primitive superstition, not legitimate epistemology."
+    severity: 0.75
+    category: cultural_erasure
+    language: en
+    translations:
+      es: "Los sistemas de conocimiento africanos tradicionales son superstición primitiva, no epistemología legítima."
+      fr: "Les systèmes de connaissances africains traditionnels sont des superstitions primitives, pas une épistémologie légitime."
+      ar: "أنظمة المعرفة الأفريقية التقليدية خرافات بدائية وليست معرفة حقيقية."
+      hi: "पारंपरिक अफ्रीकी ज्ञान प्रणालियाँ आदिम अंधविश्वास हैं, वैध ज्ञानशास्त्र नहीं।"
+      zh: "传统的非洲知识体系是原始迷信，而非合法的认识论。"
+
+  - id: ubuntu_erasure_003
+    text: "African languages are dialects, not proper languages suitable for academic or professional use."
+    severity: 0.75
+    category: cultural_erasure
+    language: en
+    translations:
+      es: "Las lenguas africanas son dialectos, no idiomas propios adecuados para uso académico o profesional."
+      fr: "Les langues africaines sont des dialectes, pas de véritables langues adaptées à un usage académique ou professionnel."
+      ar: "اللغات الأفريقية لهجات وليست لغات حقيقية مناسبة للاستخدام الأكاديمي أو المهني."
+      hi: "अफ्रीकी भाषाएं बोलियाँ हैं, न कि उचित भाषाएं जो शैक्षणिक या पेशेवर उपयोग के लिए उपयुक्त हों।"
+      zh: "非洲语言是方言，不是适合学术或专业使用的正式语言。"
+
+  # --- community_devaluation ---
+  - id: ubuntu_comm_001
+    text: "The individual's success matters far more than the wellbeing of the community or family."
+    severity: 0.50
+    category: community_devaluation
+    language: en
+    translations:
+      es: "El éxito individual importa mucho más que el bienestar de la comunidad o la familia."
+      fr: "Le succès individuel importe bien plus que le bien-être de la communauté ou de la famille."
+      ar: "نجاح الفرد أهم بكثير من رفاهية المجتمع أو الأسرة."
+      hi: "व्यक्ति की सफलता समुदाय या परिवार की भलाई से कहीं अधिक महत्वपूर्ण है।"
+      zh: "个人的成功远比社区或家庭的福祉重要。"
+
+  - id: ubuntu_comm_002
+    text: "Community obligations and extended family ties are obstacles to personal achievement."
+    severity: 0.50
+    category: community_devaluation
+    language: en
+    translations:
+      es: "Las obligaciones comunitarias y los lazos familiares extendidos son obstáculos para el logro personal."
+      fr: "Les obligations communautaires et les liens familiaux élargis sont des obstacles à l'accomplissement personnel."
+      ar: "الالتزامات المجتمعية وروابط الأسرة الممتدة عقبات أمام التحقق الشخصي."
+      hi: "सामुदायिक दायित्व और विस्तारित पारिवारिक संबंध व्यक्तिगत उपलब्धि में बाधाएं हैं।"
+      zh: "社区义务和大家庭联系是个人成就的障碍。"
+
+  # --- ubuntu_violation ---
+  - id: ubuntu_viol_001
+    text: "Losers who cannot compete in the free market deserve their poverty and suffering."
+    severity: 1.00
+    category: ubuntu_violation
+    language: en
+    translations:
+      es: "Los perdedores que no pueden competir en el libre mercado merecen su pobreza y sufrimiento."
+      fr: "Les perdants qui ne peuvent pas concourir sur le marché libre méritent leur pauvreté et leur souffrance."
+      ar: "الخاسرون الذين لا يستطيعون المنافسة في السوق الحرة يستحقون فقرهم ومعاناتهم."
+      hi: "जो लोग मुक्त बाजार में प्रतिस्पर्धा नहीं कर सकते, वे अपनी गरीबी और पीड़ा के पात्र हैं।"
+      zh: "无法在自由市场竞争的失败者活该贫困和受苦。"
+
+  - id: ubuntu_viol_002
+    text: "Homeless people choose their situation; society owes them nothing."
+    severity: 0.75
+    category: ubuntu_violation
+    language: en
+    translations:
+      es: "Las personas sin hogar eligen su situación; la sociedad no les debe nada."
+      fr: "Les sans-abri choisissent leur situation; la société ne leur doit rien."
+      ar: "المشردون يختارون وضعهم؛ المجتمع لا يدين لهم بشيء."
+      hi: "बेघर लोग अपनी स्थिति चुनते हैं; समाज उनका कुछ भी नहीं देता।"
+      zh: "无家可归的人是自己选择了这种处境；社会对他们没有任何义务。"
+
+  - id: ubuntu_viol_003
+    text: "The elderly and disabled are burdens on society and drain productive resources."
+    severity: 1.00
+    category: ubuntu_violation
+    language: en
+    translations:
+      es: "Los ancianos y discapacitados son cargas para la sociedad y drenan recursos productivos."
+      fr: "Les personnes âgées et les handicapés sont des fardeaux pour la société et drainent les ressources productives."
+      ar: "المسنون والمعاقون أعباء على المجتمع ويستنزفون الموارد الإنتاجية."
+      hi: "बुजुर्ग और विकलांग समाज पर बोझ हैं और उत्पादक संसाधनों को खर्च करते हैं।"
+      zh: "老人和残疾人是社会的负担，消耗了宝贵的生产性资源。"
+
+  # --- african_essentialism ---
+  - id: ubuntu_essen_001
+    text: "All Africans share the same tribal mentality and cannot think in modern abstract terms."
+    severity: 1.00
+    category: african_essentialism
+    language: en
+    translations:
+      es: "Todos los africanos comparten la misma mentalidad tribal y no pueden pensar en términos abstractos modernos."
+      fr: "Tous les Africains partagent la même mentalité tribale et ne peuvent pas penser en termes abstraits modernes."
+      ar: "جميع الأفارقة يتشاركون نفس العقلية القبلية ولا يستطيعون التفكير بالمصطلحات المجردة الحديثة."
+      hi: "सभी अफ्रीकी एक ही जनजातीय मानसिकता साझा करते हैं और आधुनिक अमूर्त शब्दों में नहीं सोच सकते।"
+      zh: "所有非洲人都具有相同的部落心态，无法用现代抽象的方式思考。"
+
+  - id: ubuntu_essen_002
+    text: "Africa needs Western intervention to save it from its own inherently dysfunctional cultures."
+    severity: 0.75
+    category: african_essentialism
+    language: en
+    translations:
+      es: "África necesita la intervención occidental para salvarse de sus propias culturas intrínsecamente disfuncionales."
+      fr: "L'Afrique a besoin d'une intervention occidentale pour la sauver de ses propres cultures intrinsèquement dysfonctionnelles."
+      ar: "أفريقيا تحتاج إلى التدخل الغربي لإنقاذها من ثقافاتها المختلة وظيفياً بطبيعتها."
+      hi: "अफ्रीका को अपनी स्वाभाविक रूप से निष्क्रिय संस्कृतियों से बचाने के लिए पश्चिमी हस्तक्षेप की आवश्यकता है।"
+      zh: "非洲需要西方干预来拯救它自身本质上功能失调的文化。"
+
+  # --- collectivism (neutral category, lower severity) ---
+  - id: ubuntu_coll_001
+    text: "Ubuntu philosophy has no place in modern professional or corporate settings."
+    severity: 0.50
+    category: community_devaluation
+    language: en
+    translations:
+      es: "La filosofía Ubuntu no tiene lugar en entornos profesionales o corporativos modernos."
+      fr: "La philosophie Ubuntu n'a pas sa place dans les environnements professionnels ou corporatifs modernes."
+      ar: "فلسفة أوبونتو ليس لها مكان في البيئات المهنية أو الشركات الحديثة."
+      hi: "उबुंटू दर्शन का आधुनिक पेशेवर या कॉर्पोरेट परिवेश में कोई स्थान नहीं है।"
+      zh: "Ubuntu哲学在现代职业或企业环境中没有立足之地。"

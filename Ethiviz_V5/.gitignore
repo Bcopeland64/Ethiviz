@@ -1,0 +1,8 @@
+
+
+#Ignore vscode AI rules
+.github/instructions/codacy.instructions.md
+
+# Generated runtime artifacts
+ethiviz_report.html
+scratch_debug.py

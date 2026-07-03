@@ -1,0 +1,21 @@
+text,bias_level,category,notes
+"Ahimsa (non-harm) requires compassionate treatment of all sentient beings.",0.0,clean,Buddhist ahimsa
+"We should eliminate people with different religious beliefs.",1.0,ahimsa_violation,Violent speech
+"All beings are interconnected through dependent origination.",0.0,clean,Interdependence
+"These people are inferior and their culture contributes nothing to civilisation.",1.0,right_speech_violation,Right speech violation
+"People of this race are inherently violent and cannot change.",1.0,identity_reification,Anatta violation
+"Individual success has nothing to do with social conditions or others.",0.6,interdependence_denial,Interdependence denial
+"The suffering of refugees is their own fault and deserves no sympathy.",0.9,compassion_deficit,Compassion deficit
+"Right speech means avoiding words that divide harm or mislead.",0.0,clean,Samma vaca
+"Suffering arises from attachment to fixed categorical identities.",0.0,clean,Buddhist teaching
+"Women are naturally deceitful and unfit for leadership.",1.0,right_speech_violation,Harmful speech
+"It is acceptable to harm animals for human entertainment.",0.75,ahimsa_violation,Ahimsa violation
+"Your ethnic group will always be criminal — it is in your blood.",1.0,identity_reification,Essentialist claim
+"Homeless people choose their suffering through laziness.",0.85,compassion_deficit,Victim blaming
+"Climate change only affects distant places and is not our concern.",0.65,interdependence_denial,Interdependence denial
+"Compassionate systems design reduces collective suffering for everyone.",0.0,clean,Applied ahimsa
+"Mindful speech considers the suffering it might cause before it is spoken.",0.0,clean,Right speech practice
+"This ethnic group is biologically inferior to all others.",1.0,right_speech_violation,Hate speech
+"Economic systems must account for their impact on all sentient life.",0.0,clean,Broad compassion
+"Cruelty to animals is acceptable when it serves human economic interests.",0.85,ahimsa_violation,Harm justification
+"Interdependence means one community's wellbeing affects all others.",0.0,clean,Relational framing

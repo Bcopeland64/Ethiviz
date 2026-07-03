@@ -1,298 +1,157 @@
-# EthiViz: Cultural Bias Analysis Platform
+# EthiViz — Cultural Bias Analysis Platform
 
-## EthiViz Dashboard
+EthiViz is a pluralistic AI bias detection platform that analyses text and image data
+through multiple ethical traditions simultaneously. Unlike Western-centric fairness tools,
+EthiViz treats cultural values as first-class analytical dimensions — not optional filters.
 
-An advanced ethics analysis dashboard that evaluates bias and ethical dimensions in text and image content across multiple cultural frameworks. Built with **React**, **TypeScript**, **Python**, and modern web technologies.
-
----
-
-## 🚀 Tech Stack
-
-- **Frontend Framework:** React 18+ with TypeScript
-- **Programming Language:** Python
-- **Build Tool:** Vite for fast development and optimized builds  
-- **Styling:** Tailwind CSS with PostCSS processing  
-- **Code Quality:** ESLint with TypeScript and React-specific rules  
-- **Icons:** Lucide React (optimized for performance)  
+The platform is the computational implementation of Brandon Scott Copeland's Bachelor's
+thesis, *"Cross-Cultural Bias Detection in AI Systems: A Computational Framework for
+Multi-Perspective Ethical Analysis"* (IU University of Applied Sciences, September 2025).
 
 ---
 
-## 🏗 Application Architecture
+## What Makes EthiViz Different
 
-### Core Components
+Most bias detection tools (including IBM AI Fairness 360, Fairlearn, and Google's What-If
+Tool) measure fairness using a single standard — typically a Western liberal framework
+centred on individual rights and statistical parity. EthiViz rejects this monoculture:
 
-- **App.tsx** – Main application container with state management  
-  - Global state for analysis results, job tracking, and UI state  
-  - API polling logic for asynchronous job processing  
-  - E2E testing mode with mock data injection  
-  - Error handling and loading states  
-- **ConfigPanel** – Configuration sidebar for analysis setup  
-- **MainContent** – Main dashboard area for displaying results  
+> A hiring algorithm can pass every Western fairness metric and still perpetuate bias
+> from an Ubuntu, Confucian, or Islamic ethical perspective. EthiViz surfaces both.
 
-### Key Features Implementation
-
-**Multi-Framework Ethics Analysis**  
-The application analyzes content across four ethical frameworks:
-
-- Western Ethics: Traditional Western philosophical approaches  
-- Ubuntu Ethics: African philosophical framework emphasizing interconnectedness  
-- Confucian Ethics: East Asian virtue-based ethical system  
-- Islamic Ethics: Islamic moral and ethical principles  
-
-**Asynchronous Processing System**
-
-**Analysis Data Structure**
-
-**E2E Testing Infrastructure**  
-Built-in testing mode with configurable mock data:
-
-- Comprehensive test data  
-- Text-only scenarios  
-- Image-only scenarios  
-- Missing fields testing  
-- Empty state testing  
+EthiViz analyses content through **seven ethical lenses simultaneously**: Western, Ubuntu,
+Confucian, Islamic, Buddhist, Hindu/Dharmic, and Indigenous/First Nations.
 
 ---
 
-## 📁 Project Structure
+## Current Version: V5
 
-```typescript
-// Polling mechanism for job status
-const POLLING_INTERVAL = 3000;  // 3 seconds
-const MAX_POLLING_ATTEMPTS = 20;  // 1 minute timeout
+**[`Ethiviz_V5/`](Ethiviz_V5/) is the current, actively maintained version** — a real
+Flask API backend running the actual 7-lens `ethiviz` engine, paired with a React
+frontend, with working start/stop scripts. See **[Ethiviz_V5/README.md](Ethiviz_V5/README.md)**
+for full architecture, API reference, and setup details.
 
-interface AnalysisResults {
-  text_analysis: TextAnalysis[];
-  image_analysis: Record<string, ImageAnalysis>;
-}
-```
+`Ethiviz_V2/`, `Ethiviz_V3/`, and `Ethiviz_V4/` are preserved in this repo as historical
+snapshots of earlier iterations. They are not maintained and should not be used for new
+work — the engine and web app inside `Ethiviz_V4/` were the basis V5 was built from, but
+V5 is where active development now happens.
 
-```
-├── src/
-│   ├── components/
-│   │   ├── ConfigPanel.tsx    # Analysis configuration sidebar
-│   │   └── MainContent.tsx    # Results dashboard
-│   ├── utils/
-│   │   └── types.ts           # TypeScript type definitions
-│   ├── App.tsx                # Main application component
-│   ├── main.tsx               # Application entry point
-│   ├── index.css              # Tailwind CSS imports
-│   └── vite-env.d.ts          # Vite environment types
-├── dist/                      # Build output (ignored by ESLint)
-├── index.html                 # Main HTML template
-├── vite.config.ts             # Vite configuration
-├── tailwind.config.js         # Tailwind CSS configuration
-├── postcss.config.js          # PostCSS configuration
-├── eslint.config.js           # ESLint configuration
-├── tsconfig.json              # TypeScript project references
-├── tsconfig.app.json          # App-specific TypeScript config
-└── tsconfig.node.json         # Node.js/build tools TypeScript config
-```
-
----
-
-## 🛠 Development Setup
-
-### Requirements
-
-- Node.js (version 18+ recommended)  
-- npm, yarn, or pnpm  
-
-### Installation
+### Quick start
 
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd <project-directory>
-
-# Install dependencies
-npm install
-# or
-yarn install
-# or
-pnpm install
+bash start_ethiviz.sh
 ```
 
-### Development Commands
+This is a thin wrapper that launches `Ethiviz_V5/start_ethiviz.sh` — it installs
+dependencies if missing, starts the Flask backend on port 5001, and the React frontend
+on port 5173. Open `http://localhost:5173` once both are up.
 
-```bash
-# Start development server
-npm run dev
+To stop everything: click the **Stop** button in the app header, or run
+`bash stop_ethiviz.sh` from the repo root.
 
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
-
-# Run linter
-npm run lint
-
-# Fix linting issues
-npm run lint:fix
-```
+Full details, including the `--with-vision` flag for real image analysis and the
+`--backend-only`/`--frontend-only` modes, are documented in
+[Ethiviz_V5/README.md](Ethiviz_V5/README.md#setup).
 
 ---
 
-## ⚙ Configuration Details
-
-### TypeScript Configuration
-
-The project uses a composite TypeScript setup with separate configurations:
-
-- **tsconfig.json** – Root configuration with project references  
-- **tsconfig.app.json** – Application code configuration (ES2020, React JSX)  
-- **tsconfig.node.json** – Build tools configuration (ES2022, for Vite config)  
-
-**Key TypeScript Features Enabled:**
-
-- Strict type checking  
-- Unused variable/parameter detection  
-- No fallthrough cases in switch statements  
-- React JSX transformation  
-- Bundler module resolution  
-
-### ESLint Configuration
-
-- **Base:** JavaScript and TypeScript recommended rules  
-- **React Hooks:** Enforces Rules of Hooks  
-- **React Refresh:** Ensures components are properly exportable for HMR  
-- **Scope:** All `.ts` and `.tsx` files  
-- **Environment:** Browser globals (ES2020)  
-
-### Vite Configuration
-
-Optimized for React development:
-
-- React Plugin: Enables JSX transformation and Fast Refresh  
-- Dependency Optimization: Excludes `lucide-react` from pre-bundling for better performance  
-- Development: Fast HMR and instant server start  
-- Production: Tree-shaking and code splitting  
-
-### Tailwind CSS
-
-Configured to:
-
-- **Scan:** All HTML, JS, TS, JSX, and TSX files in `src/`  
-- **Process:** Through PostCSS with Autoprefixer  
-- **Extend:** Theme customization ready  
-- **Optimize:** Unused styles purged in production  
-
----
-
-## 🔧 Build Process
-
-1. Development: Vite serves files with HMR and instant compilation  
-2. Linting: ESLint checks code quality and React patterns  
-3. Styling: Tailwind generates utility classes, PostCSS adds vendor prefixes  
-4. Type Checking: TypeScript ensures type safety  
-5. Production: Vite bundles and optimizes for deployment  
-
----
-
-## 📦 Dependencies
-
-### Dependencies
-
-- `react` – UI library  
-- `react-dom` – DOM rendering  
-- `axios` – HTTP client for API communication  
-- `lucide-react` – Icon library (performance optimized)  
-
-### Development Dependencies
-
-- `@vitejs/plugin-react` – Vite React plugin  
-- `typescript` – Type checking  
-- `@typescript-eslint/parser` & `@typescript-eslint/eslint-plugin` – TypeScript linting  
-- `eslint-plugin-react-hooks` – React Hooks linting  
-- `eslint-plugin-react-refresh` – HMR compatibility  
-- `tailwindcss` – CSS framework  
-- `autoprefixer` – CSS vendor prefixes  
-
----
-
-## 🚀 API Integration
-
-The application connects to a backend API server:
-
-### Workflow
-
-1. **Job Submission:** Analysis requests are submitted to the API  
-2. **Polling:** Status is checked every 3 seconds via the status URL  
-3. **Results Retrieval:** Completed analyses are fetched and displayed  
-4. **Error Handling:** Failed jobs and timeouts are gracefully handled  
-
----
-
-## 🎯 Key Features
-
-- Multi-Cultural Ethics Analysis: Western, Ubuntu, Confucian, Islamic frameworks  
-- Dual Content Analysis: Supports text and image analysis  
-- Bias Detection: Advanced bias scoring and diversity index calculations  
-- Real-time Processing: Asynchronous job processing with status polling  
-- Visual Dashboard: Interactive UI with comprehensive analysis results  
-- E2E Testing Mode: Built-in testing with mock data  
-- Responsive Design: Accessible interface with smooth animations  
-
----
-
-## 🚦 Getting Started
-
-### Backend Setup
-
-Ensure the backend API server is running at:  
+## Architecture (V5)
 
 ```
-http://localhost:5001
-```
-
-### Frontend Setup
-
-1. Install dependencies and start the development server  
-2. Toggle E2E mode using the banner toggle  
-3. Configure analysis in the sidebar panel  
-4. Submit content for ethics analysis  
-5. View results in the main dashboard area  
-
----
-
-## 🔍 Analysis Capabilities
-
-### Text Analysis
-
-- Bias Detection: Quantifies potential bias  
-- Diversity Assessment: Measures inclusivity  
-- Multi-Cultural Ethics: Evaluates across four frameworks  
-
-### Image Analysis
-
-- Visual Bias Detection: Identifies representation bias  
-- Demographic Analysis: Skin tone and gender representation  
-- Object Recognition: Categorization of visual elements  
-- Cultural Ethics Assessment: Framework-based evaluation  
-
-**Supported Metrics**
-
-- Bias Score (0-1 scale)  
-- Diversity Index (0-1 scale)  
-- Ethics Scores (0-10 scale)  
-- Demographic distributions  
-- Object/face counts  
-
----
-
-## 📝 Development Guidelines
-
-- Write TypeScript with strict type checking  
-- Use functional components with hooks  
-- Follow React Hooks rules (enforced by ESLint)  
-- Utilize Tailwind utilities for styling  
-- Keep components exportable for HMR  
-- Run linting before commits  
-
-```typescript
-const currentTestData: AnalysisResults = missingFieldsData;  // Switch here
+Ethiviz/
+├── Ethiviz_V5/                        # ← current version, start here
+│   ├── ethiviz/                       # Python package (pip install -e .)
+│   │   ├── api.py                     # Analyzer — primary entry point
+│   │   ├── lenses/                    # 7 cultural ethical lenses
+│   │   ├── metrics/                   # SPD, DI, EOD, AOD, Theil, consistency
+│   │   ├── mitigation/                # Reweighing, DI Remover, Calibrated EO, etc.
+│   │   ├── integration/               # EthiVizPipeline (sklearn-compatible)
+│   │   ├── storage/                   # SQLite persistent job store
+│   │   ├── sample_data/               # 140+ curated texts (7 traditions)
+│   │   ├── vision/                    # Fitzpatrick skin tone, MediaPipe, CLIP
+│   │   └── reporting/                 # HTML/JSON export
+│   ├── Scripts/
+│   │   ├── api_server.py              # Flask REST API (port 5001), async job processing
+│   │   └── ethiviz_bridge.py          # Bridges the API to the real Analyzer engine
+│   ├── project/                       # React 18 + Vite frontend (port 5173)
+│   │   └── src/components/
+│   │       ├── ConfigPanel.tsx, MainContent.tsx
+│   │       ├── ExportButton.tsx, CompareMode.tsx
+│   │       ├── CrossCulturalEquityDashboard.tsx
+│   │       └── visualizations/CulturalFairnessHeatmap.tsx
+│   ├── tests/                         # 81 tests
+│   ├── start_ethiviz.sh / stop_ethiviz.sh
+│   └── pyproject.toml
+│
+├── start_ethiviz.sh / stop_ethiviz.sh  # root wrappers -> Ethiviz_V5/
+├── Ethiviz_V4/                          # historical snapshot, not maintained
+├── Ethiviz_V3/                          # historical snapshot, not maintained
+└── Ethiviz_V2/                          # historical snapshot, not maintained
 ```
 
 ---
 
+## Ethical Traditions
+
+EthiViz analyses content through seven ethical lenses simultaneously.
+
+| Tradition | Core Values | Bias Categories Detected |
+|---|---|---|
+| **Western** | Individual rights, equal opportunity, statistical parity | Racial bias, gender bias, stereotyping, individual rights violations |
+| **Ubuntu** | Community harmony, relational impact, collective benefit | Cultural erasure, community devaluation, African essentialism |
+| **Confucian** | Social harmony, role appropriateness, hierarchical respect | Hierarchical disrespect, face violations, relational bias |
+| **Islamic** | Dignity preservation, equitable treatment, harm prevention | Orientalism, Islamic essentialism, violent stereotyping |
+| **Buddhist** | Ahimsa, right speech, interdependence | Essentialist categorisation, attachment to identity labels |
+| **Hindu / Dharmic** | Dharma, satya, ahimsa | Caste stereotyping, colonial framing, dharmic misrepresentation |
+| **Indigenous / First Nations** | CARE Principles, seven-generations stewardship | Erasure of oral tradition, land commodification framing |
+
+---
+
+## API Reference
+
+Base URL: `http://localhost:5001`
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/analyze` | POST | Submit analysis job; returns `job_id` |
+| `/api/analyze/status/{job_id}` | GET | Check job status: `pending` / `processing` / `completed` / `failed` |
+| `/api/analyze/results/{job_id}` | GET | Retrieve completed analysis results |
+| `/api/analyze/results/{job_id}/export` | GET | Download HTML or JSON report |
+| `/api/sample-data` | GET | List available curated sample datasets |
+| `/api/jobs` | GET | List recent jobs (persisted across restarts) |
+| `/api/compare` | POST | Side-by-side comparison of two completed jobs |
+| `/api/stop` | POST | Gracefully shut down backend + frontend (localhost-only) |
+
+Full request/response shapes are documented in
+[Ethiviz_V5/README.md](Ethiviz_V5/README.md#api-reference).
+
+---
+
+## What's Real vs. What's Scaffolding
+
+The 7-lens engine, text/image analysis, job persistence, compare, export, and stop are
+live and verified end-to-end. The AIF360-parity fairness metrics, mitigation algorithms,
+and scikit-learn integration (`ethiviz/metrics/`, `ethiviz/mitigation/`,
+`ethiviz/integration/`) are real, independently tested modules, but are **not yet wired
+into the live `Analyzer.analyze()` path** — they exist as a standalone, tested library
+today. See [Ethiviz_V5/README.md](Ethiviz_V5/README.md#whats-real-vs-whats-scaffolding)
+for the full, honest breakdown.
+
+---
+
+## Academic Context
+
+EthiViz implements and extends the framework from:
+
+> Brandon Scott Copeland. *"Cross-Cultural Bias Detection in AI Systems: A Computational
+> Framework for Multi-Perspective Ethical Analysis."* Bachelor's Thesis, IU University of
+> Applied Sciences, September 2025.
+
+The thesis argues that existing AI bias detection tools are epistemologically
+Western-centric and proposes a pluralistic alternative. EthiViz is that alternative.
+
+---
+
+## License
+
+Apache 2.0 — see [Ethiviz_V5/LICENSE](Ethiviz_V5/LICENSE)
