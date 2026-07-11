@@ -3,11 +3,14 @@ import axios from 'axios';
 import { Menu, X, Settings, Search, Sparkles, AlertTriangle, PowerOff } from 'lucide-react';
 import ConfigPanel from './components/ConfigPanel';
 import MainContent from './components/MainContent';
-import { AnalysisResults } from './utils/types';
+import { AnalysisResults, AnalysisProgress } from './utils/types';
 
 const API_BASE_URL = 'http://localhost:5001'; // Ensure this matches your API server
-const POLLING_INTERVAL = 3000; // 3 seconds
-const MAX_POLLING_ATTEMPTS = 20; // Max attempts before timing out (e.g., 20 * 3s = 1 minute)
+const POLLING_INTERVAL = 1500; // 1.5 seconds — frequent enough for a smooth progress bar
+// 5 minutes. The old 20-attempt/3s (60s) cap reported a false "timed out" for
+// any analysis that legitimately ran longer than a minute, which is common
+// once real per-lens/per-image work is involved.
+const MAX_POLLING_ATTEMPTS = 200;
 
 
 function App() {
@@ -18,6 +21,7 @@ function App() {
   const [statusUrl, setStatusUrl] = useState<string | null>(null); // Store the full status URL from API response
   const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [progress, setProgress] = useState<AnalysisProgress | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pollingAttempts, setPollingAttempts] = useState(0);
   const [e2eMode, setE2eMode] = useState(false);
@@ -34,6 +38,7 @@ function App() {
     setStatusUrl(null);
     setAnalysisResults(null);
     setIsLoading(false);
+    setProgress(null);
     setError(null);
     setPollingAttempts(0);
   };
@@ -42,6 +47,7 @@ function App() {
     if (e2eMode) return; // No-op in test mode (no real data to load)
     resetAnalysisState();
     setIsLoading(true);
+    setProgress({ percent: 0, message: 'Queued' });
     // JobId and StatusUrl will be set by ConfigPanel through props
   };
 
@@ -49,6 +55,7 @@ function App() {
     if (e2eMode) return;
     setAnalysisResults(results);
     setIsLoading(false);
+    setProgress(null);
     setLastCompletedJobId(jobId); // Preserve for ExportButton — jobId itself is about to be cleared
     setJobId(null); // Clear job ID once completed and results fetched
     setStatusUrl(null);
@@ -74,6 +81,7 @@ function App() {
     if (e2eMode) return;
     setError(errorMessage);
     setIsLoading(false);
+    setProgress(null);
     setJobId(null); // Clear job ID on error
     setStatusUrl(null);
     setPollingAttempts(0);
@@ -106,6 +114,9 @@ function App() {
           console.log(`Polling attempt ${pollingAttempts + 1} for job ${jobId}: ${statusUrl}`);
           const response = await axios.get(statusUrl);
           const data = response.data;
+          if (data.progress) {
+            setProgress(data.progress);
+          }
           if (data.status === 'completed') {
             setPollingAttempts(0);
             if (data.results_url) {
@@ -213,6 +224,7 @@ function App() {
           setIsLoadingGlobal={setIsLoading}         // ConfigPanel sets global loading
           setJobIdGlobal={setJobDetails}            // ConfigPanel sets job ID and status URL
           e2eMode={e2eMode}
+          isLoading={isLoading}
         />
 
         {/* Main Content */}
@@ -220,6 +232,7 @@ function App() {
           sidebarOpen={sidebarOpen}
           analysisResults={analysisResults}
           isLoading={isLoading}
+          progress={progress}
           error={error}
           apiBaseUrl={API_BASE_URL}
           lastCompletedJobId={lastCompletedJobId}

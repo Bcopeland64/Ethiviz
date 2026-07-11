@@ -1,8 +1,8 @@
 # ethiviz/api.py
 from __future__ import annotations
 import numpy as np
-from typing import Any, List, Dict, Optional
-from concurrent.futures import ThreadPoolExecutor
+from typing import Any, Callable, List, Dict, Optional
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from ethiviz.context.deployment import DeploymentContext
 from ethiviz.scoring.calibration import PlattCalibrator
 from ethiviz.scoring.drift import DriftMonitor
@@ -89,6 +89,7 @@ class Analyzer:
         dataset_source: str = "unknown",
         job_id: str | None = None,
         n_workers: int = 1,
+        progress_callback: Callable[[int, int], None] | None = None,
     ) -> ScoredResult:
         """
         Analyse a dataset for bias through all registered ethical lenses.
@@ -96,6 +97,9 @@ class Analyzer:
         Returns a ScoredResult containing per-framework scores, per-text
         candidate scores, WEAT results (when run_weat=True), and full
         reproducibility metadata.
+
+        progress_callback(n_completed, n_total), if given, is invoked once per
+        text as its scoring finishes across all lenses (not once per lens).
         """
         if not dataset:
             return ScoredResult(
@@ -114,8 +118,19 @@ class Analyzer:
             return {fid: self.lenses[fid].score(text, language=language) for fid in active_ids}
 
         max_workers = min(max(1, len(dataset)), 8) if n_workers <= 1 else n_workers
+        total = len(dataset)
+        results_by_index: dict[int, dict[str, Any]] = {}
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            all_lens_results = list(executor.map(score_text, dataset))
+            future_to_index = {
+                executor.submit(score_text, text): i for i, text in enumerate(dataset)
+            }
+            completed = 0
+            for future in as_completed(future_to_index):
+                results_by_index[future_to_index[future]] = future.result()
+                completed += 1
+                if progress_callback:
+                    progress_callback(completed, total)
+        all_lens_results = [results_by_index[i] for i in range(total)]
 
         # 3. Aggregate per framework; apply calibration + drift monitoring
         avg_framework_scores: list[FrameworkScore] = []

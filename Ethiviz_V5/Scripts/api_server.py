@@ -60,6 +60,37 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 app.logger.setLevel(logging.INFO)
 
 
+# ── Model warm-up ─────────────────────────────────────────────────────────────
+
+def _warm_up_models():
+    """Eagerly load the sentence-transformer embedding model and every lens's
+    prototype-embedding cache at server startup, instead of paying that cost
+    inside the first real analysis job.
+
+    bridge.get_analyzer() and each lens's SemanticBiasDetector both build
+    their expensive state lazily on first use: the ~120MB sentence-transformer
+    model (ethiviz/embeddings/model.py), then one encode() pass per lens's
+    prototype set. Left alone, the first job submitted after server start pays
+    for all of that on top of the actual scoring work, which is what made the
+    initial analysis look slow — every job after it is fast because the
+    singleton is already warm. Calling lens.score() directly here (not
+    analyzer.analyze()) warms the prototype cache without touching the shared
+    PlattCalibrator/DriftMonitor state that analyze() updates.
+    """
+    start = time.time()
+    try:
+        analyzer = bridge.get_analyzer()
+        for lens in analyzer.lenses.values():
+            lens.score("warm up", language="en")
+        if HAS_IMAGE_ANALYZER:
+            bridge.get_image_backend()
+        app.logger.info(f"Model warm-up completed in {time.time() - start:.1f}s")
+    except Exception:
+        app.logger.exception(
+            "Model warm-up failed — models will load lazily on first request instead."
+        )
+
+
 # ── Job store helpers ────────────────────────────────────────────────────────
 
 def _get_job(job_id: str) -> dict | None:
@@ -186,7 +217,25 @@ def run_analysis_job(job_id, analysis_type, data_inputs, selected_traditions, ad
     Updates the job status and results via the job store.
     """
     app.logger.info(f"Starting analysis for job_id: {job_id}")
-    _update_job(job_id, status="processing", start_time=time.time())
+    _update_job(job_id, status="processing", start_time=time.time(),
+                progress={"percent": 0, "message": "Starting analysis..."})
+
+    # Text and image phases each get a slice of the 0-100 progress range when
+    # both run (text_and_image); a single-modality job gets the full range.
+    has_text = "text" in analysis_type.lower()
+    has_image = "image" in analysis_type.lower()
+    text_span = (0, 47) if (has_text and has_image) else (0, 95)
+    image_span = (47, 95) if (has_text and has_image) else (0, 95)
+
+    def make_progress_cb(span, label):
+        start, end = span
+        def cb(done, total):
+            percent = start + (end - start) * (done / total if total else 1)
+            _update_job(job_id, progress={
+                "percent": round(percent, 1),
+                "message": f"{label}: {done}/{total}",
+            })
+        return cb
 
     try:
         text_results = None
@@ -196,7 +245,7 @@ def run_analysis_job(job_id, analysis_type, data_inputs, selected_traditions, ad
 
         selected_fids = bridge.resolve_framework_ids(selected_traditions)
 
-        if "text" in analysis_type.lower():
+        if has_text:
             text_input = data_inputs.get("text_input")
             app.logger.info(f"Job {job_id}: Running text analysis. Input type: {type(text_input)}")
 
@@ -204,10 +253,11 @@ def run_analysis_job(job_id, analysis_type, data_inputs, selected_traditions, ad
                 text_input=text_input,
                 selected_fids=selected_fids,
                 job_id=job_id,
+                progress_callback=make_progress_cb(text_span, "Analyzing text"),
             )
             app.logger.info(f"Job {job_id}: Text analysis completed.")
 
-        if "image" in analysis_type.lower():
+        if has_image:
             if not HAS_IMAGE_ANALYZER:
                 app.logger.warning(
                     f"Job {job_id}: vision dependencies not installed — image analysis "
@@ -222,9 +272,11 @@ def run_analysis_job(job_id, analysis_type, data_inputs, selected_traditions, ad
             image_results, image_scores = bridge.run_image_analysis(
                 image_paths=image_paths,
                 selected_fids=selected_fids,
+                progress_callback=make_progress_cb(image_span, "Analyzing images"),
             )
             app.logger.info(f"Job {job_id}: Image analysis completed.")
 
+        _update_job(job_id, progress={"percent": 95, "message": "Finalizing results..."})
         final_results = {}
         if text_results:
             final_results["text_analysis"] = text_results
@@ -240,7 +292,8 @@ def run_analysis_job(job_id, analysis_type, data_inputs, selected_traditions, ad
         tradition_scores = bridge.merge_tradition_scores_across_modalities(text_scores, image_scores)
         final_results["tradition_scores"] = tradition_scores
 
-        _update_job(job_id, status="completed", result=final_results)
+        _update_job(job_id, status="completed", result=final_results,
+                    progress={"percent": 100, "message": "Analysis complete."})
         if HAS_JOB_STORE and tradition_scores:
             _job_store.store_results(job_id, bridge.to_sqlite_payload(tradition_scores))
         app.logger.info(f"Job {job_id} completed successfully.")
@@ -318,6 +371,7 @@ def submit_analysis():
             "selected_traditions": selected_traditions,
             "advanced_options": advanced_options,
             "submission_time": time.time(),
+            "progress": {"percent": 0, "message": "Queued"},
         }
 
         data_inputs = {"source_type": data_source_type}
@@ -443,6 +497,7 @@ def get_analysis_status(job_id):
     start_time = (memory_job or {}).get("start_time")
     end_time = (memory_job or {}).get("end_time")
     duration_seconds = (memory_job or {}).get("duration_seconds")
+    progress = (memory_job or {}).get("progress") or {"percent": 0, "message": ""}
 
     response = {
         "job_id": job_id,
@@ -451,6 +506,7 @@ def get_analysis_status(job_id):
         "start_time": start_time,
         "end_time": end_time,
         "duration_seconds": duration_seconds,
+        "progress": progress,
     }
     if status == "completed":
         response["message"] = "Analysis completed successfully."
@@ -735,6 +791,12 @@ if __name__ == '__main__':
     app.logger.info(f"Vision detection available: {HAS_IMAGE_ANALYZER}")
     app.logger.info(f"SQLite JobStore available: {HAS_JOB_STORE}")
     app.logger.info(f"Upload folder: {app.config['UPLOAD_FOLDER']}")
+    # Warm the embedding model up in the background so it loads while the
+    # server is starting (and while the user is still on the config page)
+    # instead of during the first submitted job. Daemon thread: if it's still
+    # running when a request arrives, get_analyzer()'s lock just makes that
+    # request wait on the same load rather than duplicating it.
+    threading.Thread(target=_warm_up_models, daemon=True).start()
     # use_reloader=False is required: with the Werkzeug debug reloader active,
     # a SIGTERM sent to the worker process by /api/stop can be silently
     # relaunched by the watcher parent instead of actually stopping the server.

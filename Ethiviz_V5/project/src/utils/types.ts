@@ -5,11 +5,18 @@ export interface AnalyzeResponse {
   status?: string;
 }
 
+// Progress info reported while a job is pending/processing
+export interface AnalysisProgress {
+  percent: number;
+  message: string;
+}
+
 // API response for /api/analyze/status/{job_id}
 export interface AnalyzeStatusResponse {
   status: 'pending' | 'processing' | 'completed' | 'failed';
   results_url?: string;
   error_message?: string;
+  progress?: AnalysisProgress;
 }
 
 // API response for /api/analyze/results/{job_id}

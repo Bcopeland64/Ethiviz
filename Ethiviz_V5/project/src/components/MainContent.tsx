@@ -8,25 +8,42 @@ import CulturalFairnessHeatmap from './visualizations/CulturalFairnessHeatmap';
 import CrossCulturalEquityDashboard from './CrossCulturalEquityDashboard';
 import ExportButton from './ExportButton';
 import CompareMode from './CompareMode';
-import { AnalysisResults, TextAnalysisItem, ImageAnalysisItem } from '../utils/types';
+import { AnalysisResults, AnalysisProgress, TextAnalysisItem, ImageAnalysisItem } from '../utils/types';
 
 interface MainContentProps {
   sidebarOpen: boolean;
   analysisResults: AnalysisResults | null;
   isLoading: boolean;
+  progress?: AnalysisProgress | null;
   error: string | null;
   apiBaseUrl: string;
   lastCompletedJobId: string | null;
 }
 
-function MainContent({ sidebarOpen, analysisResults, isLoading, error, apiBaseUrl, lastCompletedJobId }: MainContentProps) {
+function MainContent({ sidebarOpen, analysisResults, isLoading, progress, error, apiBaseUrl, lastCompletedJobId }: MainContentProps) {
   const renderContent = () => {
     if (isLoading) {
+      const percent = Math.max(0, Math.min(100, progress?.percent ?? 0));
       return (
         <div className="flex flex-col items-center justify-center h-full text-gray-500">
           <Loader2 className="w-16 h-16 animate-spin text-blue-500 mb-4" />
           <p className="text-xl font-medium">Analysis in progress...</p>
-          <p className="text-sm">Please wait while we process your data.</p>
+          <div className="w-full max-w-md mt-4">
+            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+              <div
+                className="bg-blue-500 h-3 rounded-full transition-all duration-300 ease-out"
+                style={{ width: `${percent}%` }}
+                role="progressbar"
+                aria-valuenow={percent}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              />
+            </div>
+            <div className="flex justify-between mt-2 text-sm">
+              <span>{progress?.message || 'Please wait while we process your data.'}</span>
+              <span className="font-medium text-gray-600">{Math.round(percent)}%</span>
+            </div>
+          </div>
         </div>
       );
     }

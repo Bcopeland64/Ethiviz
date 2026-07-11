@@ -17,18 +17,20 @@ interface ConfigPanelProps {
   onAnalysisComplete: (results: AnalysisResults) => void;
   onAnalysisError: (error: string) => void;
   setIsLoadingGlobal: (isLoading: boolean) => void; // To control global loading state
-  setJobIdGlobal: (jobId: string | null) => void;
+  setJobIdGlobal: (jobId: string | null, statusUrl?: string | null) => void;
   e2eMode: boolean;
+  isLoading: boolean; // Global loading state, lifted to App.tsx so it reflects job completion/failure
 }
 
-function ConfigPanel({ 
-  isOpen, 
-  onAnalysisStart, 
-  onAnalysisComplete, 
+function ConfigPanel({
+  isOpen,
+  onAnalysisStart,
+  onAnalysisComplete,
   onAnalysisError,
   setIsLoadingGlobal, // Consume this prop
   setJobIdGlobal, // Consume this prop
-  e2eMode
+  e2eMode,
+  isLoading
 }: ConfigPanelProps) {
   const [analysisType, setAnalysisType] = useState<AnalysisType>(null);
   const [selectedTraditions, setSelectedTraditions] = useState<string[]>(AVAILABLE_TRADITIONS);
@@ -42,8 +44,7 @@ function ConfigPanel({
     image_advanced_options: { feature_level: "medium", batch_size: 16 }
   });
 
-  // Local loading/error/job states for this panel, might be partly duplicated by global state
-  const [isLoading, setIsLoading] = useState(false);
+  // Local error/job states for this panel; loading state is lifted to App.tsx (see `isLoading` prop)
   const [error, setError] = useState<string | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
   const [statusUrl, setStatusUrl] = useState<string | null>(null);
@@ -138,7 +139,6 @@ function ConfigPanel({
   const handleRunAnalysis = async () => {
     if (isLoading || e2eMode) return;
 
-    setIsLoading(true);
     setIsLoadingGlobal(true); // Update global loading state
     setError(null);
     setJobId(null);
@@ -150,7 +150,6 @@ function ConfigPanel({
     const formData = new FormData();
     if (!analysisType) {
       setError("Please select an analysis type.");
-      setIsLoading(false);
       setIsLoadingGlobal(false);
       onAnalysisError("Analysis type not selected.");
       return;
@@ -166,7 +165,6 @@ function ConfigPanel({
         formData.append('text_file', textFile);
       } else if ((analysisType === 'text' || analysisType === 'text_and_image') && !textFile) {
         setError("Text file selected for upload but no file provided.");
-        setIsLoading(false);
         setIsLoadingGlobal(false);
         onAnalysisError("Text file not provided for upload.");
         return;
@@ -176,7 +174,6 @@ function ConfigPanel({
         imageFiles.forEach(file => formData.append('image_files', file));
       } else if ((analysisType === 'image' || analysisType === 'text_and_image') && imageFiles.length === 0) {
         setError("Image analysis selected for upload but no image files provided.");
-        setIsLoading(false);
         setIsLoadingGlobal(false);
         onAnalysisError("Image files not provided for upload.");
         return;
@@ -190,7 +187,6 @@ function ConfigPanel({
       if (analysisType === 'image' || analysisType === 'text_and_image') {
         // formData.append('sample_image_id', 'sample_image_set_1'); // Example
         setError("Sample image analysis not fully implemented in frontend yet.");
-        setIsLoading(false);
         setIsLoadingGlobal(false);
         onAnalysisError("Sample image analysis not fully implemented.");
         return;
@@ -206,7 +202,7 @@ function ConfigPanel({
 
       if (response.status === 202 && response.data.job_id && response.data.status_url) {
         setJobId(response.data.job_id);
-        setJobIdGlobal(response.data.job_id); // Update global job ID
+        setJobIdGlobal(response.data.job_id, response.data.status_url); // Update global job ID + status URL
         setStatusUrl(response.data.status_url);
         setJobStatus(response.data.status || 'pending');
         // Start polling will be handled by App.tsx or context via prop useEffect on jobIdGlobal
@@ -217,10 +213,9 @@ function ConfigPanel({
       const errorMsg = err.response?.data?.error || err.message || 'An unknown error occurred.';
       setError(errorMsg);
       onAnalysisError(errorMsg);
-      setIsLoading(false);
       setIsLoadingGlobal(false);
     }
-    // isLoading and setIsLoadingGlobal will be set to false by App.tsx after polling finishes or if initial submission fails and polling doesn't start.
+    // isLoading is set to false by App.tsx after polling finishes or if initial submission fails and polling doesn't start.
   };
   
   const clearLocalError = () => {

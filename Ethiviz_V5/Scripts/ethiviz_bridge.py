@@ -18,7 +18,7 @@ import logging
 import os
 import sys
 import threading
-from typing import Any
+from typing import Any, Callable
 
 import numpy as np
 import pandas as pd
@@ -325,11 +325,16 @@ def _build_text_analysis_items(
 
 
 def run_text_analysis(
-    text_input: str, selected_fids: list[str], job_id: str = "unknown"
+    text_input: str,
+    selected_fids: list[str],
+    job_id: str = "unknown",
+    progress_callback: Callable[[int, int], None] | None = None,
 ) -> tuple[list[dict], list[dict]]:
     """Returns (text_analysis_items, tradition_scores)."""
     dataset = load_text_dataset(text_input)
-    result = get_analyzer().analyze(dataset=dataset, dataset_source=job_id)
+    result = get_analyzer().analyze(
+        dataset=dataset, dataset_source=job_id, progress_callback=progress_callback
+    )
     items = _build_text_analysis_items(dataset, result, selected_fids)
     scores = compute_tradition_scores(result, selected_fids)
     return items, scores
@@ -391,17 +396,22 @@ def _analyze_one_image(path: str, selected_fids: list[str]) -> tuple[dict, list[
 
 
 def run_image_analysis(
-    image_paths: list[str], selected_fids: list[str]
+    image_paths: list[str],
+    selected_fids: list[str],
+    progress_callback: Callable[[int, int], None] | None = None,
 ) -> tuple[dict, list[dict]]:
     """Returns (image_analysis_dict, tradition_scores) — tradition_scores is
     averaged across all images when there is more than one."""
     image_results: dict[str, dict] = {}
     all_scores: list[list[dict]] = []
-    for path in image_paths:
+    total = len(image_paths)
+    for i, path in enumerate(image_paths):
         name = os.path.basename(path)
         item, scores = _analyze_one_image(path, selected_fids)
         image_results[name] = item
         all_scores.append(scores)
+        if progress_callback:
+            progress_callback(i + 1, total)
 
     merged_scores = _merge_tradition_scores(all_scores)
     return image_results, merged_scores
