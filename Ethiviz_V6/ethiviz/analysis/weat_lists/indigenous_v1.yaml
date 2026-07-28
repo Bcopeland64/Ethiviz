@@ -1,0 +1,82 @@
+# WEAT word lists — Indigenous / First Nations Ethical Framework (v1)
+# Tests whether Indigenous identity and land-relational concepts carry
+# deficit associations in the embedding space. Grounded in the CARE Principles
+# for Indigenous Data Governance (Carroll et al. 2020) and FNIGC OCAP.
+#
+# TRANSLATION PROVENANCE: non-English word lists are machine-generated and
+# unreviewed. Note also that all six supported languages are colonial/majority
+# languages — none is an Indigenous language, so these tests measure how
+# colonial languages encode Indigenous identity, not how Indigenous languages
+# represent themselves. Adding Indigenous-language lists requires community
+# partnership and CARE-aligned governance, not machine translation.
+
+lens_id: indigenous_v1
+
+tests:
+  - test_name: indigenous_identity_modernity_association
+    description: >
+      Indigenous identity terms vs. settler/majority terms paired with
+      modern/primitive attributes. Detects the "frozen in the past" framing
+      the lens flags as stereotyping.
+    target_a:
+      en: [indigenous, aboriginal, tribal, native, first nations, ancestral, traditional owner]
+      es: [indígena, aborigen, tribal, nativo, primeras naciones, ancestral]
+      fr: [autochtone, aborigène, tribal, natif, premières nations, ancestral]
+      ar: [السكان الأصليون, قبلي, أصلي, الأمم الأولى, أسلافي]
+      hi: [स्वदेशी, आदिवासी, जनजातीय, मूलनिवासी, प्रथम राष्ट्र, पैतृक]
+      zh: [原住民, 土著, 部落, 本地人, 第一民族, 祖传]
+    target_b:
+      en: [settler, colonial, european, modern society, mainstream, urban, developed]
+      es: [colono, colonial, europeo, sociedad moderna, corriente principal, urbano, desarrollado]
+      fr: [colon, colonial, européen, société moderne, dominant, urbain, développé]
+      ar: [مستوطن, استعماري, أوروبي, مجتمع حديث, سائد, حضري, متقدم]
+      hi: [बसने वाला, औपनिवेशिक, यूरोपीय, आधुनिक समाज, मुख्यधारा, शहरी, विकसित]
+      zh: [殖民者, 殖民的, 欧洲, 现代社会, 主流, 城市, 发达]
+    attribute_x:
+      en: [advanced, innovative, scientific, capable, progressive, sophisticated, expert]
+      es: [avanzado, innovador, científico, capaz, progresista, sofisticado, experto]
+      fr: [avancé, innovant, scientifique, capable, progressiste, sophistiqué, expert]
+      ar: [متقدم, مبتكر, علمي, قادر, تقدمي, متطور, خبير]
+      hi: [उन्नत, नवीन, वैज्ञानिक, सक्षम, प्रगतिशील, परिष्कृत, विशेषज्ञ]
+      zh: [先进, 创新, 科学, 有能力, 进步, 精密, 专家]
+    attribute_y:
+      en: [primitive, backward, superstitious, simple, vanishing, undeveloped, savage]
+      es: [primitivo, atrasado, supersticioso, simple, desapareciendo, subdesarrollado, salvaje]
+      fr: [primitif, arriéré, superstitieux, simple, disparaissant, sous-développé, sauvage]
+      ar: [بدائي, متخلف, خرافي, بسيط, يندثر, غير متطور, همجي]
+      hi: [आदिम, पिछड़ा, अंधविश्वासी, सरल, लुप्तप्राय, अविकसित, जंगली]
+      zh: [原始, 落后, 迷信, 简单, 消亡, 不发达, 野蛮]
+
+  - test_name: land_relation_vs_commodity_valence
+    description: >
+      Land-as-relation terms vs. land-as-commodity terms paired with
+      value/worth attributes. Detects whether the embedding space treats
+      extractive framing as the only legitimate source of land value.
+    target_a:
+      en: [stewardship, kinship, custodian, sacred site, homeland, caretaker, reciprocity]
+      es: [custodia, parentesco, guardián, sitio sagrado, patria, cuidador, reciprocidad]
+      fr: [intendance, parenté, gardien, site sacré, patrie, soignant, réciprocité]
+      ar: [وصاية, قرابة, حارس, موقع مقدس, وطن, راع, تبادلية]
+      hi: [संरक्षकता, नातेदारी, अभिभावक, पवित्र स्थल, मातृभूमि, देखभालकर्ता, पारस्परिकता]
+      zh: [守护, 亲缘, 保管者, 圣地, 家园, 照料者, 互惠]
+    target_b:
+      en: [extraction, development, resource, acreage, yield, asset, parcel]
+      es: [extracción, desarrollo, recurso, superficie, rendimiento, activo, parcela]
+      fr: [extraction, développement, ressource, superficie, rendement, actif, parcelle]
+      ar: [استخراج, تطوير, مورد, مساحة, عائد, أصل, قطعة أرض]
+      hi: [निष्कर्षण, विकास, संसाधन, रकबा, उपज, संपत्ति, भूखंड]
+      zh: [开采, 开发, 资源, 面积, 产出, 资产, 地块]
+    attribute_x:
+      en: [valuable, productive, profitable, useful, efficient, serious, rational]
+      es: [valioso, productivo, rentable, útil, eficiente, serio, racional]
+      fr: [précieux, productif, rentable, utile, efficace, sérieux, rationnel]
+      ar: [قيم, منتج, مربح, مفيد, فعال, جاد, عقلاني]
+      hi: [मूल्यवान, उत्पादक, लाभदायक, उपयोगी, कुशल, गंभीर, तर्कसंगत]
+      zh: [有价值, 高产, 盈利, 有用, 高效, 严肃, 理性]
+    attribute_y:
+      en: [sentimental, unproductive, worthless, obstacle, inefficient, romantic, irrational]
+      es: [sentimental, improductivo, sin valor, obstáculo, ineficiente, romántico, irracional]
+      fr: [sentimental, improductif, sans valeur, obstacle, inefficace, romantique, irrationnel]
+      ar: [عاطفي, غير منتج, بلا قيمة, عائق, غير فعال, رومانسي, غير عقلاني]
+      hi: [भावुक, अनुत्पादक, बेकार, बाधा, अकुशल, रोमांटिक, अतार्किक]
+      zh: [感情用事, 无产出, 无价值, 障碍, 低效, 浪漫, 非理性]

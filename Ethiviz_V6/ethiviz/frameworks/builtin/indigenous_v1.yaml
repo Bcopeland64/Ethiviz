@@ -1,0 +1,49 @@
+id: indigenous_v1
+framework_id: indigenous_v1
+name: Indigenous / First Nations Ethics
+version: "1.0"
+ethical_lenses: [care_principles, seven_generations, fnigc_ocap]
+description: >
+  Land-relational ethics grounded in the CARE Principles (Collective Benefit,
+  Authority to Control, Responsibility, Ethics) and FNIGC protocols.
+  Centres the seven-generations principle, collective stewardship, oral tradition
+  respect, and non-extractive relationships with living systems.
+
+bias_criteria:
+  land_relational_harm:
+    description: Content that treats land/environment as mere commodity, erasing relational stewardship
+    weight: 0.22
+  knowledge_extraction:
+    description: Extraction or appropriation of indigenous knowledge without consent or attribution
+    weight: 0.25
+  cultural_erasure:
+    description: Erasure of indigenous languages, stories, protocols, or identities
+    weight: 0.25
+  seven_generations_violation:
+    description: Decisions or framings that disregard long-term community and ecological impact
+    weight: 0.18
+  stereotyping:
+    description: Reductive or essentialist portrayals of indigenous peoples and cultures
+    weight: 0.10
+
+severity_thresholds:
+  low: 0.03
+  moderate: 0.07
+  high: 0.14
+  critical: 0.22
+
+weights:
+  semantic: 0.75
+  regex: 0.25
+
+validation:
+  methodology: CARE Principles + FNIGC protocols + First Nations AI ethics literature
+  last_updated: "2025-09-01"
+  reviewer: "EthiViz V5 Cultural Review"
+
+metadata:
+  primary_sources:
+    - "FNIGC OCAP Principles (2014)"
+    - "Carroll et al. CARE Principles (2020) Data Science Journal"
+    - "Kukutai & Taylor Indigenous Data Sovereignty (2016)"
+  academic_basis: true
