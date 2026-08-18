@@ -54,6 +54,16 @@ class LanguageDetector:
         except Exception:
             code = "en"  # fallback
 
+        # langdetect returns regional variants for some languages (e.g.
+        # "zh-cn"/"zh-tw" for Mandarin) that never match a bare key in
+        # SUPPORTED_LANGUAGES. Every Chinese input was previously falling
+        # through to the `code not in SUPPORTED_LANGUAGES` branch below and
+        # silently scoring as English — a complete, silent loss of one of
+        # the six supported languages. Normalizing to the primary subtag
+        # fixes this without affecting codes that were already bare (en, ar,
+        # es, hi, fr all come back unsuffixed from langdetect).
+        code = code.split("-")[0]
+
         if code not in SUPPORTED_LANGUAGES:
             code = "en"
 

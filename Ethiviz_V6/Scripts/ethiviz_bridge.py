@@ -240,12 +240,22 @@ def compute_tradition_scores(result: ScoredResult, selected_fids: list[str]) -> 
         if fs.framework_id not in selected_fids:
             continue
         score = fs.calibrated_score if fs.calibrated_score is not None else fs.overall_score
-        out.append({
+        entry = {
             "tradition": fs.framework_id,
             "score": round(float(score), 4),
             "severity": _severity_for(fs.framework_id, score),
             "confidence": round(float(fs.confidence), 4),
-        })
+        }
+        # translation_reviewed is None for English (nothing to review) and for
+        # lenses with an undeclared provenance block; False means the result
+        # relies on an unreviewed machine translation. Only surface it when
+        # there's actually a caveat, so English-only runs stay uncluttered.
+        translation_reviewed = fs.raw_evidence.get("translation_reviewed")
+        if translation_reviewed is not True:
+            entry["translation_reviewed"] = translation_reviewed
+        if fs.raw_evidence.get("warnings"):
+            entry["warnings"] = fs.raw_evidence["warnings"]
+        out.append(entry)
     return out
 
 

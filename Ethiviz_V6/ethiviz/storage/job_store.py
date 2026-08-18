@@ -132,3 +132,28 @@ class JobStore:
                 "SELECT * FROM audit_log WHERE job_id=? ORDER BY id", (job_id,)
             ).fetchall()
         return [dict(r) for r in rows]
+
+    def log_event(self, job_id: str, event_type: str, details: dict[str, Any] | None = None) -> None:
+        """Record an arbitrary audit_log event (e.g. 'exported') for a job.
+        Previously the audit_log table only ever received the three events
+        create_job/update_status/store_results wrote automatically — nothing
+        outside JobStore could add to the compliance trail."""
+        now = datetime.now(timezone.utc).isoformat()
+        with self._conn() as conn:
+            conn.execute(
+                "INSERT INTO audit_log (job_id, event_type, timestamp, details) VALUES (?,?,?,?)",
+                (job_id, event_type, now, json.dumps(details or {})),
+            )
+
+    def delete_job(self, job_id: str) -> None:
+        """Purge a job's rows and results (Upgrade 38 retention). The
+        audit_log keeps a 'deleted' row rather than being wiped too, so the
+        deletion itself remains part of the compliance trail."""
+        now = datetime.now(timezone.utc).isoformat()
+        with self._conn() as conn:
+            conn.execute("DELETE FROM results WHERE job_id=?", (job_id,))
+            conn.execute(
+                "INSERT INTO audit_log (job_id, event_type, timestamp, details) VALUES (?,?,?,?)",
+                (job_id, "deleted", now, "{}"),
+            )
+            conn.execute("DELETE FROM jobs WHERE job_id=?", (job_id,))

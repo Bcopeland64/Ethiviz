@@ -70,6 +70,29 @@ export interface TraditionScoreEntry {
   score: number;
   severity: 'low' | 'moderate' | 'high' | 'critical' | 'unknown';
   confidence?: number;
+  // Present only when there's a caveat: false = relies on a machine-generated,
+  // unreviewed translation; null = the lens has no translation_provenance
+  // declaration at all. Absent (undefined) means no caveat applies (English,
+  // or a reviewed translation).
+  translation_reviewed?: boolean | null;
+  warnings?: string[];
+}
+
+// GET /api/framework-coverage — ethiviz/frameworks/coverage_audit.py
+export interface TraditionCoverageEntry {
+  framework_id: string;
+  label: string;
+  prototype_count: number;
+  category_count: number;
+  languages_declared: string[];
+  translations_reviewed: number;
+  translations_machine_generated: number;
+  translations_undeclared: boolean;
+}
+
+export interface FrameworkCoverageReport {
+  framework_coverage_index: number;
+  traditions: TraditionCoverageEntry[];
 }
 
 // The overall analysis results object

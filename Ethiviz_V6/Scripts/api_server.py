@@ -1,6 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+import html
 import json
 import signal
 import subprocess
@@ -41,11 +42,27 @@ except ImportError as e:
     HAS_JOB_STORE = False
 
 app = Flask(__name__)
-CORS(app) # Enable CORS for all routes and origins.
+# CORS(app) with no origins= previously allowed any origin to call every
+# route, including /api/analyze (accepts file uploads) and /api/jobs (lists
+# all job history) — any site a user's browser visited could read their
+# analysis results cross-origin. Per CLAUDE.md the frontend runs on
+# http://localhost:5173; ETHIVIZ_ALLOWED_ORIGINS overrides for other
+# deployments (comma-separated).
+_allowed_origins = [
+    o.strip() for o in os.environ.get(
+        'ETHIVIZ_ALLOWED_ORIGINS', 'http://localhost:5173'
+    ).split(',') if o.strip()
+]
+CORS(app, origins=_allowed_origins)
 
 # Configuration
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'api_uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# Reject request bodies over 50MB outright (Werkzeug returns 413) rather than
+# buffering an arbitrarily large upload into memory/disk per request — no
+# cap previously existed, so a handful of large POSTs could exhaust disk or
+# memory on the server.
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 ALLOWED_EXTENSIONS_TEXT = {'csv', 'xlsx', 'xls', 'json', 'txt'}
 ALLOWED_EXTENSIONS_IMAGE = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
@@ -54,6 +71,24 @@ _jobs_fallback: dict = {}
 
 # Ensure upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+@app.after_request
+def _set_security_headers(response):
+    """No security headers were previously set on any response. These are
+    the low-risk, high-value defaults: block MIME-sniffing, block being
+    framed by another site (clickjacking), and stop the exported HTML report
+    from loading any external resource even if a future template regresses
+    the escaping fixed above."""
+    response.headers.setdefault('X-Content-Type-Options', 'nosniff')
+    response.headers.setdefault('X-Frame-Options', 'DENY')
+    response.headers.setdefault('Referrer-Policy', 'same-origin')
+    if response.mimetype == 'text/html':
+        response.headers.setdefault(
+            'Content-Security-Policy',
+            "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'",
+        )
+    return response
 
 # Logging setup
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -89,6 +124,36 @@ def _warm_up_models():
         app.logger.exception(
             "Model warm-up failed — models will load lazily on first request instead."
         )
+
+
+# ── Upload retention (Upgrade 38) ───────────────────────────────────────────
+# Uploaded source files (potentially containing demographic/bias-relevant
+# content) previously lived in api_uploads/ forever — no TTL, no cleanup path
+# besides the OS filling up. UPLOAD_RETENTION_HOURS is deliberately
+# conservative (7 days) so a job someone wants to re-export or debug isn't
+# yanked out from under them; DELETE /api/jobs/<job_id> covers immediate,
+# explicit purges.
+UPLOAD_RETENTION_HOURS = float(os.environ.get('ETHIVIZ_UPLOAD_RETENTION_HOURS', '168'))
+_UPLOAD_SWEEP_INTERVAL_SECONDS = 3600
+
+
+def _sweep_stale_uploads():
+    """Background loop: once per hour, delete files in api_uploads/ older
+    than UPLOAD_RETENTION_HOURS. Runs for the lifetime of the process."""
+    upload_dir = Path(app.config['UPLOAD_FOLDER'])
+    while True:
+        cutoff = time.time() - UPLOAD_RETENTION_HOURS * 3600
+        try:
+            for path in upload_dir.glob('*'):
+                try:
+                    if path.is_file() and path.stat().st_mtime < cutoff:
+                        path.unlink()
+                        app.logger.info(f"Retention sweep removed stale upload: {path.name}")
+                except OSError:
+                    continue
+        except Exception:
+            app.logger.exception("Upload retention sweep failed.")
+        time.sleep(_UPLOAD_SWEEP_INTERVAL_SECONDS)
 
 
 # ── Job store helpers ────────────────────────────────────────────────────────
@@ -136,6 +201,22 @@ def _list_jobs(limit: int = 50) -> list[dict]:
     if HAS_JOB_STORE:
         return _job_store.list_jobs(limit=limit)
     return list(_jobs_fallback.values())[:limit]
+
+
+def _purge_job_uploads(job_id: str) -> int:
+    """Remove every uploaded source file for job_id from api_uploads/
+    (Upgrade 38). Files are saved as '{job_id}_{filename}', so a glob scoped
+    to that prefix is exact — job_id is a uuid4, not attacker-controlled path
+    input, so this cannot escape UPLOAD_FOLDER."""
+    upload_dir = Path(app.config['UPLOAD_FOLDER'])
+    removed = 0
+    for path in upload_dir.glob(f"{job_id}_*"):
+        try:
+            path.unlink()
+            removed += 1
+        except OSError as e:
+            app.logger.warning(f"Could not remove upload {path}: {e}")
+    return removed
 
 
 # --- Helper for Standardized Error Responses ---
@@ -584,6 +665,9 @@ def export_analysis_results(job_id):
 
     result = (memory_job or {}).get("result", {})
 
+    if HAS_JOB_STORE:
+        _job_store.log_event(job_id, "exported", {"format": fmt, "requester": request.remote_addr})
+
     if fmt == 'json':
         payload = json.dumps({"job_id": job_id, "results": result}, indent=2, default=str)
         return Response(
@@ -616,13 +700,21 @@ def export_analysis_results(job_id):
 
 
 def _generate_fallback_html(job_id: str, result: dict) -> str:
-    """Generate a simple HTML summary when the full BiasReport is unavailable."""
-    result_json = json.dumps(result, indent=2, default=str)
+    """Generate a simple HTML summary when the full BiasReport is unavailable.
+
+    `result` embeds user-supplied analysis input verbatim (e.g. each text
+    item's original_text), so it is untrusted content. Un-escaped f-string
+    interpolation here previously let an uploaded text containing
+    `</script><script>...` execute in the exported report — html.escape()
+    both values before they reach the template.
+    """
+    result_json = html.escape(json.dumps(result, indent=2, default=str))
+    safe_job_id = html.escape(job_id)
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>EthiViz Report — {job_id}</title>
+  <title>EthiViz Report — {safe_job_id}</title>
   <style>
     body {{ font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; padding: 2rem; }}
     h1 {{ color: #6366f1; }}
@@ -632,7 +724,7 @@ def _generate_fallback_html(job_id: str, result: dict) -> str:
 </head>
 <body>
   <h1>EthiViz Analysis Report</h1>
-  <p>Job ID: <code>{job_id}</code></p>
+  <p>Job ID: <code>{safe_job_id}</code></p>
   <h2>Results</h2>
   <pre>{result_json}</pre>
 </body>
@@ -648,6 +740,56 @@ def list_jobs():
         return jsonify({"jobs": jobs, "count": len(jobs)})
     except Exception as e:
         return make_error_response("Failed to list jobs.", 500, details=str(e))
+
+
+@app.route('/api/framework-coverage', methods=['GET'])
+def framework_coverage():
+    """Framework self-audit (Upgrade 36): how equitably EthiViz's own
+    prototype corpus covers its 7 traditions, independent of any single
+    analysis run. Answers the V5 plan's open question of whether CREI should
+    also evaluate the tool itself."""
+    try:
+        from ethiviz.frameworks.coverage_audit import coverage_report
+        return jsonify(coverage_report())
+    except Exception as e:
+        return make_error_response("Failed to compute framework coverage.", 500, details=str(e))
+
+
+@app.route('/api/jobs/<job_id>/audit-log', methods=['GET'])
+def job_audit_log(job_id):
+    """Expose the audit trail JobStore has been recording since Upgrade 31
+    but that no endpoint previously read back (Upgrade 39)."""
+    if not HAS_JOB_STORE:
+        return make_error_response("Audit log requires the SQLite job store.", 501)
+    job = _job_store.get_job(job_id)
+    if not job:
+        return make_error_response("Job not found.", 404, details=f"No job found with ID: {job_id}")
+    entries = _job_store.get_audit_log(job_id)
+    return jsonify({"job_id": job_id, "events": entries, "count": len(entries)})
+
+
+@app.route('/api/jobs/<job_id>', methods=['DELETE'])
+def delete_job(job_id):
+    """Purge a job's persisted record, results, uploaded source files, and
+    audit trail (Upgrade 38). Retention was previously indefinite: uploaded
+    files in api_uploads/ and rows in jobs.db never expired, which is both a
+    disk-exhaustion risk and a data-retention liability for a tool that
+    ingests demographic/bias-relevant content."""
+    job = _get_job(job_id) or _jobs_fallback.get(job_id)
+    if not job:
+        return make_error_response("Job not found.", 404, details=f"No job found with ID: {job_id}")
+
+    removed_files = _purge_job_uploads(job_id)
+
+    if HAS_JOB_STORE:
+        _job_store.delete_job(job_id)
+    _jobs_fallback.pop(job_id, None)
+
+    return jsonify({
+        "status": "deleted",
+        "job_id": job_id,
+        "files_removed": removed_files,
+    })
 
 
 @app.route('/api/compare', methods=['POST'])
@@ -797,7 +939,27 @@ if __name__ == '__main__':
     # running when a request arrives, get_analyzer()'s lock just makes that
     # request wait on the same load rather than duplicating it.
     threading.Thread(target=_warm_up_models, daemon=True).start()
+    # Retention sweep for uploaded source files (Upgrade 38) — see
+    # _sweep_stale_uploads for why this runs on an hourly loop rather than
+    # purging immediately after each job.
+    threading.Thread(target=_sweep_stale_uploads, daemon=True).start()
+
+    # debug=True previously ran in every environment, including whatever the
+    # user pointed `python Scripts/api_server.py` at. The Werkzeug debugger
+    # exposes an interactive Python console over HTTP on every unhandled
+    # exception — on host='0.0.0.0' that console was reachable from any
+    # network the machine is on, which is remote code execution, not a
+    # debugging convenience. ETHIVIZ_ENV must be explicitly set to
+    # 'development' to get the debugger back; every other value (including
+    # unset) runs the safe, production-appropriate defaults.
+    is_dev = os.environ.get('ETHIVIZ_ENV', 'production').lower() == 'development'
+    host = os.environ.get('ETHIVIZ_HOST', '127.0.0.1' if not is_dev else '0.0.0.0')
+    port = int(os.environ.get('ETHIVIZ_PORT', '5001'))
+    if is_dev:
+        app.logger.warning(
+            "ETHIVIZ_ENV=development — Flask debug mode is ON. Never set this in production."
+        )
     # use_reloader=False is required: with the Werkzeug debug reloader active,
     # a SIGTERM sent to the worker process by /api/stop can be silently
     # relaunched by the watcher parent instead of actually stopping the server.
-    app.run(debug=True, use_reloader=False, host='0.0.0.0', port=5001)
+    app.run(debug=is_dev, use_reloader=False, host=host, port=port)

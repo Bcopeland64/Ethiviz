@@ -8,7 +8,7 @@ Western-centric fairness standard.
 > A hiring algorithm can pass every Western fairness metric and still perpetuate bias
 > from an Ubuntu, Confucian, or Islamic ethical perspective. EthiViz surfaces both.
 
-This folder is the **current, working version** of EthiViz (v0.6.0): a real Flask API
+This folder is the **current, working version** of EthiViz (v0.7.0): a real Flask API
 backend running the actual 7-lens `ethiviz` engine, a React frontend, and start/stop
 scripts that run the whole thing end-to-end. Earlier folders in this repo
 (`Ethiviz_V2/`, `Ethiviz_V3/`, `Ethiviz_V4/`, `Ethiviz_V5/`) are preserved as historical

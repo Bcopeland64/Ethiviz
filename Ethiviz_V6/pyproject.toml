@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ethiviz"
-version = "0.6.0"
+version = "0.7.0"
 description = "Cross-cultural AI bias detection through seven ethical lenses with AIF360-parity fairness metrics and mitigation"
 readme = "README.md"
 license = {text = "Apache-2.0"}

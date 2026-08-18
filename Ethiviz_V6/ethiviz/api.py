@@ -30,6 +30,7 @@ from ethiviz.analysis.weat import (
 )
 from ethiviz.frameworks.conflict import ConflictResolver
 from ethiviz.frameworks.dimension_map import CrossCulturalDimensionMap
+from ethiviz.frameworks.coverage_audit import is_language_reviewed
 
 logger = logging.getLogger(__name__)
 
@@ -214,6 +215,26 @@ class Analyzer:
                 w for res in all_lens_results for w in res[fid].warnings
             })
 
+            # Translation review status (Upgrade 37). Every prototype file's
+            # translations directly determine non-English scores (see the
+            # provenance note in ethiviz/embeddings/prototypes/*.yaml), but
+            # nothing previously told a caller relying on those scores whether
+            # the translation had been reviewed by a fluent speaker or is only
+            # machine-generated (or, for 4 of 7 lenses, undeclared entirely).
+            translation_reviewed: bool | None = True
+            if language != "en":
+                translation_reviewed = is_language_reviewed(fid, language)
+                if translation_reviewed is False:
+                    lens_warnings.append(
+                        f"'{language}' scores for this lens rely on a machine-generated, "
+                        f"unreviewed translation — treat as provisional, not authoritative."
+                    )
+                elif translation_reviewed is None:
+                    lens_warnings.append(
+                        f"'{language}' scores for this lens use a translation whose review "
+                        f"status is undeclared — provenance was never recorded for this lens."
+                    )
+
             # Severity-aware aggregation. The mean alone dilutes concentrated
             # harm — one severely biased text in 100 averages to nearly zero,
             # hiding exactly the case that matters most. peak/p90 are reported
@@ -243,6 +264,7 @@ class Analyzer:
                     "language_confidence": mean_lang_confidence,
                     "analysis_coverage": mean_coverage,
                     "warnings": lens_warnings,
+                    "translation_reviewed": translation_reviewed,
                 },
             ))
 

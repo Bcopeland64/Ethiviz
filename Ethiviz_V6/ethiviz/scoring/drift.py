@@ -1,6 +1,8 @@
 # ethiviz/scoring/drift.py
 from __future__ import annotations
 import json
+import os
+import threading
 import numpy as np
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -53,6 +55,16 @@ class DriftMonitor:
         self.threshold = threshold
         self.SNAPSHOT_DIR = snapshot_dir or self.DEFAULT_SNAPSHOT_DIR
         self.SNAPSHOT_DIR.mkdir(parents=True, exist_ok=True)
+        # api_server.py runs each analysis job in its own daemon thread, and
+        # all jobs share one DriftMonitor instance (ethiviz_bridge.get_analyzer()
+        # singleton). Without a lock, two concurrent jobs analyzing the same
+        # lens race on read-then-write of the baseline/snapshot files: both can
+        # read the same baseline before either writes, and unguarded
+        # `open("w")` calls from two threads on the same path can interleave,
+        # corrupting the JSON. This lock serializes the read-modify-write
+        # cycle per instance; _save_snapshot additionally writes atomically as
+        # defense in depth for any other caller.
+        self._lock = threading.RLock()
 
     def record_snapshot(
         self,
@@ -63,6 +75,16 @@ class DriftMonitor:
     ) -> ScoreSnapshot:
         """Record a score distribution snapshot. If set_as_baseline=True,
         this snapshot becomes the reference for future drift comparisons."""
+        with self._lock:
+            return self._record_snapshot_locked(lens_id, scores, dataset_source, set_as_baseline)
+
+    def _record_snapshot_locked(
+        self,
+        lens_id: str,
+        scores: list[float],
+        dataset_source: str,
+        set_as_baseline: bool,
+    ) -> ScoreSnapshot:
         arr = np.array(scores, dtype=float)
         hist, edges = np.histogram(arr, bins=self.N_BINS, range=(0.0, 1.0))
         hist_norm = hist / (hist.sum() + 1e-8)
@@ -93,13 +115,22 @@ class DriftMonitor:
         Returns DriftAlert with KL divergence and recommended action.
         Raises RuntimeError if no baseline snapshot exists for this lens.
         """
+        with self._lock:
+            return self._check_drift_locked(lens_id, current_scores, dataset_source)
+
+    def _check_drift_locked(
+        self,
+        lens_id: str,
+        current_scores: list[float],
+        dataset_source: str,
+    ) -> DriftAlert:
         baseline = self._load_baseline(lens_id)
         if baseline is None:
             raise RuntimeError(
                 f"No baseline snapshot for lens '{lens_id}'. "
                 f"Call record_snapshot(..., set_as_baseline=True) first."
             )
-        current = self.record_snapshot(lens_id, current_scores, dataset_source)
+        current = self._record_snapshot_locked(lens_id, current_scores, dataset_source, False)
 
         # KL divergence between baseline and current histograms
         p = np.array(baseline.histogram) + 1e-8    # smoothing
@@ -152,14 +183,20 @@ class DriftMonitor:
             recommended_action=action,
         )
 
+    def _atomic_write_json(self, path: Path, data: dict) -> None:
+        """Write via a temp file + rename so a reader never observes a
+        partially-written file, even if called outside self._lock."""
+        tmp_path = path.with_suffix(f"{path.suffix}.{os.getpid()}.{threading.get_ident()}.tmp")
+        with tmp_path.open("w") as f:
+            json.dump(data, f, indent=2)
+        os.replace(tmp_path, path)
+
     def _save_snapshot(self, snapshot: ScoreSnapshot, is_baseline: bool) -> None:
         path = self.SNAPSHOT_DIR / f"{snapshot.snapshot_id}.json"
-        with path.open("w") as f:
-            json.dump(snapshot.__dict__, f, indent=2)
+        self._atomic_write_json(path, snapshot.__dict__)
         if is_baseline:
             baseline_path = self.SNAPSHOT_DIR / f"{snapshot.lens_id}_baseline.json"
-            with baseline_path.open("w") as f:
-                json.dump(snapshot.__dict__, f, indent=2)
+            self._atomic_write_json(baseline_path, snapshot.__dict__)
 
     def _load_baseline(self, lens_id: str) -> ScoreSnapshot | None:
         path = self.SNAPSHOT_DIR / f"{lens_id}_baseline.json"

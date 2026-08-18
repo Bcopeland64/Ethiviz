@@ -1,9 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import type { FrameworkCoverageReport } from '../utils/types';
+
+const API_BASE_URL = 'http://localhost:5001';
 
 interface TraditionScore {
   tradition: string;
   score: number;
   severity: string;
+  translation_reviewed?: boolean | null;
+  warnings?: string[];
 }
 
 interface CrossCulturalEquityDashboardProps {
@@ -48,6 +53,23 @@ export const CrossCulturalEquityDashboard: React.FC<CrossCulturalEquityDashboard
 
   const creiColor = crei > 0.75 ? '#22c55e' : crei > 0.5 ? '#f59e0b' : '#ef4444';
 
+  // Framework self-audit (Upgrade 36): whether EthiViz's own prototype
+  // corpus is balanced across traditions, independent of this run's content.
+  const [coverage, setCoverage] = useState<FrameworkCoverageReport | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${API_BASE_URL}/api/framework-coverage`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => { if (!cancelled) setCoverage(data); })
+      .catch(() => { if (!cancelled) setCoverage(null); });
+    return () => { cancelled = true; };
+  }, []);
+  const fciColor = (fci: number) => (fci > 0.75 ? '#22c55e' : fci > 0.5 ? '#f59e0b' : '#ef4444');
+
+  const traditionsWithTranslationCaveats = scores.filter(
+    (s) => s.translation_reviewed === false || s.translation_reviewed === null
+  );
+
   if (!scores || scores.length === 0) {
     return (
       <div className="p-4 text-gray-500 text-sm">
@@ -79,6 +101,21 @@ export const CrossCulturalEquityDashboard: React.FC<CrossCulturalEquityDashboard
           High CREI = balanced signal across lenses.
         </p>
       </div>
+
+      {/* Translation review caveats (Upgrade 37) */}
+      {traditionsWithTranslationCaveats.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded p-3 text-sm text-amber-800">
+          <strong>Translation caveat:</strong> scores for{' '}
+          {traditionsWithTranslationCaveats
+            .map((t) => TRADITION_LABELS[t.tradition] || t.tradition)
+            .join(', ')}{' '}
+          rely on a non-English translation that is{' '}
+          {traditionsWithTranslationCaveats.some((t) => t.translation_reviewed === null)
+            ? 'undeclared or unreviewed'
+            : 'machine-generated and unreviewed'}
+          . Treat these as provisional, not authoritative.
+        </div>
+      )}
 
       {/* Lens Balance */}
       <div>
@@ -134,6 +171,35 @@ export const CrossCulturalEquityDashboard: React.FC<CrossCulturalEquityDashboard
           )}
         </div>
       </div>
+
+      {/* Framework Self-Audit (Upgrade 36) */}
+      {coverage && (
+        <div className="bg-gray-50 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-medium text-gray-700">Framework Coverage Index (self-audit)</span>
+            <span className="text-2xl font-bold" style={{ color: fciColor(coverage.framework_coverage_index) }}>
+              {(coverage.framework_coverage_index * 100).toFixed(1)}%
+            </span>
+          </div>
+          <p className="text-xs text-gray-500 mb-3">
+            Unlike CREI above (which measures the content being analyzed), this measures
+            whether EthiViz's own prototype corpus is equally sized across all 7 traditions.
+          </p>
+          <div className="space-y-1">
+            {coverage.traditions.map((t) => (
+              <div key={t.framework_id} className="flex items-center gap-3 text-sm">
+                <div className="w-36 text-gray-600 shrink-0">{t.label}</div>
+                <div className="w-24 text-gray-500">{t.prototype_count} prototypes</div>
+                <div className="text-xs text-gray-400">
+                  {t.translations_undeclared
+                    ? 'translation review: undeclared'
+                    : `translations reviewed: ${t.translations_reviewed}, machine-generated: ${t.translations_machine_generated}`}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
