@@ -25,6 +25,7 @@ Multi-Perspective Ethical Analysis"* (IU University of Applied Sciences, Septemb
 - [Known Limitations](#known-limitations)
 - [Upgrading from V5](#upgrading-from-v5)
 - [Testing](#testing)
+- [What's Coming in Version 7](#whats-coming-in-version-7)
 - [Project Management Documentation](#project-management-documentation)
 - [Academic Context](#academic-context)
 - [License](#license)
@@ -423,6 +424,127 @@ python3.13 -m pytest tests/ -q
 
 162 tests cover the engine, lenses, cultural metrics, multilingual coverage and
 calibration, the dimension map, WEAT/iWEAT, mitigation modules, and the job store.
+
+---
+
+## What's Coming in Version 7
+
+> **Status: proposed, not yet approved.** The V7 plan is written and under review
+> (*ETHIVIZ_V7_IMPROVEMENT_PLAN.md*, August 2026). No V7 code has been written, and
+> scope may change based on the open questions at the end of this section.
+
+V5 closed the AIF360 parity gap. V6 repaired the engine. **V7's job is different: make
+EthiViz safe and stable to run somewhere other than a developer's laptop.** The engine is
+not the problem — what's missing is the operational layer around it, plus the wiring that
+would make already-built, already-tested modules reachable from the running app.
+
+### Guiding principle
+
+> Nothing new ships until what's already built is either wired in or explicitly cut, and
+> nothing gets exposed beyond localhost until the security tier lands.
+
+V7 does **not** add an eighth ethical tradition or a new metric family. Feature growth
+resumes in V8, on top of this foundation.
+
+### The gaps V7 targets
+
+| Gap today (V6) | V7 answer |
+|---|---|
+| No authentication on any API route | API-key auth, with jobs scoped to their owner |
+| No rate limiting; unbounded job submission | Rate limits, per-key concurrent-job caps, bounded queue |
+| Flask development server is the documented entry point | gunicorn behind a TLS-terminating reverse proxy |
+| Jobs run on bare threads: no retry, no backpressure, lost on restart | RQ + Redis task queue with retries and a separate worker process |
+| Shared `Analyzer` calibrator/drift state can race under concurrency | Per-worker `Analyzer` instances, locked writes, and a concurrency regression test |
+| No CI, no container image, no dependency scanning | GitHub Actions pipeline, Docker image, `pip-audit` / `npm audit` / `bandit` / `trivy` |
+| V6 findings, metrics, and mitigation built but invisible in the UI | Wired through the bridge and surfaced in new UI panels |
+
+### Planned upgrades (Tier 6, upgrades 40–63)
+
+**🔒 Group A — Security hardening** *(must land before any non-localhost exposure)*
+
+| # | Upgrade | What it does |
+|---|---|---|
+| 40 | Authentication & authorization | Bearer API-key auth via a `before_request` hook; jobs, audit logs, and deletion scoped to the owning key (stored as a hash, never the raw key); built as middleware so OAuth or user accounts can be added later |
+| 41 | Rate limiting & abuse prevention | `flask-limiter` on `/api/analyze` and `/api/compare`; per-key concurrent-job cap; rejections reuse the existing JSON error shape |
+| 42 | Production WSGI + TLS path | gunicorn behind nginx; separate dev and production docs; full security-header set (`nosniff`, `X-Frame-Options`, CSP, HSTS) |
+| 43 | Upload content verification | Magic-byte sniffing so a mislabelled file is rejected; decompression-bomb guard on image dimensions; per-key daily upload quota |
+| 44 | CI-enforced security scanning | `pip-audit`, `npm audit`, `bandit`, and `trivy` in GitHub Actions; builds fail on new high/critical findings; suppressions carry a review date |
+| 45 | Tamper-evident audit log | Hash-chained audit rows, plus `?verify=true` on the audit-log endpoint to detect edited history |
+
+**⚙️ Group B — Scalable production architecture**
+
+| # | Upgrade | What it does |
+|---|---|---|
+| 46 | Real task queue | RQ + Redis replaces per-request threads; bounded queue depth; one retry with backoff; workers run as a separate process (`Scripts/worker.py`) |
+| 47 | Thread-safe shared analyzer state | Resolves the race named in [Known Limitations](#known-limitations): per-worker `Analyzer` instances, lock plus atomic writes extended to the calibrator, and a new `tests/test_concurrency.py` |
+| 48 | PostgreSQL backend option | `DATABASE_URL`-driven backend via SQLAlchemy Core; SQLite stays the zero-config default |
+| 49 | Containerization + CI/CD | Multi-stage Dockerfile running as a non-root user; `docker-compose.yml` for API, worker, Redis, optional Postgres, and the frontend behind nginx |
+| 50 | Observability | Structured JSON logs with request and job IDs; Prometheus `GET /metrics`; per-request correlation ID carried through to async jobs |
+
+**🔌 Group C — Activate the dormant engine** *(highest value for the least risk: wiring, not building)*
+
+| # | Upgrade | What it does |
+|---|---|---|
+| 51 | Surface dimension-level findings | `construct_readings`, `analysis_coverage`, and per-lens `warnings` pass through the bridge into the API; the UI shows consensus vs. tradition-specific findings and a badge on unreviewed non-English results |
+| 52 | Statistical fairness metrics panel | `ethiviz/metrics/` wired into `Analyzer.analyze()` behind `include_statistical_metrics=True`; SPD, DI, EOD, AOD, and Theil shown beside the cultural scores |
+| 53 | Mitigation "what-if" panel | `ethiviz/mitigation/` as a **non-destructive preview** of how each tradition's score would change under a debiasing method |
+| 54 | Parse `severity_thresholds`; resolve stubs | Framework loader reads the YAML thresholds, replacing the proxy rescaling; demographic stubs are either implemented or removed |
+
+**🌍 Group D — Cultural & scientific rigor**
+
+| # | Upgrade | What it does |
+|---|---|---|
+| 55 | Fluent-speaker translation review | A review workflow with `reviewed_by` / `reviewed_at` fields, so the coverage audit can tell "reviewed" apart from "merely present" |
+| 56 | Indigenous language partnership infrastructure | CARE-aligned data intake and a required `community_consent` block per prototype set. This builds the *infrastructure only*; the partnership itself is out of the engineering timeline |
+| 57 | Calibration validation | Held-out, human-annotated examples per tradition; Brier score and reliability diagrams to check whether "confidence 0.7" is right about 70% of the time |
+
+**🎨 Group E — Frontend and UX**
+
+| # | Upgrade | What it does |
+|---|---|---|
+| 58 | Auth-aware UI | API-key entry and per-owner job history |
+| 59 | PDF export + accessibility pass | `pdf` export format; WCAG 2.1 AA audit, including non-color-only signals for heatmaps and severity indicators |
+| 60 | Dimension-map visualizations | `DimensionMapView.tsx` showing consensus vs. tradition-divergence, the platform's most distinctive output, which currently has no visual form |
+
+**✅ Group F — Testing, QA & compliance**
+
+| # | Upgrade | What it does |
+|---|---|---|
+| 61 | CI-gated test suite | Merges to `main` gated on backend and Jest suites, plus a ratcheting coverage floor |
+| 62 | Load, concurrency & security testing | Load tests on `/api/analyze`; a focused security review once Upgrades 40–45 land |
+| 63 | Data retention & regulatory docs | Operator-facing `docs/compliance.md` on what is retained, for how long, and how data-subject requests are fulfilled |
+
+### Suggested phasing
+
+1. **Security foundation** (40–45) — independent of everything else; can start immediately.
+2. **Scalable architecture** (46–50) — the queue (46) and the singleton fix (47) are coupled; CI and containers (49) land early so later work is built inside the pipeline.
+3. **Activate the dormant engine** (51–54) — can run in parallel with phase 2 once phase 1 is stable.
+4. **Cultural rigor** (55–57) — longer-horizon; Upgrade 56 depends on external partnership and gates nothing else.
+5. **Frontend deepening** (58–60) — 58 needs auth from phase 1; 60 needs the data surfaced in phase 3.
+6. **QA & compliance hardening** (61–63) — 61 starts alongside the CI pipeline in phase 2; full load and security testing (62) needs phases 1–2 complete.
+
+### What changes for an operator
+
+| Question | V6 today | V7 (planned) |
+|---|---|---|
+| Can anyone who reaches the port read or delete every job? | Yes | No — API-key scoped |
+| Can one caller exhaust the server with job spam? | Yes | No — rate-limited, bounded queue |
+| Is the calibrator safe under concurrent jobs? | No — documented race | Yes — per-worker instance, locked writes |
+| Does a crashed job get retried? | No — stuck in `processing` | Yes — requeued with backoff |
+| Is there a repeatable deploy artifact? | No Dockerfile, no CI | Yes — image plus CI-gated pipeline |
+| Do `construct_readings`, warnings, and coverage reach the UI? | No | Yes |
+| Are the fairness metrics and mitigation algorithms usable from the app? | No | Yes |
+| Is there a documented retention and deletion policy? | Mechanism only | Yes |
+
+### Open decisions
+
+These are still unresolved and affect scope:
+
+1. **Auth model:** is API-key auth enough, or is this heading toward multi-user accounts / OAuth?
+2. **Deployment target:** self-hosted single operator (Docker Compose suffices) or hosted multi-tenant (pulls in Postgres and per-tenant rate limiting)?
+3. **Mitigation panel:** preview-only (the lower-risk default), or an option to apply debiasing and re-run the analysis?
+4. **Security testing:** an external penetration test once phase 1 lands, or internal SAST/DAST and fuzzing?
+5. **Indigenous language partnership:** is there an existing community contact, or should V7 build the intake infrastructure and leave the partnership out of its timeline?
 
 ---
 
