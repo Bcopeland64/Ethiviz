@@ -1,0 +1,105 @@
+# EthiViz V7 — Upgrade 49. Wires the API, one RQ worker, Redis (Upgrade 46),
+# Postgres (Upgrade 48), and the built React frontend behind nginx (Upgrade
+# 42's reverse-proxy pattern, adapted for Compose's internal networking —
+# see deploy/nginx.docker.conf) into one stack for local/self-hosted use.
+#
+# Quick start:
+#   cp .env.example .env   # set ETHIVIZ_API_KEYS and POSTGRES_PASSWORD at minimum
+#   docker compose up --build
+#   open http://localhost:8080
+#
+# Every service here still works without this file — SQLite/no-Redis/no-auth
+# is the code's own zero-config default (see README.md). This Compose stack
+# is the "everything turned on" reference deployment, not a requirement.
+
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ethiviz
+      POSTGRES_USER: ethiviz
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ethiviz"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      target: runtime
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      ETHIVIZ_REDIS_URL: redis://redis:6379/0
+      DATABASE_URL: postgresql+psycopg://ethiviz:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/ethiviz
+      ETHIVIZ_API_KEYS: ${ETHIVIZ_API_KEYS:-}
+      ETHIVIZ_ALLOWED_ORIGINS: ${ETHIVIZ_ALLOWED_ORIGINS:-http://localhost:8080}
+      # nginx is the only thing that talks to `api` directly on this network
+      # (see deploy/nginx.docker.conf) — safe to trust its X-Forwarded-For.
+      ETHIVIZ_TRUST_PROXY: "true"
+    volumes:
+      - ethiviz-uploads:/app/api_uploads
+      - ethiviz-home:/home/ethiviz/.ethiviz
+    expose:
+      - "5001"
+
+  worker:
+    build:
+      context: .
+      target: runtime
+    command: ["python", "Scripts/worker.py"]
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      ETHIVIZ_REDIS_URL: redis://redis:6379/0
+      DATABASE_URL: postgresql+psycopg://ethiviz:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/ethiviz
+    volumes:
+      - ethiviz-uploads:/app/api_uploads
+      - ethiviz-home:/home/ethiviz/.ethiviz
+
+  frontend:
+    build:
+      context: .
+      target: frontend
+      args:
+        # Same-origin: the browser talks to this nginx container, which
+        # reverse-proxies /api/ to the `api` service internally (see
+        # deploy/nginx.docker.conf). A hardcoded http://localhost:5001
+        # would resolve to the *browser's* machine, not this stack, on
+        # anything but a local single-host deployment.
+        VITE_API_BASE_URL: ""
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "${ETHIVIZ_HTTP_PORT:-8080}:80"
+
+volumes:
+  redis-data:
+  postgres-data:
+  ethiviz-uploads:
+  ethiviz-home:

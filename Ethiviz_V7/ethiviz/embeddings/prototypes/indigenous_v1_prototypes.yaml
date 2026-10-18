@@ -1,0 +1,140 @@
+# Indigenous / First Nations ethical lens (v1) prototype set.
+#
+# TRANSLATION PROVENANCE — read before relying on non-English scores.
+# The 'en' text of every prototype below is the authored source of record.
+# Translations marked machine_generated in translation_provenance were
+# produced without native-speaker review. They are semantic anchors that
+# directly determine scores in their language, so a mistranslation silently
+# corrupts every result for that language. Have a fluent reviewer confirm
+# each set before treating non-English output as authoritative, then move
+# the language code from machine_generated to reviewed.
+#
+# Note: the six supported languages are all colonial/majority languages.
+# None of them is an Indigenous language, so this lens cannot currently
+# analyse text in the languages of the communities it is written to protect.
+# Adding Indigenous-language prototype sets requires community partnership
+# and CARE-aligned data governance, not machine translation.
+translation_provenance:
+  reviewed: []
+  machine_generated: [ar, zh, es, fr, hi]
+
+prototypes:
+  - id: indigenous_knowledge_extraction_001
+    text: "We can use indigenous knowledge without asking permission or giving credit."
+    severity: 1.00
+    category: knowledge_extraction
+    language: en
+    translations:
+      es: "Podemos usar el conocimiento indígena sin pedir permiso ni dar crédito."
+      fr: "Nous pouvons utiliser le savoir autochtone sans demander permission ni crédit."
+      ar: "يمكننا استخدام معارف الشعوب الأصلية دون طلب إذن أو الإشارة إلى مصدرها."
+      zh: "我们可以使用原住民的知识，不必征求许可，也不必注明出处。"
+      hi: "हम स्वदेशी ज्ञान का उपयोग बिना अनुमति माँगे या श्रेय दिए कर सकते हैं।"
+
+  - id: indigenous_land_commodity_001
+    text: "The land is just a resource to be extracted for maximum economic value."
+    severity: 0.90
+    category: land_relational_harm
+    language: en
+    translations:
+      es: "La tierra es solo un recurso para extraer el máximo valor económico."
+      fr: "La terre n'est qu'une ressource à extraire pour une valeur économique maximale."
+      ar: "الأرض مجرد مورد يُستخرج لتحقيق أقصى قيمة اقتصادية."
+      zh: "土地只是一种资源，应当开采以获取最大经济价值。"
+      hi: "भूमि केवल एक संसाधन है जिसे अधिकतम आर्थिक मूल्य के लिए निकाला जाना चाहिए।"
+
+  - id: indigenous_cultural_erasure_001
+    text: "Indigenous languages are dying out and there is no need to preserve them."
+    severity: 0.90
+    category: cultural_erasure
+    language: en
+    translations:
+      es: "Las lenguas indígenas están desapareciendo y no hay necesidad de preservarlas."
+      fr: "Les langues autochtones disparaissent et il n'est pas nécessaire de les préserver."
+      ar: "لغات الشعوب الأصلية تندثر ولا حاجة للحفاظ عليها."
+      zh: "原住民语言正在消亡，没有必要保护它们。"
+      hi: "स्वदेशी भाषाएँ लुप्त हो रही हैं और उन्हें संरक्षित करने की कोई आवश्यकता नहीं है।"
+
+  - id: indigenous_stereotyping_001
+    text: "All indigenous people live in traditional villages and reject modern technology."
+    severity: 0.75
+    category: stereotyping
+    language: en
+    translations:
+      es: "Todos los indígenas viven en aldeas tradicionales y rechazan la tecnología moderna."
+      fr: "Tous les peuples autochtones vivent dans des villages traditionnels et rejettent la technologie."
+      ar: "جميع السكان الأصليين يعيشون في قرى تقليدية ويرفضون التكنولوجيا الحديثة."
+      zh: "所有原住民都住在传统村落里，排斥现代科技。"
+      hi: "सभी स्वदेशी लोग पारंपरिक गाँवों में रहते हैं और आधुनिक तकनीक को अस्वीकार करते हैं।"
+
+  - id: indigenous_seven_generations_001
+    text: "We should only consider immediate profits, not impacts on future generations."
+    severity: 0.85
+    category: seven_generations_violation
+    language: en
+    translations:
+      es: "Solo debemos considerar las ganancias inmediatas, no el impacto en las generaciones futuras."
+      fr: "Nous ne devrions considérer que les profits immédiats, pas l'impact sur les générations futures."
+      ar: "ينبغي أن ننظر فقط إلى الأرباح الفورية، لا إلى آثارها على الأجيال القادمة."
+      zh: "我们只应考虑眼前利润，而不是对后代的影响。"
+      hi: "हमें केवल तात्कालिक लाभ पर विचार करना चाहिए, भावी पीढ़ियों पर पड़ने वाले प्रभाव पर नहीं।"
+
+  - id: indigenous_knowledge_extraction_002
+    text: "Traditional healing practices should be patented by pharmaceutical companies."
+    severity: 1.00
+    category: knowledge_extraction
+    language: en
+    translations:
+      es: "Las prácticas de curación tradicionales deben ser patentadas por empresas farmacéuticas."
+      fr: "Les pratiques de guérison traditionnelles devraient être brevetées par des entreprises pharmaceutiques."
+      ar: "ينبغي أن تحصل شركات الأدوية على براءات اختراع لممارسات الطب التقليدي."
+      zh: "传统疗法应当由制药公司申请专利。"
+      hi: "पारंपरिक उपचार पद्धतियों का पेटेंट दवा कंपनियों को लेना चाहिए।"
+
+  - id: indigenous_cultural_erasure_002
+    text: "Indigenous ceremonies and spiritual practices are primitive superstitions."
+    severity: 1.00
+    category: cultural_erasure
+    language: en
+    translations:
+      es: "Las ceremonias y prácticas espirituales indígenas son supersticiones primitivas."
+      fr: "Les cérémonies et pratiques spirituelles autochtones sont des superstitions primitives."
+      ar: "طقوس الشعوب الأصلية وممارساتها الروحية خرافات بدائية."
+      zh: "原住民的仪式和灵性习俗是原始迷信。"
+      hi: "स्वदेशी समारोह और आध्यात्मिक प्रथाएँ आदिम अंधविश्वास हैं।"
+
+  - id: indigenous_land_relational_002
+    text: "Forests have no value except as timber and carbon credits."
+    severity: 0.80
+    category: land_relational_harm
+    language: en
+    translations:
+      es: "Los bosques no tienen más valor que la madera y los créditos de carbono."
+      fr: "Les forêts n'ont d'autre valeur que le bois et les crédits carbone."
+      ar: "الغابات لا قيمة لها سوى كونها أخشاباً وأرصدة كربون."
+      zh: "森林除了木材和碳信用额之外没有任何价值。"
+      hi: "जंगलों का लकड़ी और कार्बन क्रेडिट के अलावा कोई मूल्य नहीं है।"
+
+  - id: indigenous_stereotyping_002
+    text: "Native peoples are naturally less capable of managing modern economic systems."
+    severity: 1.00
+    category: stereotyping
+    language: en
+    translations:
+      es: "Los pueblos nativos son naturalmente menos capaces de gestionar sistemas económicos modernos."
+      fr: "Les peuples autochtones sont naturellement moins aptes à gérer les systèmes économiques modernes."
+      ar: "الشعوب الأصلية أقل قدرة بطبيعتها على إدارة الأنظمة الاقتصادية الحديثة."
+      zh: "原住民天生就不太有能力管理现代经济体系。"
+      hi: "मूल निवासी स्वभाव से आधुनिक आर्थिक प्रणालियों का प्रबंधन करने में कम सक्षम हैं।"
+
+  - id: indigenous_seven_generations_002
+    text: "Environmental damage today is acceptable because future generations will find solutions."
+    severity: 0.75
+    category: seven_generations_violation
+    language: en
+    translations:
+      es: "El daño ambiental de hoy es aceptable porque las generaciones futuras encontrarán soluciones."
+      fr: "Les dommages environnementaux d'aujourd'hui sont acceptables car les générations futures trouveront des solutions."
+      ar: "الضرر البيئي اليوم مقبول لأن الأجيال القادمة ستجد حلولاً."
+      zh: "今天的环境破坏是可以接受的，因为后代会找到解决办法。"
+      hi: "आज का पर्यावरणीय नुकसान स्वीकार्य है क्योंकि भावी पीढ़ियाँ समाधान खोज लेंगी।"

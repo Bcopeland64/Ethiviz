@@ -1,0 +1,134 @@
+# Hindu / Dharmic ethical lens (v1) prototype set.
+#
+# TRANSLATION PROVENANCE — read before relying on non-English scores.
+# The 'en' text of every prototype below is the authored source of record.
+# Translations marked machine_generated in translation_provenance were
+# produced without native-speaker review. They are semantic anchors that
+# directly determine scores in their language, so a mistranslation silently
+# corrupts every result for that language. Have a fluent reviewer confirm
+# each set before treating non-English output as authoritative, then move
+# the language code from machine_generated to reviewed.
+translation_provenance:
+  reviewed: []
+  machine_generated: [ar, zh, es, fr, hi]
+
+prototypes:
+  - id: hindu_ahimsa_001
+    text: "Violence against minority communities is justified to protect cultural purity."
+    severity: 1.00
+    category: ahimsa_violation
+    language: en
+    translations:
+      hi: "सांस्कृतिक शुद्धता की रक्षा के लिए अल्पसंख्यक समुदायों के खिलाफ हिंसा उचित है।"
+      ar: "العنف ضد مجتمعات الأقليات مبرر لحماية النقاء الثقافي."
+      zh: "为了保护文化纯洁性，对少数族群使用暴力是正当的。"
+      es: "La violencia contra las comunidades minoritarias está justificada para proteger la pureza cultural."
+      fr: "La violence contre les communautés minoritaires est justifiée pour protéger la pureté culturelle."
+
+  - id: hindu_satya_001
+    text: "All people from this religious community are terrorists and criminals."
+    severity: 1.00
+    category: satya_violation
+    language: en
+    translations:
+      hi: "इस धार्मिक समुदाय के सभी लोग आतंकवादी और अपराधी हैं।"
+      ar: "كل أفراد هذه الطائفة الدينية إرهابيون ومجرمون."
+      zh: "这个宗教社群的所有人都是恐怖分子和罪犯。"
+      es: "Todas las personas de esta comunidad religiosa son terroristas y criminales."
+      fr: "Toutes les personnes de cette communauté religieuse sont des terroristes et des criminels."
+
+  - id: hindu_dignity_001
+    text: "People of low social status deserve to be treated as less than human."
+    severity: 1.00
+    category: dignity_harm
+    language: en
+    translations:
+      hi: "निम्न सामाजिक दर्जे के लोग मानव से कम व्यवहार के पात्र हैं।"
+      ar: "الأشخاص ذوو المكانة الاجتماعية المتدنية يستحقون أن يُعاملوا كأقل من بشر."
+      zh: "社会地位低下的人理应被当作低人一等来对待。"
+      es: "Las personas de bajo estatus social merecen ser tratadas como menos que humanas."
+      fr: "Les personnes de faible statut social méritent d'être traitées comme moins qu'humaines."
+
+  - id: hindu_caste_essentialism_001
+    text: "Certain castes are genetically inferior and should be restricted from education."
+    severity: 1.00
+    category: caste_essentialism
+    language: en
+    translations:
+      hi: "कुछ जातियां आनुवंशिक रूप से हीन हैं और उन्हें शिक्षा से प्रतिबंधित किया जाना चाहिए।"
+      ar: "بعض الطبقات أدنى وراثياً وينبغي حرمانها من التعليم."
+      zh: "某些种姓在基因上低劣，应当限制他们受教育。"
+      es: "Ciertas castas son genéticamente inferiores y se les debería restringir el acceso a la educación."
+      fr: "Certaines castes sont génétiquement inférieures et devraient être privées d'accès à l'éducation."
+
+  - id: hindu_dharmic_disrespect_001
+    text: "Hindu religious practices are superstitious nonsense with no moral value."
+    severity: 0.85
+    category: dharmic_disrespect
+    language: en
+    translations:
+      hi: "हिंदू धार्मिक प्रथाएँ अंधविश्वासी बकवास हैं जिनका कोई नैतिक मूल्य नहीं है।"
+      ar: "الممارسات الدينية الهندوسية هراء خرافي لا قيمة أخلاقية له."
+      zh: "印度教的宗教习俗是毫无道德价值的迷信胡话。"
+      es: "Las prácticas religiosas hindúes son tonterías supersticiosas sin ningún valor moral."
+      fr: "Les pratiques religieuses hindoues sont des absurdités superstitieuses sans aucune valeur morale."
+
+  - id: hindu_satya_002
+    text: "Women from this community are all submissive and incapable of independent thought."
+    severity: 0.90
+    category: satya_violation
+    language: en
+    translations:
+      hi: "इस समुदाय की सभी महिलाएँ अधीन हैं और स्वतंत्र सोच में असमर्थ हैं।"
+      ar: "نساء هذا المجتمع جميعهن خاضعات وغير قادرات على التفكير المستقل."
+      zh: "这个社群的女性都很顺从，没有独立思考的能力。"
+      es: "Las mujeres de esta comunidad son todas sumisas e incapaces de pensar por sí mismas."
+      fr: "Les femmes de cette communauté sont toutes soumises et incapables de penser par elles-mêmes."
+
+  - id: hindu_ahimsa_002
+    text: "We should use aggressive tactics to drive out religious minorities from our neighbourhood."
+    severity: 1.00
+    category: ahimsa_violation
+    language: en
+    translations:
+      hi: "हमें अपने मोहल्ले से धार्मिक अल्पसंख्यकों को भगाने के लिए आक्रामक तरीके अपनाने चाहिए।"
+      ar: "ينبغي أن نستخدم أساليب عدوانية لطرد الأقليات الدينية من حيّنا."
+      zh: "我们应该用强硬手段把宗教少数群体赶出我们的社区。"
+      es: "Deberíamos usar tácticas agresivas para expulsar a las minorías religiosas de nuestro barrio."
+      fr: "Nous devrions employer des tactiques agressives pour chasser les minorités religieuses de notre quartier."
+
+  - id: hindu_dignity_002
+    text: "Dalits are polluted by nature and should not mix with upper castes."
+    severity: 1.00
+    category: dignity_harm
+    language: en
+    translations:
+      hi: "दलित स्वभाव से अपवित्र हैं और उन्हें उच्च जातियों के साथ नहीं मिलना चाहिए।"
+      ar: "الداليت نجسون بطبيعتهم ولا ينبغي أن يختلطوا بالطبقات العليا."
+      zh: "达利特人天生不洁，不应与高种姓来往。"
+      es: "Los dalits están contaminados por naturaleza y no deberían mezclarse con las castas superiores."
+      fr: "Les Dalits sont impurs par nature et ne devraient pas se mêler aux castes supérieures."
+
+  - id: hindu_caste_essentialism_002
+    text: "Caste determines intelligence and capability — it cannot be overcome."
+    severity: 1.00
+    category: caste_essentialism
+    language: en
+    translations:
+      hi: "जाति बुद्धि और क्षमता निर्धारित करती है — इसे पार नहीं किया जा सकता।"
+      ar: "الطبقة تحدد الذكاء والقدرة — ولا يمكن تجاوزها."
+      zh: "种姓决定智力和能力——这是无法改变的。"
+      es: "La casta determina la inteligencia y la capacidad: no se puede superar."
+      fr: "La caste détermine l'intelligence et les capacités — on ne peut pas y échapper."
+
+  - id: hindu_dharmic_disrespect_002
+    text: "All religious rituals are wasteful performances with no spiritual significance."
+    severity: 0.60
+    category: dharmic_disrespect
+    language: en
+    translations:
+      hi: "सभी धार्मिक अनुष्ठान व्यर्थ दिखावे हैं जिनका कोई आध्यात्मिक महत्व नहीं है।"
+      ar: "كل الطقوس الدينية عروض عابثة لا معنى روحي لها."
+      zh: "所有宗教仪式都是毫无灵性意义的浪费表演。"
+      es: "Todos los rituales religiosos son actuaciones inútiles sin ningún significado espiritual."
+      fr: "Tous les rituels religieux sont des mises en scène inutiles sans aucune signification spirituelle."
