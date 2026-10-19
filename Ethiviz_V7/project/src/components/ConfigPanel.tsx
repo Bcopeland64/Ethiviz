@@ -283,6 +283,12 @@ function ConfigPanel({
       <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 via-transparent to-purple-50/50 pointer-events-none"></div>
       <div className="p-6 relative h-full overflow-y-auto"> {/* Added h-full and overflow-y-auto */}
         <div className="space-y-6"> {/* Reduced space-y for compactness */}
+          <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+            Uploaded files are retained temporarily (7 days by default) for job history.
+            Delete jobs when no longer needed. API-key authentication is disabled unless
+            the server operator configures keys; do not expose an unconfigured server
+            beyond localhost.
+          </div>
           
           {/* Local Error Display for ConfigPanel specific issues (e.g. initial submission validation) */}
           {error && (

@@ -11,6 +11,7 @@ import uuid
 import threading
 import time
 import logging
+from typing import Any
 from flask import Flask, request, jsonify, Response, g
 from flask_cors import CORS # Import CORS
 from flask_limiter import Limiter
@@ -557,17 +558,21 @@ def run_analysis_job(job_id, analysis_type, data_inputs, selected_traditions, ad
     # these.
     job_status = "failed"
     job_tradition_scores: list[dict] | None = None
+    phase_timings: dict[str, Any] = {}
+    analysis_started = time.perf_counter()
 
     try:
         text_results = None
         image_results = None
         text_scores: list[dict] = []
         image_scores: list[dict] = []
+        text_performance: dict[str, Any] = {}
 
         selected_fids = bridge.resolve_framework_ids(selected_traditions)
 
         dimension_findings: dict | None = None
         if has_text:
+            phase_started = time.perf_counter()
             text_input = data_inputs.get("text_input")
             app.logger.info(f"Job {job_id}: Running text analysis. Input type: {type(text_input)}")
 
@@ -584,10 +589,16 @@ def run_analysis_job(job_id, analysis_type, data_inputs, selected_traditions, ad
                 job_id=job_id,
                 progress_callback=make_progress_cb(text_span, "Analyzing text"),
                 include_statistical_metrics=include_statistical_metrics,
+                performance_output=text_performance,
             )
             app.logger.info(f"Job {job_id}: Text analysis completed.")
+            phase_timings["text_analysis_seconds"] = round(
+                time.perf_counter() - phase_started, 4
+            )
+            phase_timings["text_engine"] = text_performance
 
         if has_image:
+            phase_started = time.perf_counter()
             if not HAS_IMAGE_ANALYZER:
                 app.logger.warning(
                     f"Job {job_id}: vision dependencies not installed — image analysis "
@@ -605,6 +616,9 @@ def run_analysis_job(job_id, analysis_type, data_inputs, selected_traditions, ad
                 progress_callback=make_progress_cb(image_span, "Analyzing images"),
             )
             app.logger.info(f"Job {job_id}: Image analysis completed.")
+            phase_timings["image_analysis_seconds"] = round(
+                time.perf_counter() - phase_started, 4
+            )
 
         _update_job(job_id, progress={"percent": 95, "message": "Finalizing results..."})
         final_results = {}
@@ -623,6 +637,12 @@ def run_analysis_job(job_id, analysis_type, data_inputs, selected_traditions, ad
 
         tradition_scores = bridge.merge_tradition_scores_across_modalities(text_scores, image_scores)
         final_results["tradition_scores"] = tradition_scores
+        phase_timings["total_seconds"] = round(
+            time.perf_counter() - analysis_started, 4
+        )
+        phase_timings["text_segments"] = len(text_results) if text_results else 0
+        phase_timings["images"] = len(image_results) if image_results else 0
+        final_results["performance"] = phase_timings
 
         _update_job(job_id, status="completed", result=final_results,
                     progress={"percent": 100, "message": "Analysis complete."})

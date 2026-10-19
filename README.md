@@ -15,8 +15,8 @@ Multi-Perspective Ethical Analysis"* (IU University of Applied Sciences, Septemb
 ## Table of Contents
 
 - [What Makes EthiViz Different](#what-makes-ethiviz-different)
-- [Current Version: V6](#current-version-v6)
-- [What Changed in V6](#what-changed-in-v6)
+- [Current Version: V7](#current-version-v7)
+- [Historical V6 Engine Changes](#historical-v6-engine-changes)
 - [Quick Start](#quick-start)
 - [Architecture](#architecture)
 - [Ethical Traditions](#ethical-traditions)
@@ -25,7 +25,7 @@ Multi-Perspective Ethical Analysis"* (IU University of Applied Sciences, Septemb
 - [Known Limitations](#known-limitations)
 - [Upgrading from V5](#upgrading-from-v5)
 - [Testing](#testing)
-- [What's Coming in Version 7](#whats-coming-in-version-7)
+- [V7 Delivery Status](#v7-delivery-status)
 - [Project Management Documentation](#project-management-documentation)
 - [Academic Context](#academic-context)
 - [License](#license)
@@ -46,28 +46,31 @@ Confucian, Islamic, Buddhist, Hindu/Dharmic, and Indigenous/First Nations.
 
 ---
 
-## Current Version: V6
+## Current Version: V7
 
-**[`Ethiviz_V6/`](Ethiviz_V6/) is the current, actively maintained version (v0.7.0)** — a
-real Flask API backend running the actual 7-lens `ethiviz` engine, paired with a React
-frontend, with working start/stop scripts that run the whole stack end-to-end. See
-**[Ethiviz_V6/README.md](Ethiviz_V6/README.md)** for full architecture, API reference, and
-setup details, and **[Ethiviz_V6/CHANGELOG.md](Ethiviz_V6/CHANGELOG.md)** for breaking
-changes and migration notes.
+**[`Ethiviz_V7/`](Ethiviz_V7/) is the current project snapshot (v0.10.0)** — a Flask API
+backend running the 7-lens `ethiviz` engine, paired with a React frontend and local and
+containerized deployment paths. The root start/stop scripts launch V7. See
+**[Ethiviz_V7/README.md](Ethiviz_V7/README.md)** for architecture, API reference, setup,
+known limitations, and deployment guidance, and
+**[Ethiviz_V7/CHANGELOG.md](Ethiviz_V7/CHANGELOG.md)** for implementation history.
 
-`Ethiviz_V2/`, `Ethiviz_V3/`, `Ethiviz_V4/`, and `Ethiviz_V5/` are preserved in this repo
-as historical snapshots of earlier iterations. They are not maintained and should not be
-used for new work. Each version has a distinct contribution:
+`Ethiviz_V2/` through `Ethiviz_V6/` are preserved as historical snapshots and are not
+maintained for new work. Each major version has a distinct contribution:
 
 | Version | Contribution |
 |---|---|
 | V4 | Built the 7-lens engine as a library, but the web app never called it |
 | V5 | Wired the running web app to the real 7-lens engine |
-| **V6** | **Audited and repaired the engine itself: metrics, multilingual support, and cross-cultural reasoning** |
+| V6 | Audited and repaired the engine itself: metrics, multilingual support, and cross-cultural reasoning |
+| **V7** | **Added API security, operational scaling, cross-cultural findings, and production deployment paths** |
 
 ---
 
-## What Changed in V6
+## Historical V6 Engine Changes
+
+The following records the V6 engine work. V7 is the current project; use its README and
+changelog for current setup, API behavior, and known limitations.
 
 V5's contribution was architectural. V6 turns inward on the engine. The headline finding
 is that several of the metrics carrying the most cultural meaning were structurally unable
@@ -153,7 +156,7 @@ bash start_ethiviz.sh
 ```
 
 The root `start_ethiviz.sh` is a thin wrapper (as are `stop_ethiviz.sh` and
-`start_services.sh`) that launches the copies in `Ethiviz_V6/`. It installs the `ethiviz`
+`start_services.sh`) that launches the copies in `Ethiviz_V7/`. It installs the `ethiviz`
 package (editable) and Flask/flask-cors if missing, starts the backend on port **5001**,
 waits for it to respond, then starts the React frontend on port **5173**. Once both are
 up, open **http://localhost:5173**.
@@ -178,12 +181,12 @@ Without `--with-vision`, image analysis still works but degrades to a metadata-o
 
 ```bash
 # Terminal 1 — backend
-cd Ethiviz_V6
-python3.13 -m pip install --user -e .
-python3.13 Scripts/api_server.py      # http://localhost:5001
+cd Ethiviz_V7
+python3 -m pip install --user -e '.[api,semantic]'
+python3 Scripts/api_server.py          # http://localhost:5001
 
 # Terminal 2 — frontend
-cd Ethiviz_V6/project
+cd Ethiviz_V7/project
 npm install
 npm run dev                           # http://localhost:5173
 ```
@@ -210,7 +213,7 @@ Ethiviz/
 │   ├── Risk_Management_Plan.md         # Risk Register & Mitigation Strategy
 │   ├── Agile_Scrum_Artifacts.md        # Sprint Backlog, User Stories & Acceptance Criteria
 │   └── Stakeholder_Matrix.md           # Stakeholder Analysis & Communication Plan
-├── Ethiviz_V6/                         # ← current version, start here
+├── Ethiviz_V7/                         # ← current version, start here
 │   ├── ethiviz/                        # Python package (pip install -e .)
 │   │   ├── api.py                      # Analyzer — primary entry point
 │   │   ├── lenses/                     # 7 cultural ethical lenses (+ shared base scoring)
@@ -237,7 +240,7 @@ Ethiviz/
 │   │       ├── ExportButton.tsx, CompareMode.tsx
 │   │       ├── CrossCulturalEquityDashboard.tsx
 │   │       └── visualizations/CulturalFairnessHeatmap.tsx
-│   ├── tests/                          # 162 tests
+│   ├── tests/                          # backend regression suite
 │   │   ├── test_v5_phase1_metrics.py        # Repaired cultural metrics
 │   │   ├── test_v5_phase2_multilingual.py   # Coverage, calibration, translations
 │   │   └── test_v5_phase3_crosscultural.py  # Dimension map, WEAT parity, iWEAT
@@ -245,7 +248,7 @@ Ethiviz/
 │   ├── start_ethiviz.sh / stop_ethiviz.sh
 │   └── pyproject.toml
 │
-├── start_ethiviz.sh / stop_ethiviz.sh / start_services.sh  # root wrappers -> Ethiviz_V6/
+├── start_ethiviz.sh / stop_ethiviz.sh / start_services.sh  # root wrappers -> Ethiviz_V7/
 ├── Ethiviz_V5/                         # historical snapshot, not maintained
 ├── Ethiviz_V4/                         # historical snapshot, not maintained
 ├── Ethiviz_V3/                         # historical snapshot, not maintained
@@ -284,6 +287,9 @@ and its absence elsewhere is not consensus.
 
 ## API Reference
 
+This summary is retained for orientation. The V7 README is authoritative for current
+request options, authentication, endpoints, and response fields.
+
 **Base URL:** `http://localhost:5001`
 
 | Endpoint | Method | Description |
@@ -306,8 +312,7 @@ analysis_type        : "text" | "image" | "text_and_image"
 data_source_type     : "upload" | "sample"
 selected_traditions  : ["western", "ubuntu", "confucian", "islamic",
                         "buddhist", "hindu", "indigenous"]
-advanced_options     : JSON string (currently accepted but not yet
-                       wired to the real engine — see Known Limitations)
+advanced_options     : JSON string (supports optional statistical fairness metrics)
 text_file            : file upload (CSV, XLSX, JSON, TXT)
 image_files          : one or more file uploads (PNG, JPG, WEBP, GIF)
 ```
@@ -325,6 +330,8 @@ A completed job's results include:
 - **`tradition_scores`** — `[{tradition, score, severity, confidence}, ...]`, keyed by the
   engine's internal framework id (e.g. `confucian_v2`, not `confucian`). This powers the
   fairness heatmap and cross-cultural dashboard in the UI.
+- **`performance`** — elapsed times and input counts, including text-engine phases when
+  text analysis runs. These are workload measurements, not accuracy or fairness metrics.
 
 > **Note on `confidence`:** its meaning changed in V6. It previously reported
 > language-detection confidence; it now reflects each lens's own confidence scaled by how
@@ -337,7 +344,11 @@ Full request/response shapes are documented in
 
 ---
 
-## What's Real vs. What's Scaffolding
+## Historical V6 Implementation Notes
+
+The status notes in this section describe V6 and are superseded for current behavior by
+the [V7 README](Ethiviz_V7/README.md). In particular, they must not be read as claims
+about which V7 features are wired through the API.
 
 Being direct about this matters for anyone building on top of EthiViz.
 
@@ -363,7 +374,10 @@ Being direct about this matters for anyone building on top of EthiViz.
 
 ---
 
-## Known Limitations
+## Historical V6 Limitations
+
+For V7 limitations, deployment cautions, and data-retention details, see the
+[current V7 documentation](Ethiviz_V7/README.md).
 
 - **Machine-generated translations.** Prototype translations and non-English WEAT word
   lists have not been reviewed by fluent speakers. They are semantic anchors that directly
@@ -418,33 +432,32 @@ carried forward.
 ## Testing
 
 ```bash
-cd Ethiviz_V6
-python3.13 -m pytest tests/ -q
+cd Ethiviz_V7
+python3 -m pytest tests/ -q
 ```
 
-162 tests cover the engine, lenses, cultural metrics, multilingual coverage and
-calibration, the dimension map, WEAT/iWEAT, mitigation modules, and the job store.
+The backend suite covers the engine, API, lenses, cultural metrics, multilingual coverage,
+calibration, cross-cultural findings, mitigation modules, and the job store.
 
 ---
 
-## What's Coming in Version 7
+## V7 Delivery Status
 
-> **Status: proposed, not yet approved.** The V7 plan is written and under review
-> (*ETHIVIZ_V7_IMPROVEMENT_PLAN.md*, August 2026). No V7 code has been written, and
-> scope may change based on the open questions at the end of this section.
-
-V5 closed the AIF360 parity gap. V6 repaired the engine. **V7's job is different: make
-EthiViz safe and stable to run somewhere other than a developer's laptop.** The engine is
-not the problem — what's missing is the operational layer around it, plus the wiring that
-would make already-built, already-tested modules reachable from the running app.
+The original proposal below is retained as historical planning material; it is not the
+current implementation specification. V7 implementation status, deferred work, benchmark
+guidance, and operator cautions are documented in
+[Ethiviz_V7/README.md](Ethiviz_V7/README.md) and
+[Ethiviz_V7/CHANGELOG.md](Ethiviz_V7/CHANGELOG.md).
 
 ### Guiding principle
 
 > Nothing new ships until what's already built is either wired in or explicitly cut, and
 > nothing gets exposed beyond localhost until the security tier lands.
 
-V7 does **not** add an eighth ethical tradition or a new metric family. Feature growth
-resumes in V8, on top of this foundation.
+Current V7 work includes API security, operational scaling, cross-cultural findings,
+performance instrumentation, and frontend improvements. Human-reviewed accuracy
+evaluation remains dependent on community/domain review and is not invented by the
+implementation.
 
 ### The gaps V7 targets
 
@@ -525,7 +538,7 @@ resumes in V8, on top of this foundation.
 
 ### What changes for an operator
 
-| Question | V6 today | V7 (planned) |
+| Question | V6 at the time of planning | V7 plan |
 |---|---|---|
 | Can anyone who reaches the port read or delete every job? | Yes | No — API-key scoped |
 | Can one caller exhaust the server with job spam? | Yes | No — rate-limited, bounded queue |
@@ -583,4 +596,4 @@ Western-centric and proposes a pluralistic alternative. EthiViz is that alternat
 
 ## License
 
-Apache 2.0 — see [`Ethiviz_V6/LICENSE`](Ethiviz_V6/LICENSE).
+Apache 2.0 — see [`Ethiviz_V7/LICENSE`](Ethiviz_V7/LICENSE).

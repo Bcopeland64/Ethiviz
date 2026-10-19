@@ -96,6 +96,32 @@ function MainContent({ sidebarOpen, analysisResults, isLoading, progress, error,
               <p className="mt-1">{analysisResults._note || 'Only aggregate scores could be recovered for this job.'}</p>
             </div>
           )}
+          <div className="p-3 text-sm text-blue-900 bg-blue-50 border border-blue-200 rounded-lg">
+            Lens scores are exploratory screening signals, not percentages of bias, legal
+            determinations, or substitutes for contextual and community review. Different
+            ethical lenses measure different constructs; compare their findings with care.
+          </div>
+          {analysisResults.performance?.total_seconds !== undefined && (
+            <p className="text-xs text-gray-500">
+              Completed in {analysisResults.performance.total_seconds.toFixed(1)} seconds
+              {analysisResults.performance.text_segments !== undefined &&
+                ` · ${analysisResults.performance.text_segments} text segments`}
+              {analysisResults.performance.images !== undefined &&
+                ` · ${analysisResults.performance.images} images`}
+            </p>
+          )}
+          {analysisResults.performance?.text_engine && (
+            <p className="text-xs text-gray-500">
+              Text engine: language detection{' '}
+              {analysisResults.performance.text_engine.language_detection_seconds?.toFixed(2) ?? '—'}s
+              {' · '}embeddings{' '}
+              {analysisResults.performance.text_engine.embedding_seconds?.toFixed(2) ?? '—'}s
+              {' · '}scoring{' '}
+              {analysisResults.performance.text_engine.scoring_seconds?.toFixed(2) ?? '—'}s
+              {' · '}aggregation{' '}
+              {analysisResults.performance.text_engine.aggregation_seconds?.toFixed(2) ?? '—'}s
+            </p>
+          )}
           {(!hasTextResults && !hasImageResults) && (
             <div className="p-4 my-4 text-sm text-yellow-700 bg-yellow-100 border border-yellow-300 rounded-lg shadow">
               <div className="flex items-center">

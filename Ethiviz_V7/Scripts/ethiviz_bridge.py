@@ -450,6 +450,7 @@ def run_text_analysis(
     job_id: str = "unknown",
     progress_callback: Callable[[int, int], None] | None = None,
     include_statistical_metrics: bool = False,
+    performance_output: dict[str, Any] | None = None,
 ) -> tuple[list[dict], list[dict], dict]:
     """Returns (text_analysis_items, tradition_scores, dimension_findings).
 
@@ -464,6 +465,8 @@ def run_text_analysis(
     result = get_analyzer().analyze(
         dataset=dataset, dataset_source=job_id, progress_callback=progress_callback
     )
+    if performance_output is not None:
+        performance_output.update(result.metadata.get("performance", {}))
     items = _build_text_analysis_items(dataset, result, selected_fids)
     scores = compute_tradition_scores(
         result, selected_fids, include_statistical_metrics=include_statistical_metrics
@@ -477,11 +480,28 @@ def run_text_analysis(
 def _describe_detection(detection: dict) -> str:
     skin_tones = detection.get("skin_tones") or []
     cultural_elements = detection.get("cultural_elements") or []
+    if isinstance(cultural_elements, dict):
+        cultural_elements = [
+            f"{category}: {', '.join(items)}"
+            for category, items in cultural_elements.items()
+            if isinstance(items, (list, tuple, set)) and items
+        ]
     return (
         f"Image depicting {detection.get('n_faces', 0)} face(s). "
         f"Detected skin tones (Fitzpatrick scale): {', '.join(skin_tones) or 'none detected'}. "
         f"Cultural elements identified: {', '.join(cultural_elements) or 'none detected'}."
     )
+
+
+def _count_cultural_elements(cultural_elements: Any) -> int:
+    if isinstance(cultural_elements, dict):
+        return sum(
+            len(items) for items in cultural_elements.values()
+            if isinstance(items, (list, tuple, set))
+        )
+    if isinstance(cultural_elements, (list, tuple, set)):
+        return len(cultural_elements)
+    return 0
 
 
 def _analyze_one_image(path: str, selected_fids: list[str]) -> tuple[dict, list[dict]]:
@@ -496,15 +516,20 @@ def _analyze_one_image(path: str, selected_fids: list[str]) -> tuple[dict, list[
     from PIL import Image as PILImage
 
     backend = get_image_backend()
+    detection_status = "unavailable"
+    detection_error = None
     if backend is not None:
         try:
             img = PILImage.open(path).convert("RGB")
             detection = backend.detect(np.array(img))
             proxy = _describe_detection(detection)
+            detection_status = "completed"
         except Exception as exc:
             logger.exception("Image detection failed for %s", path)
             detection = {"n_faces": 0, "skin_tones": [], "cultural_elements": []}
             proxy = f"Image uploaded for analysis; detection failed ({exc})."
+            detection_status = "failed"
+            detection_error = str(exc)
     else:
         detection = {"n_faces": 0, "skin_tones": [], "cultural_elements": []}
         proxy = (
@@ -517,8 +542,17 @@ def _analyze_one_image(path: str, selected_fids: list[str]) -> tuple[dict, list[
     result = get_analyzer().analyze(dataset=[proxy], dataset_source=os.path.basename(path))
     items = _build_text_analysis_items([proxy], result, selected_fids)
     analysis = {k: v for k, v in items[0].items() if k not in ("text_id", "original_text")}
-    analysis["face_count"] = detection.get("n_faces", 0)
-    analysis["object_count"] = len(detection.get("cultural_elements", []))
+    analysis["face_count"] = (
+        detection.get("n_faces", 0) if detection_status == "completed" else None
+    )
+    analysis["cultural_elements"] = detection.get("cultural_elements", {})
+    analysis["detection_status"] = detection_status
+    analysis["object_count"] = (
+        _count_cultural_elements(detection.get("cultural_elements", []))
+        if detection_status == "completed" else None
+    )
+    if detection_error:
+        analysis["detection_error"] = detection_error
     tradition_scores = compute_tradition_scores(result, selected_fids)
     return {
         "analysis": analysis,

@@ -6,11 +6,9 @@ import MainContent from './components/MainContent';
 import { AnalysisResults, AnalysisProgress } from './utils/types';
 
 const API_BASE_URL = 'http://localhost:5001'; // Ensure this matches your API server
-const POLLING_INTERVAL = 1500; // 1.5 seconds — frequent enough for a smooth progress bar
-// 5 minutes. The old 20-attempt/3s (60s) cap reported a false "timed out" for
-// any analysis that legitimately ran longer than a minute, which is common
-// once real per-lens/per-image work is involved.
-const MAX_POLLING_ATTEMPTS = 200;
+const INITIAL_POLLING_INTERVAL = 1500;
+const MAX_POLLING_INTERVAL = 10000;
+const MAX_ANALYSIS_WAIT_MS = 30 * 60 * 1000;
 
 const getAuthHeaders = () => {
   const apiKey = window.localStorage.getItem('ethiviz_api_key');
@@ -27,7 +25,6 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [progress, setProgress] = useState<AnalysisProgress | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [pollingAttempts, setPollingAttempts] = useState(0);
   const [e2eMode, setE2eMode] = useState(false);
   const [lastCompletedJobId, setLastCompletedJobId] = useState<string | null>(null);
   const [stopped, setStopped] = useState(false);
@@ -44,7 +41,6 @@ function App() {
     setIsLoading(false);
     setProgress(null);
     setError(null);
-    setPollingAttempts(0);
   };
 
   const handleAnalysisStart = () => {
@@ -55,7 +51,7 @@ function App() {
     // JobId and StatusUrl will be set by ConfigPanel through props
   };
 
-  const handleAnalysisComplete = (results: AnalysisResults) => {
+  const handleAnalysisComplete = useCallback((results: AnalysisResults) => {
     if (e2eMode) return;
     setAnalysisResults(results);
     setIsLoading(false);
@@ -63,8 +59,7 @@ function App() {
     setLastCompletedJobId(jobId); // Preserve for ExportButton — jobId itself is about to be cleared
     setJobId(null); // Clear job ID once completed and results fetched
     setStatusUrl(null);
-    setPollingAttempts(0);
-  };
+  }, [e2eMode, jobId]);
 
   const handleStop = async () => {
     const confirmed = window.confirm(
@@ -74,22 +69,21 @@ function App() {
     if (!confirmed) return;
     try {
       await axios.post(`${API_BASE_URL}/api/stop`);
-    } catch (_e) {
+    } catch {
       // A network error here is expected once the backend actually terminates
       // mid-response — treat it as a successful stop, not a failure.
     }
     setStopped(true);
   };
 
-  const handleAnalysisError = (errorMessage: string) => {
+  const handleAnalysisError = useCallback((errorMessage: string) => {
     if (e2eMode) return;
     setError(errorMessage);
     setIsLoading(false);
     setProgress(null);
     setJobId(null); // Clear job ID on error
     setStatusUrl(null);
-    setPollingAttempts(0);
-  };
+  }, [e2eMode]);
 
   // Callback for ConfigPanel to set JobId and StatusUrl
   const setJobDetails = useCallback((newJobId: string | null, newStatusUrl?: string | null) => {
@@ -98,7 +92,6 @@ function App() {
     if (newStatusUrl) setStatusUrl(newStatusUrl);
     if (!newJobId) {
       setStatusUrl(null);
-      setPollingAttempts(0);
     }
   }, [E2E_TEST_MODE]);
 
@@ -107,53 +100,73 @@ function App() {
   useEffect(() => {
     if (E2E_TEST_MODE) return;
 
-    let intervalId: NodeJS.Timeout | null = null;
-    const checkJobStatus = async () => { // Defined inside useEffect or ensure it's stable
-        if (!statusUrl || !jobId) return;
-        if (pollingAttempts >= MAX_POLLING_ATTEMPTS) {
-          handleAnalysisError(`Analysis timed out after ${MAX_POLLING_ATTEMPTS} attempts.`);
+    if (!jobId || !statusUrl) return;
+    let active = true;
+    let timerId: ReturnType<typeof setTimeout> | undefined;
+    let attempts = 0;
+    const startedAt = Date.now();
+    let lastProgress: AnalysisProgress | null = null;
+    const scheduleNextPoll = () => {
+      const delay = Math.min(
+        INITIAL_POLLING_INTERVAL * Math.pow(1.5, attempts),
+        MAX_POLLING_INTERVAL,
+      );
+      timerId = setTimeout(checkJobStatus, delay);
+    };
+    const checkJobStatus = async () => {
+      if (!active) return;
+      if (Date.now() - startedAt >= MAX_ANALYSIS_WAIT_MS) {
+        handleAnalysisError('Analysis exceeded the 30-minute wait limit. Check recent jobs before retrying.');
+        return;
+      }
+      try {
+        const response = await axios.get(statusUrl, { headers: getAuthHeaders() });
+        if (!active) return;
+        const data = response.data;
+        if (data.progress) {
+          lastProgress = data.progress;
+          setProgress(data.progress);
+        }
+        if (data.status === 'completed') {
+          if (data.results_url) {
+            const resultsResponse = await axios.get(data.results_url, { headers: getAuthHeaders() });
+            if (active) handleAnalysisComplete(resultsResponse.data.results);
+          } else {
+            handleAnalysisError('Job completed but no results URL was returned.');
+          }
+        } else if (data.status === 'failed') {
+          handleAnalysisError(data.error_message || 'Analysis job failed.');
+        } else if (data.status === 'processing' || data.status === 'pending') {
+          attempts += 1;
+          scheduleNextPoll();
+        } else {
+          handleAnalysisError('Unknown job status from API.');
+        }
+      } catch (err: unknown) {
+        if (!active) return;
+        console.error('Error during polling:', err);
+        if (axios.isAxiosError(err) && err.response && err.response.status < 500
+          && err.response.status !== 429) {
+          const message = err.response.data?.error || err.message;
+          handleAnalysisError(`Could not check analysis status: ${message}`);
           return;
         }
-        try {
-          console.log(`Polling attempt ${pollingAttempts + 1} for job ${jobId}: ${statusUrl}`);
-          const response = await axios.get(statusUrl, { headers: getAuthHeaders() });
-          const data = response.data;
-          if (data.progress) {
-            setProgress(data.progress);
-          }
-          if (data.status === 'completed') {
-            setPollingAttempts(0);
-            if (data.results_url) {
-              const resultsResponse = await axios.get(data.results_url, { headers: getAuthHeaders() });
-              handleAnalysisComplete(resultsResponse.data.results);
-            } else { throw new Error("Job completed but no results URL."); }
-          } else if (data.status === 'failed') {
-            handleAnalysisError(data.error_message || 'Analysis job failed.');
-          } else if (data.status === 'processing' || data.status === 'pending') {
-            setPollingAttempts(prev => prev + 1);
-          } else {
-            handleAnalysisError('Unknown job status from API.');
-          }
-        } catch (err: any) {
-          console.error("Error during polling:", err);
-          if (pollingAttempts < MAX_POLLING_ATTEMPTS -1) {
-            setPollingAttempts(prev => prev + 1);
-          } else {
-            handleAnalysisError(err.response?.data?.error || err.message || 'Failed to check job status.');
-          }
-        }
-      };
+        attempts += 1;
+        setProgress({
+          percent: lastProgress?.percent ?? 0,
+          message: 'Unable to check job status; retrying.',
+        });
+        scheduleNextPoll();
+      }
+    };
 
-    if (jobId && statusUrl && (isLoading || pollingAttempts > 0) && pollingAttempts < MAX_POLLING_ATTEMPTS) {
-      intervalId = setInterval(checkJobStatus, POLLING_INTERVAL);
-    } else if (!jobId || !statusUrl) {
-      setPollingAttempts(0); 
-    }
+    void checkJobStatus();
     
     return () => {
-      if (intervalId) clearInterval(intervalId);
+      active = false;
+      if (timerId !== undefined) clearTimeout(timerId);
     };
-  }, [jobId, statusUrl, isLoading, pollingAttempts, E2E_TEST_MODE]); // Added E2E_TEST_MODE and checkJobStatus dependencies
+  }, [jobId, statusUrl, E2E_TEST_MODE, handleAnalysisComplete, handleAnalysisError]);
 
 
   return (

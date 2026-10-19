@@ -1,6 +1,7 @@
 # ethiviz/api.py
 from __future__ import annotations
 import logging
+import time
 import numpy as np
 from collections import Counter
 from typing import Any, Callable, List, Dict, Optional
@@ -25,6 +26,7 @@ from ethiviz.context.weights import get_weights
 from ethiviz.context.regulatory import RegulatoryMapper
 from ethiviz.reporting.base import BiasReport
 from ethiviz.embeddings.language_detection import LanguageDetector
+from ethiviz.embeddings.semantic_detector import SemanticBiasDetector
 from ethiviz.analysis.weat import (
     WEATAnalyzer, iWEATAnalyzer, WEATTestSuite, load_weat_tests, load_iweat_tests,
 )
@@ -33,6 +35,7 @@ from ethiviz.frameworks.dimension_map import CrossCulturalDimensionMap
 from ethiviz.frameworks.coverage_audit import is_language_reviewed
 
 logger = logging.getLogger(__name__)
+_EMBEDDING_BATCH_SIZE = 64
 
 
 class Analyzer:
@@ -109,6 +112,7 @@ class Analyzer:
         progress_callback(n_completed, n_total), if given, is invoked once per
         text as its scoring finishes across all lenses (not once per lens).
         """
+        analysis_started = time.perf_counter()
         if not dataset:
             return ScoredResult(
                 [], [], 0.0, [], [], None, None, self.deployment_context,
@@ -119,8 +123,10 @@ class Analyzer:
         # applying it to the whole dataset meant a mixed-language corpus was
         # scored entirely in the first text's language — every other language's
         # prototypes silently mismatched. Each text is now scored in its own.
+        language_started = time.perf_counter()
         lang_results = [self.lang_detector.detect(t) for t in dataset]
         languages = [lr.language_code for lr in lang_results]
+        language_detection_seconds = time.perf_counter() - language_started
 
         # Dominant language is reported at the dataset level for metadata and
         # for the WEAT word lists, which are dataset-wide rather than per-text.
@@ -131,30 +137,75 @@ class Analyzer:
         # 2. Parallel lens scoring across every text
         active_ids = [fid for fid in self.framework_ids if fid in self.lenses]
 
-        def score_text(item: tuple[str, str]) -> dict[str, Any]:
-            text, text_lang = item
+        def score_text(item: tuple[str, str, np.ndarray | None]) -> dict[str, Any]:
+            text, text_lang, semantic_embedding = item
+            score_options = (
+                {"semantic_embedding": semantic_embedding}
+                if semantic_embedding is not None else {}
+            )
             return {
-                fid: self.lenses[fid].score(text, language=text_lang)
+                fid: self.lenses[fid].score(text, language=text_lang, **score_options)
                 for fid in active_ids
             }
 
         max_workers = min(max(1, len(dataset)), 8) if n_workers <= 1 else n_workers
         total = len(dataset)
         results_by_index: dict[int, dict[str, Any]] = {}
+        embedding_detector = (
+            getattr(self.lenses[active_ids[0]], "detector", None)
+            if active_ids and self.use_semantic else None
+        )
+        shared_model = (
+            embedding_detector.model
+            if isinstance(embedding_detector, SemanticBiasDetector) else None
+        )
+        embedding_seconds = 0.0
+        scoring_started = time.perf_counter()
+        completed = 0
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            future_to_index = {
-                executor.submit(score_text, (text, lang)): i
-                for i, (text, lang) in enumerate(zip(dataset, languages))
-            }
-            completed = 0
-            for future in as_completed(future_to_index):
-                results_by_index[future_to_index[future]] = future.result()
-                completed += 1
-                if progress_callback:
-                    progress_callback(completed, total)
+            for chunk_start in range(0, total, _EMBEDDING_BATCH_SIZE):
+                chunk_indices = list(range(
+                    chunk_start, min(chunk_start + _EMBEDDING_BATCH_SIZE, total)
+                ))
+                embeddings_by_index: dict[int, np.ndarray] = {}
+                if shared_model is not None:
+                    embedding_started = time.perf_counter()
+                    indices_by_language: dict[str, list[int]] = {}
+                    for index in chunk_indices:
+                        indices_by_language.setdefault(languages[index], []).append(index)
+                    for language_indices in indices_by_language.values():
+                        unique_texts = list(dict.fromkeys(
+                            dataset[index] for index in language_indices
+                        ))
+                        encoded = shared_model.encode(unique_texts)
+                        embeddings_by_text = {
+                            text: encoded[row] for row, text in enumerate(unique_texts)
+                        }
+                        for index in language_indices:
+                            embeddings_by_index[index] = embeddings_by_text[dataset[index]]
+                    embedding_seconds += time.perf_counter() - embedding_started
+
+                future_to_index = {
+                    executor.submit(
+                        score_text,
+                        (
+                            dataset[index],
+                            languages[index],
+                            embeddings_by_index.get(index),
+                        ),
+                    ): index
+                    for index in chunk_indices
+                }
+                for future in as_completed(future_to_index):
+                    results_by_index[future_to_index[future]] = future.result()
+                    completed += 1
+                    if progress_callback:
+                        progress_callback(completed, total)
+        scoring_seconds = time.perf_counter() - scoring_started - embedding_seconds
         all_lens_results = [results_by_index[i] for i in range(total)]
 
         # 3. Aggregate per framework; apply calibration + drift monitoring
+        aggregation_started = time.perf_counter()
         avg_framework_scores: list[FrameworkScore] = []
         candidates: list[BiasCandidate] = []
         per_text_scores: dict[str, list[float]] = {fid: [] for fid in active_ids}
@@ -317,6 +368,8 @@ class Analyzer:
             random_seed=self.random_seed,
             n_bootstrap=self.n_bootstrap,
         )
+        aggregation_seconds = time.perf_counter() - aggregation_started
+        total_seconds = time.perf_counter() - analysis_started
 
         result = ScoredResult(
             candidates=candidates,
@@ -338,6 +391,16 @@ class Analyzer:
                 "per_text_scores": per_text_scores,
                 "texts": dataset,
                 "source_type": "text",
+                "performance": {
+                    "text_count": total,
+                    "language_detection_seconds": round(language_detection_seconds, 4),
+                    "embedding_seconds": round(embedding_seconds, 4),
+                    "scoring_seconds": round(scoring_seconds, 4),
+                    "aggregation_seconds": round(aggregation_seconds, 4),
+                    "total_seconds": round(total_seconds, 4),
+                    "texts_per_second": round(total / total_seconds, 2)
+                    if total_seconds > 0 else None,
+                },
             },
         )
         # Attach generate_report to this result instance

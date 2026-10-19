@@ -11,6 +11,29 @@ export interface AnalysisProgress {
   message: string;
 }
 
+export interface AnalysisPerformance {
+  text_count?: number;
+  text_engine?: {
+    text_count?: number;
+    language_detection_seconds?: number;
+    embedding_seconds?: number;
+    scoring_seconds?: number;
+    aggregation_seconds?: number;
+    total_seconds?: number;
+    texts_per_second?: number | null;
+  };
+  language_detection_seconds?: number;
+  embedding_seconds?: number;
+  scoring_seconds?: number;
+  aggregation_seconds?: number;
+  text_analysis_seconds?: number;
+  image_analysis_seconds?: number;
+  total_seconds?: number;
+  texts_per_second?: number | null;
+  text_segments?: number;
+  images?: number;
+}
+
 // API response for /api/analyze/status/{job_id}
 export interface AnalyzeStatusResponse {
   status: 'pending' | 'processing' | 'completed' | 'failed';
@@ -54,6 +77,9 @@ export interface ImageAnalysisItem {
     indigenous_ethics_score?: number;
     face_count?: number;
     object_count?: number;
+    cultural_elements?: Record<string, string[]>;
+    detection_status?: 'completed' | 'unavailable' | 'failed';
+    detection_error?: string;
     [key: string]: any;
   };
   image_url?: string;
@@ -159,5 +185,6 @@ export interface AnalysisResults {
   image_analysis?: { [imageName: string]: ImageAnalysisItem };
   tradition_scores?: TraditionScoreEntry[];
   dimension_findings?: DimensionFindings;
+  performance?: AnalysisPerformance;
   [key: string]: any;
 }

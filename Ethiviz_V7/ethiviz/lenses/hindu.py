@@ -72,7 +72,12 @@ class HinduLens(EthicalLens):
     def score(self, input_data: str, language: str = "en", **kwargs: Any) -> LensScore:
         all_sim: dict[str, float] = {}
         if self.use_semantic:
-            all_sim = self.detector.detect(input_data, self.lens_id, language=language)
+            all_sim = self.detector.detect(
+                input_data,
+                self.lens_id,
+                language=language,
+                input_embedding=kwargs.get("semantic_embedding"),
+            )
 
         dim_scores, coverage = self._score_dimensions(
             input_data, all_sim, _CATEGORY_PATTERNS,
@@ -106,5 +111,4 @@ class HinduLens(EthicalLens):
             analysis_coverage=coverage.coverage,
             warnings=coverage.warnings(),
         )
-
 

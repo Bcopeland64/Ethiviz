@@ -1,6 +1,6 @@
 from __future__ import annotations
 import numpy as np
-from typing import Any, Dict, List
+from typing import Dict
 from ethiviz.embeddings.model import EmbeddingModel
 from ethiviz.embeddings.prototype_store import PrototypeStore
 
@@ -51,7 +51,13 @@ class SemanticBiasDetector:
         off_diagonal = sim_matrix[~np.eye(n, dtype=bool)]
         return float(np.mean(off_diagonal))
 
-    def detect(self, text: str, lens_id: str, language: str = "en") -> Dict[str, float]:
+    def detect(
+        self,
+        text: str,
+        lens_id: str,
+        language: str = "en",
+        input_embedding: np.ndarray | None = None,
+    ) -> Dict[str, float]:
         """
         Returns similarity scores for all prototypes in the given lens.
         Returns {prototype_id: similarity_score}.
@@ -77,7 +83,7 @@ class SemanticBiasDetector:
         if not prototypes:
             return {}
 
-        input_emb = self.model.encode(text)
+        input_emb = input_embedding if input_embedding is not None else self.model.encode(text)
 
         # Cosine similarity
         # (input_emb: 1x384, proto_norms: Nx384)

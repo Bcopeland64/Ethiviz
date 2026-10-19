@@ -42,6 +42,28 @@ const ImageAnalysisVisuals: React.FC<ImageAnalysisVisualsProps> = ({ imageResult
   return (
     <div className="space-y-8">
       <h2 className="text-2xl font-semibold text-green-700 mb-6">Image Analysis Visualizations</h2>
+      <div className="space-y-2">
+        {imageNames.map((imageName) => {
+          const analysis = imageResults[imageName].analysis;
+          const elements = analysis.cultural_elements as Record<string, string[]> | undefined;
+          const detected = Object.entries(elements ?? {}).flatMap(([category, labels]) =>
+            labels.map((label) => `${category.replace(/_/g, ' ')}: ${label}`),
+          );
+          const status = analysis.detection_status ?? 'unavailable';
+          return (
+            <div key={imageName} className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+              <strong>Image detector: {status}</strong>
+              {status === 'completed' && (
+                <span> · {analysis.face_count ?? 0} faces · {analysis.object_count ?? 0} detected cultural elements</span>
+              )}
+              {status === 'unavailable' && <span> · Vision detection is not available; image scores use a limited proxy.</span>}
+              {status === 'failed' && <span> · Vision detection failed; detection counts are unavailable.</span>}
+              {analysis.detection_error && <p className="mt-1">Detection error: {analysis.detection_error}</p>}
+              {detected.length > 0 && <p className="mt-1">Labels: {detected.join('; ')}</p>}
+            </div>
+          );
+        })}
+      </div>
       
       <ImageMetrics imageResults={imageResults} />
       

@@ -71,7 +71,12 @@ class WesternLens(EthicalLens):
         # ── Semantic scoring: group prototypes by category ──────────────────
         all_sim: dict[str, float] = {}
         if self.use_semantic:
-            all_sim = self.detector.detect(input_data, self.lens_id, language=language)
+            all_sim = self.detector.detect(
+                input_data,
+                self.lens_id,
+                language=language,
+                input_embedding=kwargs.get("semantic_embedding"),
+            )
 
         # procedural_bias has no regex patterns of its own; _score_dimensions
         # scores it from the semantic channel alone via the empty pattern list.

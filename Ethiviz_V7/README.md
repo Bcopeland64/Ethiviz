@@ -41,6 +41,12 @@ compliance or substitutes for community and domain expertise.
   community partnerships are not included.
 - GitHub Actions runs backend tests and builds the frontend. The load-test directory
   currently contains a queue smoke test, not a full load or penetration-testing suite.
+- Text embeddings are encoded in bounded, per-language batches and reused by all selected
+  lenses for each input segment. Completed results include phase timings and throughput
+  so operators can benchmark actual workloads before tuning concurrency or hardware.
+- Image results expose detector availability/status, labels, and the count of detected
+  cultural elements (not the number of detector categories). These image signals remain
+  exploratory because the lens scores are based on a detector-generated text proxy.
 
 ## Architecture
 
@@ -378,6 +384,21 @@ image_files           : one or more file uploads (PNG, JPG, WEBP, GIF)
   52) is wired in, since it needs just the scores the engine already produces. Wiring the
   rest for real would mean adding a way to collect those labels first (e.g. letting a
   caller tag a column in an uploaded dataset), not just calling the existing code.
+
+## Performance benchmarking and analysis validation
+
+Run `python Scripts/benchmark_analysis.py --input path/to/data.txt` from this directory to
+measure cold and warm analysis time, phase timings, throughput, and dataset size. Use the
+same hardware, model revision, input corpus, and lens selection when comparing changes;
+latency numbers are not accuracy metrics.
+
+Accuracy claims require a separate human-reviewed evaluation set. Do not treat the
+existing curated examples as ground truth unless they have been independently reviewed.
+For each evaluation item, record the text/image context, language, lens, construct,
+adjudicated label, evidence span, annotator decisions, disagreement, and adjudication.
+Report precision/recall and calibration by lens and language, include satire, quotation,
+refutation, and neutral identity mentions, and obtain appropriate community review and
+consent before collecting culturally sensitive examples.
 
 ---
 

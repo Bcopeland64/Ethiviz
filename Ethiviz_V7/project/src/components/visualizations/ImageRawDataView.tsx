@@ -19,7 +19,7 @@ const ImageRawDataView: React.FC<ImageRawDataViewProps> = ({ imageResults }) => 
     { key: 'confucian_ethics_score', name: 'Confucian Score' },
     { key: 'islamic_ethics_score', name: 'Islamic Score' },
     { key: 'face_count', name: 'Face Count'},
-    { key: 'object_count', name: 'Object Count'}
+    { key: 'object_count', name: 'Cultural Element Count'}
   ];
   
   // Check the 'analysis' sub-object for keys, not the top-level image data object.
