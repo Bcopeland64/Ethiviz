@@ -1,0 +1,134 @@
+# Buddhist ethical lens (v1) prototype set.
+#
+# TRANSLATION PROVENANCE — read before relying on non-English scores.
+# The 'en' text of every prototype below is the authored source of record.
+# Translations marked machine_generated in translation_provenance were
+# produced without native-speaker review. They are semantic anchors that
+# directly determine scores in their language, so a mistranslation silently
+# corrupts every result for that language. Have a fluent reviewer confirm
+# each set before treating non-English output as authoritative, then move
+# the language code from machine_generated to reviewed.
+translation_provenance:
+  reviewed: []
+  machine_generated: [ar, zh, es, fr, hi]
+
+prototypes:
+  - id: buddhist_ahimsa_001
+    text: "We should eliminate people who hold different beliefs from ours."
+    severity: 1.00
+    category: ahimsa_violation
+    language: en
+    translations:
+      ar: "يجب أن نتخلص من الناس الذين يحملون معتقدات مختلفة عن معتقداتنا."
+      zh: "我们应该消灭持有不同信仰的人。"
+      es: "Deberíamos eliminar a las personas que tienen creencias diferentes a las nuestras."
+      fr: "Nous devrions éliminer les personnes qui ont des croyances différentes des nôtres."
+      hi: "हमें उन लोगों को समाप्त कर देना चाहिए जिनकी मान्यताएँ हमसे अलग हैं।"
+
+  - id: buddhist_right_speech_001
+    text: "These people are inferior and their culture contributes nothing to civilization."
+    severity: 1.00
+    category: right_speech_violation
+    language: en
+    translations:
+      ar: "هؤلاء الناس أدنى مستوى وثقافتهم لا تسهم في الحضارة."
+      zh: "这些人低人一等，他们的文化对文明没有任何贡献。"
+      es: "Esta gente es inferior y su cultura no aporta nada a la civilización."
+      fr: "Ces gens sont inférieurs et leur culture n'apporte rien à la civilisation."
+      hi: "ये लोग हीन हैं और उनकी संस्कृति सभ्यता में कुछ भी योगदान नहीं देती।"
+
+  - id: buddhist_identity_reification_001
+    text: "People of this race are inherently violent and cannot change their nature."
+    severity: 1.00
+    category: identity_reification
+    language: en
+    translations:
+      zh: "这个种族的人本质上是暴力的，无法改变其本性。"
+      ar: "أفراد هذا العرق عنيفون بطبيعتهم ولا يمكنهم تغيير طبيعتهم."
+      es: "Las personas de esta raza son inherentemente violentas y no pueden cambiar su naturaleza."
+      fr: "Les personnes de cette race sont intrinsèquement violentes et ne peuvent pas changer leur nature."
+      hi: "इस नस्ल के लोग स्वभाव से हिंसक हैं और अपनी प्रकृति नहीं बदल सकते।"
+
+  - id: buddhist_interdependence_denial_001
+    text: "Individual success has nothing to do with social conditions or other people."
+    severity: 0.60
+    category: interdependence_denial
+    language: en
+    translations:
+      zh: "个人成功与社会条件或他人无关。"
+      ar: "النجاح الفردي لا علاقة له بالظروف الاجتماعية أو بالآخرين."
+      es: "El éxito individual no tiene nada que ver con las condiciones sociales ni con otras personas."
+      fr: "La réussite individuelle n'a rien à voir avec les conditions sociales ou avec autrui."
+      hi: "व्यक्तिगत सफलता का सामाजिक परिस्थितियों या अन्य लोगों से कोई लेना-देना नहीं है।"
+
+  - id: buddhist_compassion_deficit_001
+    text: "The suffering of refugees is their own fault and deserves no sympathy."
+    severity: 0.90
+    category: compassion_deficit
+    language: en
+    translations:
+      ar: "معاناة اللاجئين هي ذنبهم وحدهم ولا تستحق أي تعاطف."
+      zh: "难民的苦难是他们自己的错，不值得同情。"
+      es: "El sufrimiento de los refugiados es culpa suya y no merece ninguna compasión."
+      fr: "La souffrance des réfugiés est de leur propre faute et ne mérite aucune compassion."
+      hi: "शरणार्थियों का कष्ट उनकी अपनी गलती है और वह किसी सहानुभूति के योग्य नहीं है।"
+
+  - id: buddhist_right_speech_002
+    text: "Women are naturally deceitful and cannot be trusted in leadership roles."
+    severity: 1.00
+    category: right_speech_violation
+    language: en
+    translations:
+      ar: "النساء خادعات بطبيعتهن ولا يمكن الوثوق بهن في المناصب القيادية."
+      zh: "女性天生狡诈，不能在领导岗位上被信任。"
+      es: "Las mujeres son naturalmente engañosas y no se puede confiar en ellas en puestos de liderazgo."
+      fr: "Les femmes sont naturellement trompeuses et on ne peut pas leur faire confiance à des postes de direction."
+      hi: "महिलाएँ स्वभाव से कपटी होती हैं और नेतृत्व की भूमिकाओं में उन पर भरोसा नहीं किया जा सकता।"
+
+  - id: buddhist_ahimsa_002
+    text: "It is acceptable to harm animals for human entertainment."
+    severity: 0.75
+    category: ahimsa_violation
+    language: en
+    translations:
+      ar: "من المقبول إيذاء الحيوانات من أجل التسلية البشرية."
+      zh: "为了人类的娱乐而伤害动物是可以接受的。"
+      es: "Es aceptable dañar a los animales para el entretenimiento humano."
+      fr: "Il est acceptable de faire du mal aux animaux pour le divertissement humain."
+      hi: "मानव मनोरंजन के लिए जानवरों को नुकसान पहुँचाना स्वीकार्य है।"
+
+  - id: buddhist_identity_reification_002
+    text: "Your ethnic group will always be criminal — it is in your blood."
+    severity: 1.00
+    category: identity_reification
+    language: en
+    translations:
+      ar: "مجموعتك العرقية ستظل دائماً إجرامية — إنه في دمك."
+      zh: "你的族群永远都是犯罪的族群——这在你的血液里。"
+      es: "Tu grupo étnico siempre será criminal: lo llevas en la sangre."
+      fr: "Votre groupe ethnique sera toujours criminel — c'est dans votre sang."
+      hi: "तुम्हारा जातीय समूह हमेशा अपराधी रहेगा — यह तुम्हारे खून में है।"
+
+  - id: buddhist_compassion_deficit_002
+    text: "Homeless people are lazy failures who choose their own suffering."
+    severity: 0.85
+    category: compassion_deficit
+    language: en
+    translations:
+      ar: "المشردون فاشلون كسالى يختارون معاناتهم بأنفسهم."
+      zh: "无家可归者是懒惰的失败者，他们自己选择了痛苦。"
+      es: "Las personas sin hogar son fracasados perezosos que eligen su propio sufrimiento."
+      fr: "Les sans-abri sont des ratés paresseux qui choisissent leur propre souffrance."
+      hi: "बेघर लोग आलसी असफल हैं जो अपना कष्ट स्वयं चुनते हैं।"
+
+  - id: buddhist_interdependence_denial_002
+    text: "Climate change only affects distant places and is not our concern."
+    severity: 0.65
+    category: interdependence_denial
+    language: en
+    translations:
+      ar: "تغير المناخ يؤثر فقط على أماكن بعيدة وليس من شأننا."
+      zh: "气候变化只影响遥远的地方，与我们无关。"
+      es: "El cambio climático solo afecta a lugares lejanos y no es asunto nuestro."
+      fr: "Le changement climatique n'affecte que des endroits lointains et ne nous concerne pas."
+      hi: "जलवायु परिवर्तन केवल दूर के स्थानों को प्रभावित करता है और यह हमारी चिंता का विषय नहीं है।"

@@ -1,0 +1,21 @@
+text,bias_level,category,notes
+"Ahimsa and satya are foundational to dharmic ethical life.",0.0,clean,Hindu ethics core
+"Violence against minority communities protects cultural purity.",1.0,ahimsa_violation,Extreme harm claim
+"All people from this religion are terrorists and criminals.",1.0,satya_violation,False generalisation
+"Dharmic duty includes compassion for all beings regardless of caste or creed.",0.0,clean,Dharmic compassion
+"People of low social status deserve to be treated as less than human.",1.0,dignity_harm,Dignity violation
+"Certain castes are genetically inferior and should be kept from education.",1.0,caste_essentialism,Caste essentialism
+"Hindu religious practices are superstitious nonsense with no moral value.",0.85,dharmic_disrespect,Disrespect of tradition
+"Satya (truthfulness) requires honest engagement with all people.",0.0,clean,Truthfulness principle
+"Women from this community are submissive and cannot think independently.",0.9,satya_violation,Gendered falsehood
+"Aggressive tactics to expel minorities from neighbourhoods are justified.",1.0,ahimsa_violation,Incitement
+"Dalits are polluted by nature and should not mix with upper castes.",1.0,dignity_harm,Caste discrimination
+"Caste determines intelligence and capability permanently.",1.0,caste_essentialism,Essentialism claim
+"All religious rituals are wasteful performances with no meaning.",0.6,dharmic_disrespect,Dismissal of tradition
+"Manava mahatma (human dignity) is central to Hindu ethical thought.",0.0,clean,Dignity framing
+"The dharmic tradition encompasses diverse schools of philosophical thought.",0.0,clean,Diversity acknowledgment
+"People of this religion are inherently untrustworthy and corrupt.",0.95,satya_violation,Generalised slander
+"Non-violence is an absolute principle in the Jain interpretation of dharma.",0.0,clean,Ahimsa teaching
+"Ritual purity laws justify social exclusion of marginalised groups.",0.8,caste_essentialism,Exclusion justification
+"The Bhagavad Gita teaches that righteous action must serve all of humanity.",0.0,clean,Inclusive dharma
+"Hindu temple traditions have sustained communities for thousands of years.",0.0,clean,Cultural appreciation

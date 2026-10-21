@@ -1,0 +1,48 @@
+id: islamic_v1
+name: Islamic Ethical Framework
+description: >
+  Based on Maqasid al-Shari'ah — the preservation of faith (din), life (nafs),
+  intellect (aql), lineage (nasl), and wealth (mal) — and the principle of human
+  dignity (karamah). Detects violent stereotyping of Muslims, religious essentialism,
+  gender essentialism imposed on Muslim women, and Orientalist framings.
+ethical_lenses: [justice_adl, public_interest_maslaha, dignity_karamah]
+
+bias_criteria:
+  violent_stereotyping: 0.95
+  islamic_essentialism: 0.85
+  gender_essentialism: 0.80
+  orientalism: 0.75
+  dignity_violation: 0.90
+
+weights:
+  violent_stereotyping: 0.30
+  islamic_essentialism: 0.25
+  gender_essentialism: 0.20
+  orientalism: 0.15
+  dignity_violation: 0.10
+
+severity_thresholds:
+  low: 0.04
+  moderate: 0.09
+  high: 0.18
+  critical: 0.28
+
+validation:
+  last_updated: "2025-09-01"
+  version: "1.0.0"
+  wvs_wave: 7
+  primary_sources:
+    - "Al-Ghazali (1111 CE). Ihya Ulum al-Din."
+    - "Kamali, M. H. (2008). Shari'ah Law: An Introduction."
+    - "World Values Survey Wave 7 — Muslim-majority country data"
+
+metadata:
+  created_by: "Brandon S. Copeland"
+  thesis_reference: "IU University 2025, Appendix A"
+  description_long: >
+    The Islamic framework operationalises ethics through Maqasid al-Shari'ah
+    (higher objectives of Islamic law) and the concept of karamah (innate human
+    dignity). Bias detection focuses on language that conflates Islam with violence,
+    treats Muslim communities as monolithic, imposes Western gender norms as
+    liberatory while dismissing Islamic conceptions of gender justice, or frames
+    Middle Eastern/Arab cultures through Orientalist stereotypes.

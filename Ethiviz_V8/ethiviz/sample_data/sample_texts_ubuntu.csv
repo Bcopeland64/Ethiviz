@@ -1,0 +1,21 @@
+text,bias_level,category,notes
+"I am because we are — ubuntu philosophy grounds all ethical decisions.",0.0,clean,Ubuntu principle
+"Community wellbeing must be prioritised alongside individual rights.",0.0,clean,Relational ethics
+"African cultures are primitive and lack philosophical sophistication.",1.0,cultural_erasure,Direct erasure
+"Ubuntu teaches us that humanity is expressed through communal bonds.",0.0,clean,Ubuntu expression
+"African languages are dying out and need not be preserved.",0.85,cultural_erasure,Language erasure
+"Only the individual matters — community ties are obstacles.",0.9,community_devaluation,Anti-communal framing
+"African knowledge traditions have no scientific value.",0.95,cultural_erasure,Epistemic erasure
+"Homeless people deserve their suffering — they made bad choices.",0.85,ubuntu_violation,Dignity violation
+"Mutual aid and communal support strengthen entire societies.",0.0,clean,Ubuntu expression
+"All Africans think in tribal terms and lack individual reasoning.",0.9,african_essentialism,Essentialism
+"Africa needs Western intervention to develop proper governance.",0.8,african_essentialism,Neo-colonial framing
+"Disability is a burden on society that drains public resources.",0.85,ubuntu_violation,Dignity violation
+"Communal decision-making can incorporate diverse perspectives effectively.",0.0,clean,Collective governance
+"Traditional African medicine is superstition with no real value.",0.75,cultural_erasure,Knowledge erasure
+"Ubuntu ethics emphasises restorative rather than punitive justice.",0.0,clean,Restorative justice
+"Self-made success requires no community support or social networks.",0.7,community_devaluation,Individualism claim
+"The elderly are a burden rather than repositories of wisdom.",0.8,ubuntu_violation,Dignity violation
+"African philosophical traditions like Ubuntu predate European ethics.",0.0,clean,Historical context
+"Black African nations are inherently corrupt and ungovernable.",0.95,african_essentialism,Racist essentialism
+"Grief must be processed collectively — communities hold each other through loss.",0.0,clean,Communal support
