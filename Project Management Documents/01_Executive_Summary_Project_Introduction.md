@@ -2,17 +2,17 @@
 
 ## Executive Summary
 
-Ethiviz_V6 is a next-generation cultural bias analysis platform designed to help organizations assess text and image-based content through multiple ethical traditions rather than a single Western-centric fairness lens. The project has matured from concept and experimental validation into a production-readiness initiative that requires disciplined governance, operational control, measurable outcomes, and controlled delivery.
+EthiViz V9 is an exploratory cultural-bias analysis platform that evaluates text and image-based content through multiple ethical traditions. The project remains subject to deployment-specific risk assessment, evidence gathering, and governance review; a new version or technical safeguard is not, by itself, a production approval.
 
-The purpose of the production initiative is to convert a promising technical platform into a secure, resilient, supportable, and business-relevant system. This requires addressing architecture hardening, deployment readiness, data handling, security controls, performance management, stakeholder alignment, and operational procedures. The project is not simply a technology deployment; it is a business transformation effort whose success depends on aligning technical delivery with governance, usability, trust, and measurable value.
+The V9 initiative focuses on dependable job handling, retry safety, queued cancellation, health checks, application retention, and API-level measurement. It also requires deployment evidence, data handling review, security controls, accessibility, stakeholder alignment, and operational procedures. V9 does not establish a validated analysis capability or certify production readiness.
 
-The strategic objective is to bring Ethiviz_V6 to a stable production state where it can support internal or external users, generate reliable analytical output, and demonstrate business credibility without exposing the organization to unacceptable operational or reputational risk.
+The objective is to produce a deployment-specific readiness decision and a clear record of what is measured, implemented, and still gated on external evidence. EthiViz outputs remain exploratory decision-support signals.
 
 ## Project Introduction
 
 ### Background
 
-Ethiviz_V6 builds on prior design iterations and aims to operationalize a pluralistic framework for bias analysis. The product distinguishes itself by evaluating material across multiple ethical perspectives, making it more culturally nuanced and context-aware than conventional single-framework tools.
+EthiViz V9 builds on prior design iterations and adds service-level lifecycle controls. Its multi-tradition approach is not independently validated for accuracy, fairness, or cultural validity; the limitations and review requirements must remain visible in product use.
 
 This capability is especially valuable in environments where fairness must be assessed across diverse cultural assumptions, social norms, and ethical systems. However, those very capabilities also introduce implementation complexity, especially around model explainability, quality controls, user trust, and operational scalability.
 
@@ -30,11 +30,11 @@ Without a structured production plan, the organization may face:
 
 ### Business Need
 
-The project addresses a need for culturally informed bias assessment tools that can support responsible AI review, content assessment, and ethical evaluation in real-world contexts. Ethiviz_V6 is positioned to offer a differentiated capability in the market and to support mission-critical decision-making in environments where social and cultural sensitivity matters.
+The project explores whether culturally informed analysis can support responsible AI review. It is not currently positioned for mission-critical or consequential decisions; that would require qualified evaluation, community partnership, legal review, and operational validation.
 
 ### Strategic Objectives
 
-- Bring Ethiviz_V6 to a production-ready state with reliable operational performance.
+- Verify V9 behavior in documented deployment profiles without inventing performance targets.
 - Establish clear governance, ownership, and operating model.
 - Harden core technical, security, and quality controls.
 - Ensure user trust through explainability, quality assurance, and transparent controls.
@@ -66,4 +66,4 @@ The project will be considered successful when:
 
 ### Summary Conclusion
 
-Ethiviz_V6 has meaningful strategic value and a strong technical foundation, but the path to production requires more than technical capability. It requires a disciplined project management framework that links technical execution, stakeholder engagement, risk mitigation, governance, and controlled change. The objective is not simply to launch a product; it is to establish a credible, dependable, and sustainable operating capability.
+EthiViz V9 implements additional operational safeguards, but representative capacity measurements, external retention controls, complete accessibility evidence, accountable governance, and qualified human/community evaluation remain open. The project should not claim production readiness or validated analytical performance until those gates are met.

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This plan defines how changes to the Ethiviz_V6 production-readiness effort will be reviewed, approved, tracked, and communicated. It ensures the project remains aligned to scope, schedule, and risk while preventing uncontrolled feature expansion.
+This plan defines how changes to EthiViz V9 and subsequent snapshots will be reviewed, approved, tracked, and communicated. Changes to models, prototypes, thresholds, dependencies, operational limits, or user-facing claims require risk/evidence review proportional to impact; version changes do not bypass approval.
 
 ## Change Control Principles
 

@@ -1,0 +1,39 @@
+# Sample reverse-proxy config terminating TLS in front of the gunicorn
+# process started via `gunicorn -c deploy/gunicorn_conf.py Scripts.api_server:app`
+# (Upgrade 42). This is a starting point, not a drop-in file — replace
+# server_name and the certificate paths for your own domain/certs (e.g. from
+# certbot) before use.
+
+server {
+    listen 80;
+    server_name your-ethiviz-domain.example;
+    # Redirect all plain HTTP to HTTPS.
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name your-ethiviz-domain.example;
+
+    ssl_certificate     /etc/letsencrypt/live/your-ethiviz-domain.example/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your-ethiviz-domain.example/privkey.pem;
+
+    # EthiViz's own MAX_CONTENT_LENGTH (50MB) already caps request bodies at
+    # the Flask layer — this must be at least as large or nginx will reject
+    # legitimate uploads before Flask ever sees them.
+    client_max_body_size 50m;
+
+    location / {
+        proxy_pass http://127.0.0.1:5001;
+        proxy_http_version 1.1;
+
+        # api_server.py logs request.remote_addr (used for /api/stop's
+        # loopback check and for rate-limit/quota keys when auth is
+        # disabled) — without these headers, every request behind this
+        # proxy looks like it came from nginx itself.
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

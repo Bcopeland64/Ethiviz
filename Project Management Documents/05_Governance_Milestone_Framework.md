@@ -2,7 +2,7 @@
 
 ## Governance Model
 
-Ethiviz_V6 will be governed through a lightweight but formal project structure designed to support fast decisions without sacrificing accountability. The structure consists of:
+EthiViz V9 should be governed through a lightweight but formal project structure designed to support timely decisions without sacrificing accountability. Milestone completion does not equal production approval; evidence and risk acceptance must be reviewed separately.
 
 - Executive Sponsor: final strategic owner and decision authority
 - Steering Committee: monthly/biweekly high-level governance forum

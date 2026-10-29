@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# EthiViz — root convenience wrapper. See Ethiviz_V8/start_services.sh (the
+# EthiViz — root convenience wrapper. See Ethiviz_V9/start_services.sh (the
 # real, maintained copy) and start_ethiviz.sh for context.
 set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-exec bash "$SCRIPT_DIR/Ethiviz_V8/start_services.sh" "$@"
+exec bash "$SCRIPT_DIR/Ethiviz_V9/start_services.sh" "$@"

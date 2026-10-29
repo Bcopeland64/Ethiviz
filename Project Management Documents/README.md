@@ -1,6 +1,9 @@
 # Project Management Documents
 
-This folder contains the core project management package for the Ethiviz_V6 production-readiness effort.
+This folder contains the project management package for EthiViz, now aligned with the
+V9 implementation snapshot. These are planning and governance templates; they do not
+constitute sponsor approval, a production readiness decision, or evidence that named
+roles and operational processes are active.
 
 ## Document Set
 
@@ -20,7 +23,12 @@ This folder contains the core project management package for the Ethiviz_V6 prod
 
 ## Project Context
 
-Ethiviz_V6 is a cultural bias analysis platform designed to detect and explain bias through multiple ethical frameworks, including Western, Ubuntu, Confucian, Islamic, Buddhist, Hindu/Dharmic, and Indigenous perspectives. This management package supports the transition from prototype and validation work to production deployment with governance, planning, operational controls, and risk oversight.
+EthiViz V9 is an exploratory cultural-bias analysis platform that presents signals
+through multiple ethical frameworks, including Western, Ubuntu, Confucian, Islamic,
+Buddhist, Hindu/Dharmic, and Indigenous perspectives. V9 improves job lifecycle
+controls, idempotency, queued cancellation, health checks, and application retention.
+It does not establish validated analysis quality, community authorization, production
+capacity, or production readiness.
 
 ## Governance Summary
 
@@ -33,4 +41,8 @@ Ethiviz_V6 is a cultural bias analysis platform designed to detect and explain b
 
 ## Production Objective
 
-Deploy a resilient, secure, governed, and measurable version of Ethiviz_V6 that supports real users, operational reliability, and stakeholder confidence while maintaining a clear path to ongoing enhancement.
+Prepare a deployment-specific readiness decision only after operational evidence,
+qualified human and community review, risk ownership, and applicable legal assessment
+are complete. The [V9 plan](../VERSION_9_IMPROVEMENT_PLAN.md) records implemented and
+deferred work; the [V10 plan](../VERSION_10_IMPROVEMENT_PLAN.md) prioritizes evidence
+gaps.

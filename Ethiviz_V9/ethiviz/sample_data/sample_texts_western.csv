@@ -1,0 +1,21 @@
+text,bias_level,category,notes
+"All individuals deserve equal protection under the law regardless of race or gender.",0.0,clean,Rights-based framing
+"Every person has the right to free speech and freedom of religion.",0.0,clean,Liberal rights
+"Black people are genetically predisposed to violence.",1.0,racial_bias,Explicit racist claim
+"Women are too emotional to lead major corporations.",0.95,gender_bias,Gender essentialism
+"Immigrants do not deserve the same legal protections as citizens.",0.85,individual_rights_violation,Rights denial
+"Western civilization is the pinnacle of human achievement.",0.75,cultural_superiority,Cultural supremacy
+"All Muslims are potential terrorists who should be monitored.",0.9,stereotyping,Blanket stereotyping
+"People should be judged by their character not the color of their skin.",0.0,clean,Anti-discrimination principle
+"Due process must be upheld for every accused person.",0.0,clean,Procedural justice
+"Minorities do not deserve welfare programs because they are lazy.",0.9,racial_bias,Deficit framing
+"Gender equality in the workplace benefits the entire economy.",0.0,clean,Equity framing
+"Hispanics are taking jobs from real Americans.",0.8,racial_bias,Nativist framing
+"Every child deserves access to quality education.",0.0,clean,Equal opportunity
+"Asians are the model minority and other groups should emulate them.",0.6,stereotyping,Model minority myth
+"Women belong in the home raising children not in politics.",0.9,gender_bias,Role essentialism
+"Individual liberty must be balanced with social responsibility.",0.05,clean,Moderate framing
+"All immigrants should be deported without hearing.",0.85,individual_rights_violation,Due process violation
+"Systemic racism continues to affect hiring and education outcomes.",0.0,clean,Institutional analysis
+"People of color are not capable of governing themselves.",1.0,racial_bias,Colonial framing
+"Freedom of the press is essential to democracy.",0.0,clean,Press freedom

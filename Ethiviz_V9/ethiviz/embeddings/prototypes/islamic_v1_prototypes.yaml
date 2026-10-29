@@ -1,0 +1,137 @@
+prototypes:
+  # --- violent_stereotyping ---
+  - id: islamic_essentialism_001
+    text: "All Muslims are terrorists or support terrorism."
+    severity: 1.00
+    category: violent_stereotyping
+    language: en
+    translations:
+      ar: "جميع المسلمين إرهابيون أو يدعمون الإرهاب."
+      es: "Todos los musulmanes son terroristas o apoyan el terrorismo."
+      fr: "Tous les musulmans sont des terroristes ou soutiennent le terrorisme."
+      hi: "सभी मुसलमान आतंकवादी हैं या आतंकवाद का समर्थन करते हैं।"
+      zh: "所有穆斯林都是恐怖分子或支持恐怖主义。"
+
+  - id: islamic_violent_002
+    text: "Islam is a religion of violence; its followers are inherently prone to extremism."
+    severity: 1.00
+    category: violent_stereotyping
+    language: en
+    translations:
+      ar: "الإسلام دين عنف وأتباعه عرضة بطبيعتهم للتطرف."
+      es: "El Islam es una religión de violencia; sus seguidores son inherentemente propensos al extremismo."
+      fr: "L'Islam est une religion de violence; ses fidèles sont intrinsèquement enclins à l'extrémisme."
+      hi: "इस्लाम हिंसा का धर्म है; इसके अनुयायी स्वाभाविक रूप से उग्रवाद के प्रति प्रवण हैं।"
+      zh: "伊斯兰教是暴力宗教；其信徒天生倾向于极端主义。"
+
+  - id: islamic_violent_003
+    text: "Muslims should be banned from entering the country because they are a security threat."
+    severity: 1.00
+    category: violent_stereotyping
+    language: en
+    translations:
+      ar: "يجب منع المسلمين من دخول البلاد لأنهم يشكلون تهديداً أمنياً."
+      es: "Los musulmanes deberían tener prohibida la entrada al país porque representan una amenaza para la seguridad."
+      fr: "Les musulmans devraient être interdits d'entrée dans le pays car ils constituent une menace pour la sécurité."
+      hi: "मुसलमानों को देश में प्रवेश से प्रतिबंधित किया जाना चाहिए क्योंकि वे एक सुरक्षा खतरा हैं।"
+      zh: "应禁止穆斯林入境，因为他们是安全威胁。"
+
+  # --- islamic_essentialism ---
+  - id: islamic_essen_001
+    text: "The Islamic world is fundamentally incompatible with democracy and modernity."
+    severity: 0.75
+    category: islamic_essentialism
+    language: en
+    translations:
+      ar: "العالم الإسلامي غير متوافق أساسياً مع الديمقراطية والحداثة."
+      es: "El mundo islámico es fundamentalmente incompatible con la democracia y la modernidad."
+      fr: "Le monde islamique est fondamentalement incompatible avec la démocratie et la modernité."
+      hi: "इस्लामी दुनिया मौलिक रूप से लोकतंत्र और आधुनिकता के साथ असंगत है।"
+      zh: "伊斯兰世界与民主和现代性根本不兼容。"
+
+  - id: islamic_essen_002
+    text: "Muslims cannot be truly loyal citizens of Western countries because their faith comes first."
+    severity: 0.75
+    category: islamic_essentialism
+    language: en
+    translations:
+      ar: "لا يمكن للمسلمين أن يكونوا مواطنين غربيين مخلصين حقاً لأن إيمانهم يأتي أولاً."
+      es: "Los musulmanes no pueden ser verdaderos ciudadanos leales de países occidentales porque su fe está primero."
+      fr: "Les musulmans ne peuvent pas être de vrais citoyens loyaux des pays occidentaux car leur foi passe avant tout."
+      hi: "मुसलमान पश्चिमी देशों के वास्तव में वफादार नागरिक नहीं हो सकते क्योंकि उनका विश्वास पहले आता है।"
+      zh: "穆斯林无法真正忠诚于西方国家，因为他们的信仰是第一位的。"
+
+  - id: islamic_essen_003
+    text: "All Islamic societies are monolithic theocracies that oppress their people uniformly."
+    severity: 0.75
+    category: islamic_essentialism
+    language: en
+    translations:
+      ar: "جميع المجتمعات الإسلامية دول دينية متجانسة تقمع شعوبها بشكل موحد."
+      es: "Todas las sociedades islámicas son teocraciones monolíticas que oprimen uniformemente a sus pueblos."
+      fr: "Toutes les sociétés islamiques sont des théocraties monolithiques qui oppriment uniformément leurs peuples."
+      hi: "सभी इस्लामी समाज एकरूप धर्मतंत्र हैं जो अपने लोगों को एकसमान रूप से दबाते हैं।"
+      zh: "所有伊斯兰社会都是铁板一块的神权政治，统一压迫其人民。"
+
+  # --- gender_essentialism ---
+  - id: islamic_gender_001
+    text: "Muslim women who don't wear the hijab are immoral and deserve no respect."
+    severity: 0.75
+    category: gender_essentialism
+    language: en
+    translations:
+      ar: "المرأة المسلمة التي لا ترتدي الحجاب لا أخلاق لها ولا تستحق الاحترام."
+      es: "Las mujeres musulmanas que no usan el hiyab son inmorales y no merecen respeto."
+      fr: "Les femmes musulmanes qui ne portent pas le hijab sont immorales et ne méritent aucun respect."
+      hi: "मुस्लिम महिलाएं जो हिजाब नहीं पहनती हैं वे अनैतिक हैं और सम्मान की पात्र नहीं हैं।"
+      zh: "不戴头巾的穆斯林女性是不道德的，不值得尊重。"
+
+  - id: islamic_gender_002
+    text: "Islam inherently oppresses women; Muslim women cannot be truly liberated within their faith."
+    severity: 0.75
+    category: gender_essentialism
+    language: en
+    translations:
+      ar: "الإسلام يقمع المرأة بطبيعته؛ لا يمكن للمرأة المسلمة أن تكون محررة حقاً داخل إيمانها."
+      es: "El Islam oprime inherentemente a las mujeres; las mujeres musulmanas no pueden estar verdaderamente liberadas dentro de su fe."
+      fr: "L'Islam opprime intrinsèquement les femmes; les femmes musulmanes ne peuvent pas être véritablement libérées dans leur foi."
+      hi: "इस्लाम स्वाभाविक रूप से महिलाओं को दबाता है; मुस्लिम महिलाएं अपने विश्वास के भीतर वास्तव में मुक्त नहीं हो सकतीं।"
+      zh: "伊斯兰教本质上压迫女性；穆斯林女性在她们的信仰框架内无法真正获得解放。"
+
+  # --- orientalism ---
+  - id: islamic_orient_001
+    text: "Middle Eastern people are irrational, emotional, and unable to govern themselves democratically."
+    severity: 0.75
+    category: orientalism
+    language: en
+    translations:
+      ar: "سكان الشرق الأوسط غير عقلانيين وعاطفيين وغير قادرين على حكم أنفسهم ديمقراطياً."
+      es: "Los pueblos de Oriente Medio son irracionales, emocionales e incapaces de gobernarse democráticamente."
+      fr: "Les peuples du Moyen-Orient sont irrationnels, émotionnels et incapables de se gouverner démocratiquement."
+      hi: "मध्य पूर्व के लोग तर्कहीन, भावुक हैं और लोकतांत्रिक तरीके से खुद को नहीं चला सकते।"
+      zh: "中东人非理性、情绪化，无法以民主方式自治。"
+
+  - id: islamic_orient_002
+    text: "Arab culture is exotic, backward, and needs Western civilization to modernize it."
+    severity: 0.75
+    category: orientalism
+    language: en
+    translations:
+      ar: "الثقافة العربية غريبة ومتخلفة وتحتاج الحضارة الغربية لتحديثها."
+      es: "La cultura árabe es exótica, atrasada y necesita que la civilización occidental la modernice."
+      fr: "La culture arabe est exotique, arriérée et a besoin que la civilisation occidentale la modernise."
+      hi: "अरब संस्कृति विदेशी, पिछड़ी है और इसे आधुनिक बनाने के लिए पश्चिमी सभ्यता की जरूरत है।"
+      zh: "阿拉伯文化奇异、落后，需要西方文明来使其现代化。"
+
+  # --- dignity_violation (karamah) ---
+  - id: islamic_karamah_001
+    text: "Certain groups are inherently less dignified under sacred law."
+    severity: 0.90
+    category: dignity_violation
+    language: en
+    translations:
+      ar: "مجموعات معينة هي بطبيعتها أقل كرامة بموجب القانون المقدس."
+      es: "Ciertos grupos son inherentemente menos dignos bajo la ley sagrada."
+      fr: "Certains groupes sont intrinsèquement moins dignes selon la loi sacrée."
+      hi: "कुछ समूह पवित्र कानून के तहत स्वाभाविक रूप से कम गरिमा वाले हैं।"
+      zh: "某些群体在神圣法律下天生就缺乏尊严。"

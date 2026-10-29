@@ -6,7 +6,7 @@ Critical path analysis identifies the sequence of tasks that directly determines
 
 ## Critical Path Dependencies
 
-The following sequence represents the likely critical path for Ethiviz_V6 production readiness:
+The following sequence represents the likely critical path for EthiViz V9 operational evidence and any future release decision:
 
 1. Charter approval and governance setup
 2. Requirements baseline and acceptance criteria sign-off

@@ -1,27 +1,27 @@
 # 0. Project Charter
 
 ## Project Title
-Ethiviz_V6 Production Readiness and Go-Live Initiative
+EthiViz V9 Operational Evidence and Governance Initiative
 
 ## Project Purpose
-The purpose of this project is to bring Ethiviz_V6 to a production-ready state by stabilizing technical performance, strengthening security and governance, validating quality, and establishing the operational model required for dependable deployment and ongoing support.
+The purpose of this initiative is to assess EthiViz V9's operational and governance readiness through tested lifecycle controls, deployment evidence, data-retention validation, and qualified review. Implementation of technical safeguards alone does not authorize production use.
 
 ## Project Objective
-To deliver a trusted, secure, and operationally viable version of Ethiviz_V6 that meets agreed business and technical requirements and is approved for production use through formal governance and release criteria.
+To produce an evidence-based deployment decision for EthiViz V9 against agreed technical, privacy, accessibility, AI-governance, and stakeholder requirements, without asserting analytical validity in the absence of independent evidence.
 
 ## Business Need
-Ethiviz_V6 is a culturally informed bias analysis platform with strategic value in evaluating content through multiple ethical frameworks. To realize this value in a responsible and sustainable way, the organization must transition the platform from prototype or validation status to a controlled production operating model.
+EthiViz V9 is an exploratory cultural-bias analysis platform. Its scores are not validated fairness certifications. Any transition beyond controlled exploratory use requires accountable ownership, deployment-specific risk assessment, human oversight, community-informed review, and verified operating controls.
 
 ## Project Scope
 
 ### In Scope
-- production-readiness stabilization of the platform
+- stabilization and verification of the V9 implementation
 - architecture, configuration, and deployment hardening
 - quality assurance and testing
 - security control validation and remediation
 - monitoring, support, and operational runbooks
 - governance, stakeholder reporting, and change control
-- go-live decision support and transition to operational ownership
+- evidence-based release decision support and transition to accountable ownership
 
 ### Out of Scope
 - major new feature development beyond the approved production baseline
@@ -30,18 +30,18 @@ Ethiviz_V6 is a culturally informed bias analysis platform with strategic value 
 - any scope additions not formally approved through change control
 
 ## Project Goals
-- achieve production readiness according to agreed quality, security, and operational standards
+- establish whether agreed quality, security, and operational release criteria are met
 - reduce delivery, reliability, and governance risk to acceptable levels
 - improve stakeholder confidence through transparent governance and measurable progress
 - ensure a sustainable operational support model after release
 
 ## Success Criteria
-The project is successful when:
-- the platform is running reliably in the target production environment
-- critical security controls are implemented and validated
-- key quality and acceptance criteria are met
-- business stakeholders approve the production release decision
-- operational ownership, support procedures, and monitoring are in place
+The initiative is successful when:
+- supported deployment profiles and their limits are measured or explicitly marked unverified
+- critical security, lifecycle, retention, accessibility, and recovery controls have evidence
+- unresolved governance and analytical-validity gaps are documented and owned
+- a deployment-specific decision is made by accountable stakeholders
+- operational support and escalation ownership are assigned before any production approval
 
 ## High-Level Deliverables
 - approved project charter and governance structure
@@ -49,8 +49,8 @@ The project is successful when:
 - architecture and production environment design
 - stabilized platform and remediation plan
 - quality validation package and defect closure plan
-- production readiness review package
-- go-live approval and handover documentation
+- evidence-based readiness review package
+- deployment decision and, only if approved, operational handover documentation
 
 ## Assumptions
 - the current platform foundation is viable and can be stabilized without full redesign
@@ -100,7 +100,7 @@ The project carries technical, security, quality, and schedule risk associated w
 Project communications will be structured, regular, and decision-oriented. Weekly status reporting, governance reviews, and issue tracking will maintain alignment across the sponsor, delivery team, and operational owners.
 
 ## Approval
-This charter establishes the formal foundation for the Ethiviz_V6 Production Readiness and Go-Live Initiative and should be approved by the Executive Sponsor before execution proceeds beyond initiation.
+This charter establishes the planning foundation for the EthiViz V9 Operational Evidence and Governance Initiative and should be approved by the Executive Sponsor before execution proceeds beyond initiation.
 
 ## Charter Status
 Draft for approval

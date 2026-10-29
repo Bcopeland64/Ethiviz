@@ -37,6 +37,11 @@ The RACI matrix defines responsibility, accountability, consultation, and inform
 - The Security Lead owns prioritization and validation of security controls.
 - QA Lead owns release acceptance criteria and quality evidence.
 - Operations Lead owns monitoring, support, and service continuity.
+- The listed role names are placeholders, not named appointments. Assign an accountable
+  data/privacy owner, evaluation lead, and qualified community reviewers before those
+  workstreams or any broader deployment are considered active.
+- Release acceptance must distinguish technical test evidence from analytical validity,
+  community authorization, and legal review.
 
 ## Operational Implication
 

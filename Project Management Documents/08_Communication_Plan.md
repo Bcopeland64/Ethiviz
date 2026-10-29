@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The communication plan ensures that all stakeholders receive timely, accurate, and relevant information about Ethiviz_V6 production-readiness progress, risks, decisions, and launch status. Clear communication reduces uncertainty and protects stakeholder confidence.
+The communication plan ensures that stakeholders receive timely and accurate information about EthiViz V9 implementation, evidence gaps, risks, and release decisions. Communications must not describe a proposed or tested control as production readiness or validated analytical performance.
 
 ## Stakeholder Groups
 

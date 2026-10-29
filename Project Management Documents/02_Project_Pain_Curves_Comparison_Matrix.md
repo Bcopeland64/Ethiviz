@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This matrix compares the current project pain profile with the target state after Ethiviz_V6 production readiness is established. It provides a practical view of where the organization experiences friction today and how the program will reduce that friction over time.
+This matrix compares the current project pain profile with the evidence-gated target state for EthiViz V9. It does not imply production readiness; deployment capacity, external data retention, qualified evaluation, and governance ownership remain release dependencies.
 
 ## Pain Curves Comparison Matrix
 

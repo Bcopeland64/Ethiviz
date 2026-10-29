@@ -9,6 +9,34 @@ but material governance and assurance gaps remain. The repository alone does not
 claims of validated cultural/fairness performance, regulatory compliance, or readiness
 for consequential use.
 
+## V9 implementation update — 2026-10-29
+
+This supplement reviews repository changes in `Ethiviz_V9/` against the V8 findings below.
+It is a source/document/test review only; the V8 assessment scope limitations still apply.
+No live deployment, production configuration, Redis/PostgreSQL recovery, backup schedule,
+community partnership, human evaluation, or legal context was independently verified.
+
+**New repository evidence:** V9 adds persistent idempotency records, allowed job-state
+transitions, queued-only cancellation, failure-closed Redis configuration, database/
+queue/worker readiness checks, configurable application upload and terminal-job
+retention, an API-level benchmark, and basic live-region announcements. The V9 plan
+identifies each as partial where production or external evidence remains missing.
+
+**Updated posture:** These changes improve operational transparency but do not establish a
+production capacity profile or complete recovery/deletion guarantees. Cancellation is
+not available once a job is running. V9 retains audit metadata after deletion, and the
+application cannot erase copies in backups, proxies, Redis, or external systems.
+Accessibility changes are not a complete conformance audit. No qualified,
+consented, human-reviewed evaluation corpus or community authorization was added.
+
+**Governance conclusion:** The V8 High findings concerning accountable deployment
+ownership, cultural provenance/consent, governed evaluation, and use-context assessment
+remain open. V9 offers partial implementation evidence for retention/queue configuration
+and limited accessibility behavior, but the repository still does not support claims of
+validated cultural/fairness performance, regulatory compliance, or readiness for
+consequential use. See the [V9 plan](../VERSION_9_IMPROVEMENT_PLAN.md) and
+[V9 action status](Action_Register.md).
+
 ## 1. Executive summary
 
 EthiViz analyzes text and images using seven ethical-tradition lenses and presents
@@ -383,3 +411,9 @@ evidence.
 - [Calibration evaluation utility](../Ethiviz_V8/ethiviz/evaluation/calibration_validation.py)
 - [V8 CI workflow](../.github/workflows/ethiviz-v8-ci.yml)
 - [V9 improvement proposal](../VERSION_9_IMPROVEMENT_PLAN.md)
+- [V9 README and operational limitations](../Ethiviz_V9/README.md)
+- [V9 API lifecycle and readiness implementation](../Ethiviz_V9/Scripts/api_server.py)
+- [V9 queue implementation](../Ethiviz_V9/Scripts/analysis_queue.py)
+- [V9 job-store transitions and retention](../Ethiviz_V9/ethiviz/storage/job_store.py)
+- [V9 API benchmark](../Ethiviz_V9/Scripts/benchmark_api.py)
+- [V9 plan implementation status](../VERSION_9_IMPROVEMENT_PLAN.md)

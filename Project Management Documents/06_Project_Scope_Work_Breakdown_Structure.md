@@ -4,7 +4,7 @@
 
 ### In Scope
 
-- stabilization of the Ethiviz_V6 platform
+- stabilization and verification of the EthiViz V9 platform, including idempotency, job-state transitions, queued cancellation, readiness, and retention controls
 - architecture and deployment hardening
 - performance and reliability assessment
 - security and data handling controls
@@ -63,7 +63,7 @@
    5.4 User acceptance validation
    5.5 Release readiness sign-off
 
-6. Production Readiness and Go-Live
+6. Evidence-Based Release Decision and Operational Handover
    6.1 Deployment validation
    6.2 Monitoring configuration
    6.3 Support procedures and runbooks

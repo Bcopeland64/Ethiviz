@@ -14,6 +14,9 @@
 | R-08 | Release timeline slips due to dependency bottlenecks | Schedule | Medium | High | Project Manager | delayed approvals or dependency failure | track critical path, escalate blockers, adjust sequencing | Active |
 | R-09 | User adoption is limited by unclear value proposition or poor UX | Adoption | Medium | Medium | Product Owner | poor feedback or minimal pilot usage | refine onboarding and messaging, validate with stakeholders | Active |
 | R-10 | Insufficient support model after go-live | Operational | Medium | Medium | Operations Lead | no named on-call ownership or escalation coverage | assign support roles and finalize hypercare plan | Active |
+| R-11 | No governed human-reviewed evidence for accuracy, fairness, or cultural validity | AI governance | High | High | Product Owner / Evaluation Lead | validity claims or consequential use proposed without evidence | block such claims; define consented evaluation protocol and qualified review | Active |
+| R-12 | Production capacity and recovery limits are unmeasured | Technical / Operations | Medium | High | Technical Lead / Operations Lead | worker count, queue capacity, or SLO proposed without representative benchmarks | benchmark target topology and run overload/restart tests before publishing limits | Active |
+| R-13 | Deletion expectations exceed application control of backups, logs, or Redis | Privacy / Compliance | Medium | High | Privacy Owner / Operations Lead | deletion request or retention promise includes external copies | map each store, assign retention owner, and disclose unverified infrastructure boundaries | Active |
 
 ## Risk Review Notes
 

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This plan outlines how Ethiviz_V6 production-readiness costs will be estimated, tracked, controlled, and reported. The objective is to ensure financial discipline without undermining delivery quality or risk reduction.
+This plan outlines how EthiViz V9 operational-evidence and governance costs will be estimated, tracked, controlled, and reported. Budget estimates should include representative deployment tests, accessible-design review, qualified evaluation, and community partnership where appropriate; those activities must not be assumed cost-free.
 
 ## Cost Categories
 

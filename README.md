@@ -15,7 +15,7 @@ Multi-Perspective Ethical Analysis"* (IU University of Applied Sciences, Septemb
 ## Table of Contents
 
 - [What Makes EthiViz Different](#what-makes-ethiviz-different)
-- [Current Version: V8](#current-version-v8)
+- [Current Version: V9](#current-version-v9)
 - [Historical V6 Engine Changes](#historical-v6-engine-changes)
 - [Quick Start](#quick-start)
 - [Architecture](#architecture)
@@ -25,7 +25,7 @@ Multi-Perspective Ethical Analysis"* (IU University of Applied Sciences, Septemb
 - [Known Limitations](#known-limitations)
 - [Upgrading from V5](#upgrading-from-v5)
 - [Testing](#testing)
-- [V8 Delivery Status](#v8-delivery-status)
+- [V9 Delivery Status](#v9-delivery-status)
 - [Historical V7 Delivery Status](#historical-v7-delivery-status)
 - [Project Management Documentation](#project-management-documentation)
 - [Academic Context](#academic-context)
@@ -47,14 +47,16 @@ Confucian, Islamic, Buddhist, Hindu/Dharmic, and Indigenous/First Nations.
 
 ---
 
-## Current Version: V8
+## Current Version: V9
 
-**[`Ethiviz_V8/`](Ethiviz_V8/) is the latest project snapshot**, building on V7 with
-deferred visualization loading, a measured frontend bundle budget, bounded language
-detection caching, fail-closed network binding, and root-level dependency CI. See
-**[Ethiviz_V8/README.md](Ethiviz_V8/README.md)** for setup, safety controls, benchmarking,
-validation, and known limitations. **[`Ethiviz_V7/`](Ethiviz_V7/)** remains available as
-the prior snapshot and its README documents that version.
+**[`Ethiviz_V9/`](Ethiviz_V9/) is the latest project snapshot**, building on V8 with
+retry-safe job submission, enforced job-state transitions, queued cancellation, fail-closed
+Redis configuration, health/readiness endpoints, terminal-job retention, API-level
+benchmarking, and accessible progress announcements. See
+**[Ethiviz_V9/README.md](Ethiviz_V9/README.md)** for setup, API behavior, safety controls,
+validation, and known limitations. V9 is not a production-readiness or analytical-validity
+certification; deployment capacity, external retention, human-reviewed evaluation, and
+community review remain open.
 
 `Ethiviz_V2/` through `Ethiviz_V6/` are preserved as historical snapshots and are not
 maintained for new work. Each major version has a distinct contribution:
@@ -66,12 +68,13 @@ maintained for new work. Each major version has a distinct contribution:
 | V6 | Audited and repaired the engine itself: metrics, multilingual support, and cross-cultural reasoning |
 | **V7** | **Added API security, operational scaling, cross-cultural findings, and production deployment paths** |
 | **V8** | **Adds lazy chart loading, performance checks, bounded caching, fail-closed binding, and dependency CI** |
+| **V9** | **Adds idempotency, job lifecycle/cancellation controls, health checks, retention, and API benchmarking** |
 
 ---
 
 ## Historical V6 Engine Changes
 
-The following records the V6 engine work. V8 is the latest project; use its README for
+The following records the V6 engine work. V9 is the latest project; use its README for
 current setup, API behavior, and known limitations.
 
 V5's contribution was architectural. V6 turns inward on the engine. The headline finding
@@ -158,7 +161,7 @@ bash start_ethiviz.sh
 ```
 
 The root `start_ethiviz.sh` is a thin wrapper (as are `stop_ethiviz.sh` and
-`start_services.sh`) that launches the copies in `Ethiviz_V8/`. It installs the `ethiviz`
+`start_services.sh`) that launches the copies in `Ethiviz_V9/`. It installs the `ethiviz`
 package (editable) and Flask/flask-cors if missing, starts the backend on port **5001**,
 waits for it to respond, then starts the React frontend on port **5173**. Once both are
 up, open **http://localhost:5173**.
@@ -183,13 +186,13 @@ Without `--with-vision`, image analysis still works but degrades to a metadata-o
 
 ```bash
 # Terminal 1 — backend
-cd Ethiviz_V8
+cd Ethiviz_V9
 python3 -m pip install --user -e '.[api,semantic]'
 python3 Scripts/api_server.py          # http://localhost:5001
 
 # Terminal 2 — frontend
-cd Ethiviz_V8/project
-npm install
+cd Ethiviz_V9/project
+npm ci
 npm run dev                           # http://localhost:5173
 ```
 
@@ -209,13 +212,7 @@ npm run dev                           # http://localhost:5173
 
 ```
 Ethiviz/
-├── docs/pm/                            # ← IT Project Management & Governance Documentation
-│   ├── Project_Charter.md              # Project Charter & Scope Statement
-│   ├── WBS_and_Schedule.md             # Work Breakdown Structure & Timeline
-│   ├── Risk_Management_Plan.md         # Risk Register & Mitigation Strategy
-│   ├── Agile_Scrum_Artifacts.md        # Sprint Backlog, User Stories & Acceptance Criteria
-│   └── Stakeholder_Matrix.md           # Stakeholder Analysis & Communication Plan
-├── Ethiviz_V8/                         # ← current version, start here
+├── Ethiviz_V9/                         # ← current version, start here
 │   ├── ethiviz/                        # Python package (pip install -e .)
 │   │   ├── api.py                      # Analyzer — primary entry point
 │   │   ├── lenses/                     # 7 cultural ethical lenses (+ shared base scoring)
@@ -250,7 +247,10 @@ Ethiviz/
 │   ├── start_ethiviz.sh / stop_ethiviz.sh
 │   └── pyproject.toml
 │
-├── start_ethiviz.sh / stop_ethiviz.sh / start_services.sh  # root wrappers -> Ethiviz_V8/
+├── Project Management Documents/       # Project charter, WBS, risks, governance, change control
+├── AI_Governance_Assessment/           # V8 baseline assessment + V9 implementation update
+├── start_ethiviz.sh / stop_ethiviz.sh / start_services.sh  # root wrappers -> Ethiviz_V9/
+├── Ethiviz_V8/                         # prior version snapshot
 ├── Ethiviz_V5/                         # historical snapshot, not maintained
 ├── Ethiviz_V4/                         # historical snapshot, not maintained
 ├── Ethiviz_V3/                         # historical snapshot, not maintained
@@ -289,7 +289,7 @@ and its absence elsewhere is not consensus.
 
 ## API Reference
 
-This summary is retained for orientation. The V8 README is authoritative for current
+This summary is retained for orientation. The V9 README is authoritative for current
 request options, authentication, endpoints, and response fields.
 
 **Base URL:** `http://localhost:5001`
@@ -297,7 +297,10 @@ request options, authentication, endpoints, and response fields.
 | Endpoint | Method | Description |
 |---|---|---|
 | `/api/analyze` | POST | Submit an analysis job; returns `job_id` + `status_url` |
-| `/api/analyze/status/{job_id}` | GET | `pending` / `processing` / `completed` / `failed` |
+| `/api/analyze/status/{job_id}` | GET | `pending` / `processing` / `completed` / `failed` / `cancelled` |
+| `/api/jobs/{job_id}/cancel` | POST | Cancel queued work only; running work returns `409` |
+| `/health/live` | GET | Process liveness |
+| `/health/ready` | GET | Database, queue, and worker readiness (`503` if unavailable) |
 | `/api/analyze/results/{job_id}` | GET | Retrieve results once completed |
 | `/api/analyze/results/{job_id}/export` | GET | Download HTML or JSON report (`?format=html\|json`) |
 | `/api/sample-data` | GET | List curated sample datasets |
@@ -341,8 +344,10 @@ A completed job's results include:
 > report visibly lower values than before — that is the intended correction, not a
 > regression.
 
-Full request/response shapes are documented in
-[`Ethiviz_V6/README.md`](Ethiviz_V6/README.md).
+An optional `Idempotency-Key` header makes identical submission retries reuse the original
+job; reusing the key with a different payload returns `409`. Full request/response shapes,
+retention defaults, and benchmark instructions are documented in
+[`Ethiviz_V9/README.md`](Ethiviz_V9/README.md).
 
 ---
 
@@ -379,7 +384,7 @@ Being direct about this matters for anyone building on top of EthiViz.
 ## Historical V6 Limitations
 
 For current limitations, deployment cautions, and data-retention details, see the
-[V8 documentation](Ethiviz_V8/README.md).
+[V9 documentation](Ethiviz_V9/README.md).
 
 - **Machine-generated translations.** Prototype translations and non-English WEAT word
   lists have not been reviewed by fluent speakers. They are semantic anchors that directly
@@ -434,23 +439,29 @@ carried forward.
 ## Testing
 
 ```bash
-cd Ethiviz_V8
+cd Ethiviz_V9
 python3 -m pytest tests/ -q
 ```
 
 The backend suite covers the engine, API, lenses, cultural metrics, multilingual coverage,
-calibration, cross-cultural findings, mitigation modules, and the job store.
+calibration, cross-cultural findings, mitigation modules, job lifecycle, idempotency,
+cancellation, readiness, and retention.
 
 ---
 
-## V8 Delivery Status
+## V9 Delivery Status
 
-V8 implements the independently verifiable frontend, cache, binding, and CI improvements
-described in [Ethiviz_V8/README.md](Ethiviz_V8/README.md). The V8 improvement plan also
-includes work that cannot be honestly claimed complete without operator measurements,
-qualified reviewers, community consent, and governed evaluation data. In particular,
-V8 does not claim a validated human-reviewed accuracy benchmark, queue cancellation/
-recovery guarantees, end-to-end backup deletion, or production capacity limits.
+V9 implements the job lifecycle, idempotency, queued-only cancellation, fail-closed Redis
+configuration, readiness checks, application retention defaults, API-level benchmark,
+and accessible status announcements described in
+[Ethiviz_V9/README.md](Ethiviz_V9/README.md). See
+[VERSION_9_IMPROVEMENT_PLAN.md](VERSION_9_IMPROVEMENT_PLAN.md) for what is implemented,
+tested, partial, and still gated. V9 does not establish a measured production capacity
+profile, complete backup/external-log erasure, graceful recovery guarantees for every
+deployment, or validated cultural/fairness performance.
+
+The V10 proposal is in
+[VERSION_10_IMPROVEMENT_PLAN.md](VERSION_10_IMPROVEMENT_PLAN.md).
 
 ## Historical V7 Delivery Status
 
@@ -574,21 +585,16 @@ These are still unresolved and affect scope:
 
 ## Project Management Documentation
 
-To complement the technical delivery, this project demonstrates end-to-end IT Project
-Management lifecycle execution. The [`docs/pm/`](docs/pm/) folder showcases how full
-software engineering initiatives are initiated, planned, executed, and governed:
+The [Project Management Documents](Project%20Management%20Documents/README.md) folder
+contains the charter, executive summary, WBS, risk and change controls, governance
+framework, communications, and cost/schedule materials. They are planning documents and
+placeholder role assignments—not evidence of sponsor approval or active operational
+ownership. Current delivery status and evidence gates are linked from that folder's
+README and the [V9 improvement plan](VERSION_9_IMPROVEMENT_PLAN.md).
 
-| PM Artifact | Focus Area & Description |
-|---|---|
-| [Project Charter](docs/pm/Project_Charter.md) | High-level business case, objectives, milestones, constraints, and success metrics. |
-| [WBS & Schedule](docs/pm/WBS_and_Schedule.md) | Detailed Work Breakdown Structure mapping architectural iterations (V2 through V6) to deliverable schedules. |
-| [Risk Register](docs/pm/Risk_Management_Plan.md) | Identifies technical, ethical, and delivery risks alongside impact assessments and mitigation paths. |
-| [Agile/Scrum Framework](docs/pm/Agile_Scrum_Artifacts.md) | User story mapping, acceptance criteria, epic definitions, and sprint velocity tracking. |
-| [Stakeholder Matrix](docs/pm/Stakeholder_Matrix.md) | Communication strategy catering to academic advisors, open-source contributors, and end-users. |
-
-This governance layer highlights my capability as an aspiring IT Project Manager to bridge
-the gap between complex software engineering, cross-cultural domain ethics, and structured
-project governance.
+The [AI Governance Assessment](AI_Governance_Assessment/README.md) retains its V8
+repository assessment and adds a V9 implementation update. It does not assess a live
+deployment or certify compliance, fairness, accuracy, or cultural validity.
 
 ---
 
@@ -607,4 +613,4 @@ Western-centric and proposes a pluralistic alternative. EthiViz is that alternat
 
 ## License
 
-Apache 2.0 — see [`Ethiviz_V8/LICENSE`](Ethiviz_V8/LICENSE).
+Apache 2.0 — see [`Ethiviz_V9/LICENSE`](Ethiviz_V9/LICENSE).
