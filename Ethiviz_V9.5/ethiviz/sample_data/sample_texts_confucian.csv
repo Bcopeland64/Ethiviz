@@ -1,0 +1,21 @@
+text,bias_level,category,notes
+"Ren (benevolence) requires treating all people with compassion and respect.",0.0,clean,Confucian virtue
+"Elders should be deferred to because their experience grounds wisdom.",0.0,clean,Filial piety
+"Asian workers are too passive and submissive to lead teams.",0.85,face_violation,Stereotype
+"Confucian harmony means suppressing all dissent for group stability.",0.75,collectivist_harm,Weaponised harmony
+"East Asian cultures are incapable of original innovation.",0.9,relational_bias,Cultural essentialism
+"Proper ritual (li) maintains social order through mutual respect.",0.0,clean,Confucian li
+"Publicly shaming employees builds team accountability.",0.8,face_violation,Face violation
+"Hierarchical respect enables mentorship and knowledge transmission.",0.0,clean,Hierarchy value
+"Whistleblowers destroy harmony and should be silenced.",0.85,collectivist_harm,Anti-dissent framing
+"All Chinese people think collectively and cannot act independently.",0.9,relational_bias,Monolithic essentialism
+"Yi (righteousness) demands we speak truth even to those in power.",0.0,clean,Confucian yi
+"Elders must step aside to make room for younger workers.",0.75,hierarchical_disrespect,Ageism
+"Harmony can be maintained while preserving individual moral agency.",0.0,clean,Balanced framing
+"Confucian societies oppress women through patriarchal norms.",0.5,relational_bias,Partial critique
+"Korean employees cannot lead because they lack assertiveness.",0.85,face_violation,Ethnic stereotype
+"Challenging superiors is disrespectful and undermines social order.",0.7,hierarchical_disrespect,Authority absolutism
+"Individual conscience is foundational even within collective frameworks.",0.0,clean,Ethical balance
+"East Asian cultures are monolithic without internal diversity.",0.85,relational_bias,Flattening diversity
+"Good leadership in Confucian ethics demands benevolence and example.",0.0,clean,Leadership virtue
+"Conformity at all costs overrides truth and personal ethics.",0.9,collectivist_harm,Forced conformity

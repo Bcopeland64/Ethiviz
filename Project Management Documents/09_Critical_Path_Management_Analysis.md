@@ -6,7 +6,7 @@ Critical path analysis identifies the sequence of tasks that directly determines
 
 ## Critical Path Dependencies
 
-The following sequence represents the likely critical path for EthiViz V9 operational evidence and any future release decision:
+The following sequence represents the likely critical path for EthiViz V9.5 operational evidence and any future release decision. A governed evaluation protocol and suitable corpus are prerequisites to interpreting evaluator output as evidence.
 
 1. Charter approval and governance setup
 2. Requirements baseline and acceptance criteria sign-off

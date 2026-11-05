@@ -1,0 +1,506 @@
+# ethiviz/api.py
+from __future__ import annotations
+import logging
+import time
+import numpy as np
+from collections import Counter
+from typing import Any, Callable, List, Dict, Optional
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from ethiviz.context.deployment import DeploymentContext
+from ethiviz.scoring.calibration import PlattCalibrator
+from ethiviz.scoring.drift import DriftMonitor
+from ethiviz.utils.batch import BatchProcessor
+from ethiviz.utils.reproducibility import ReproducibilityRecord
+from ethiviz.frameworks.loader import FrameworkLoader
+from ethiviz.frameworks.base import FrameworkRegistry
+from ethiviz.lenses.western import WesternLens
+from ethiviz.lenses.ubuntu import UbuntuLens
+from ethiviz.lenses.confucian import ConfucianLens
+from ethiviz.lenses.islamic import IslamicLens
+from ethiviz.lenses.buddhist import BuddhistLens
+from ethiviz.lenses.hindu import HinduLens
+from ethiviz.lenses.indigenous import IndigenousLens
+from ethiviz.scoring.base import ScoredResult, FrameworkScore, BiasCandidate
+from ethiviz.scoring.multi_framework import MultiFrameworkScorer
+from ethiviz.context.weights import get_weights
+from ethiviz.context.regulatory import RegulatoryMapper
+from ethiviz.reporting.base import BiasReport
+from ethiviz.embeddings.language_detection import LanguageDetector
+from ethiviz.embeddings.semantic_detector import SemanticBiasDetector
+from ethiviz.analysis.weat import (
+    WEATAnalyzer, iWEATAnalyzer, WEATTestSuite, load_weat_tests, load_iweat_tests,
+)
+from ethiviz.frameworks.conflict import ConflictResolver
+from ethiviz.frameworks.dimension_map import CrossCulturalDimensionMap
+from ethiviz.frameworks.coverage_audit import is_language_reviewed
+
+logger = logging.getLogger(__name__)
+_EMBEDDING_BATCH_SIZE = 64
+
+
+class Analyzer:
+    """
+    Primary entry point for EthiViz bias detection.
+
+    Example:
+        >>> from ethiviz.api import Analyzer
+        >>> from ethiviz.context.deployment import DeploymentContext
+        >>> ctx = DeploymentContext(region="US", domain="hiring",
+        ...     primary_community="western", regulatory_framework="gdpr")
+        >>> analyzer = Analyzer(deployment_context=ctx)
+        >>> result = analyzer.analyze(["All women prefer caregiving to leadership."] * 5)
+        >>> report = result.generate_report()
+        >>> print(result.consensus_score)
+    """
+
+    def __init__(
+        self,
+        registry: FrameworkRegistry | None = None,
+        frameworks: list[str] | None = None,
+        aggregation: str = "weighted_mean",
+        confidence_threshold: float = 0.6,
+        deployment_context: DeploymentContext | None = None,
+        calibrator: PlattCalibrator | None = None,
+        drift_monitor: DriftMonitor | None = None,
+        use_semantic: bool = True,
+        random_seed: int = 42,
+        n_bootstrap: int = 1000,
+    ) -> None:
+        self.registry = registry or FrameworkLoader().load_builtin()
+        self.framework_ids = frameworks or self.registry.registered_ids
+        self.deployment_context = deployment_context
+        self.calibrator = calibrator or PlattCalibrator()
+        self.drift_monitor = drift_monitor or DriftMonitor()
+        self.use_semantic = use_semantic
+        self.random_seed = random_seed
+        self.n_bootstrap = n_bootstrap
+        self.lang_detector = LanguageDetector()
+
+        self.lenses: dict[str, Any] = {
+            "western_v1": WesternLens(use_semantic=use_semantic),
+            "ubuntu_v1": UbuntuLens(use_semantic=use_semantic),
+            "confucian_v2": ConfucianLens(use_semantic=use_semantic),
+            "islamic_v1": IslamicLens(use_semantic=use_semantic),
+            "buddhist_v1": BuddhistLens(use_semantic=use_semantic),
+            "hindu_v1": HinduLens(use_semantic=use_semantic),
+            "indigenous_v1": IndigenousLens(use_semantic=use_semantic),
+        }
+
+    # ------------------------------------------------------------------
+    # Public API
+    # ------------------------------------------------------------------
+
+    def analyze(
+        self,
+        dataset: List[str],
+        mode: str = "text",
+        weights: dict[str, float] | None = None,
+        run_weat: bool = False,
+        run_iweat: bool = False,
+        dataset_source: str = "unknown",
+        job_id: str | None = None,
+        n_workers: int = 1,
+        progress_callback: Callable[[int, int], None] | None = None,
+    ) -> ScoredResult:
+        """
+        Analyse a dataset for bias through all registered ethical lenses.
+
+        Returns a ScoredResult containing per-framework scores, per-text
+        candidate scores, WEAT results (when run_weat=True), and full
+        reproducibility metadata.
+
+        progress_callback(n_completed, n_total), if given, is invoked once per
+        text as its scoring finishes across all lenses (not once per lens).
+        """
+        analysis_started = time.perf_counter()
+        if not dataset:
+            return ScoredResult(
+                [], [], 0.0, [], [], None, None, self.deployment_context,
+                ReproducibilityRecord.capture(self.framework_ids), {}
+            )
+
+        # 1. Language detection, per text. Detecting once from dataset[0] and
+        # applying it to the whole dataset meant a mixed-language corpus was
+        # scored entirely in the first text's language — every other language's
+        # prototypes silently mismatched. Each text is now scored in its own.
+        language_started = time.perf_counter()
+        lang_results = [self.lang_detector.detect(t) for t in dataset]
+        languages = [lr.language_code for lr in lang_results]
+        language_detection_seconds = time.perf_counter() - language_started
+
+        # Dominant language is reported at the dataset level for metadata and
+        # for the WEAT word lists, which are dataset-wide rather than per-text.
+        language = Counter(languages).most_common(1)[0][0]
+        mean_lang_confidence = float(np.mean([lr.confidence for lr in lang_results]))
+        mixed_language = len(set(languages)) > 1
+
+        # 2. Parallel lens scoring across every text
+        active_ids = [fid for fid in self.framework_ids if fid in self.lenses]
+
+        def score_text(item: tuple[str, str, np.ndarray | None]) -> dict[str, Any]:
+            text, text_lang, semantic_embedding = item
+            score_options = (
+                {"semantic_embedding": semantic_embedding}
+                if semantic_embedding is not None else {}
+            )
+            return {
+                fid: self.lenses[fid].score(text, language=text_lang, **score_options)
+                for fid in active_ids
+            }
+
+        max_workers = min(max(1, len(dataset)), 8) if n_workers <= 1 else n_workers
+        total = len(dataset)
+        results_by_index: dict[int, dict[str, Any]] = {}
+        embedding_detector = (
+            getattr(self.lenses[active_ids[0]], "detector", None)
+            if active_ids and self.use_semantic else None
+        )
+        shared_model = (
+            embedding_detector.model
+            if isinstance(embedding_detector, SemanticBiasDetector) else None
+        )
+        embedding_seconds = 0.0
+        scoring_started = time.perf_counter()
+        completed = 0
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            for chunk_start in range(0, total, _EMBEDDING_BATCH_SIZE):
+                chunk_indices = list(range(
+                    chunk_start, min(chunk_start + _EMBEDDING_BATCH_SIZE, total)
+                ))
+                embeddings_by_index: dict[int, np.ndarray] = {}
+                if shared_model is not None:
+                    embedding_started = time.perf_counter()
+                    indices_by_language: dict[str, list[int]] = {}
+                    for index in chunk_indices:
+                        indices_by_language.setdefault(languages[index], []).append(index)
+                    for language_indices in indices_by_language.values():
+                        unique_texts = list(dict.fromkeys(
+                            dataset[index] for index in language_indices
+                        ))
+                        encoded = shared_model.encode(unique_texts)
+                        embeddings_by_text = {
+                            text: encoded[row] for row, text in enumerate(unique_texts)
+                        }
+                        for index in language_indices:
+                            embeddings_by_index[index] = embeddings_by_text[dataset[index]]
+                    embedding_seconds += time.perf_counter() - embedding_started
+
+                future_to_index = {
+                    executor.submit(
+                        score_text,
+                        (
+                            dataset[index],
+                            languages[index],
+                            embeddings_by_index.get(index),
+                        ),
+                    ): index
+                    for index in chunk_indices
+                }
+                for future in as_completed(future_to_index):
+                    results_by_index[future_to_index[future]] = future.result()
+                    completed += 1
+                    if progress_callback:
+                        progress_callback(completed, total)
+        scoring_seconds = time.perf_counter() - scoring_started - embedding_seconds
+        all_lens_results = [results_by_index[i] for i in range(total)]
+
+        # 3. Aggregate per framework; apply calibration + drift monitoring
+        aggregation_started = time.perf_counter()
+        avg_framework_scores: list[FrameworkScore] = []
+        candidates: list[BiasCandidate] = []
+        per_text_scores: dict[str, list[float]] = {fid: [] for fid in active_ids}
+
+        for fid in active_ids:
+            text_scores = [res[fid].overall_score for res in all_lens_results]
+            per_text_scores[fid] = text_scores
+            avg_score = float(np.mean(text_scores))
+
+            # Merge all dimension scores across texts (mean per dimension)
+            all_dim_keys: set[str] = set()
+            for res in all_lens_results:
+                all_dim_keys.update(res[fid].dimension_scores.keys())
+            dim_scores: dict[str, float] = {}
+            for dim in all_dim_keys:
+                dim_scores[dim] = float(np.mean([
+                    res[fid].dimension_scores.get(dim, 0.0) for res in all_lens_results
+                ]))
+
+            # Calibration (Upgrade 9)
+            calibrated: float | None = None
+            if self.calibrator.is_fitted(fid):
+                calibrated = self.calibrator.calibrate(avg_score, fid)
+
+            # Drift monitoring (Upgrade 10)
+            if self.drift_monitor:
+                try:
+                    self.drift_monitor.check_drift(fid, text_scores, dataset_source)
+                except RuntimeError:
+                    self.drift_monitor.record_snapshot(
+                        fid, text_scores, dataset_source, set_as_baseline=True
+                    )
+
+            # Confidence interval (Upgrade 7) — bootstrap over per-text scores
+            rng = np.random.default_rng(self.random_seed)
+            arr = np.array(text_scores, dtype=float)
+            boot_means = [
+                rng.choice(arr, size=len(arr), replace=True).mean()
+                for _ in range(min(self.n_bootstrap, 500))
+            ]
+            ci = (float(np.percentile(boot_means, 2.5)), float(np.percentile(boot_means, 97.5)))
+
+            # Confidence is the lens's own mean confidence across texts,
+            # attenuated by language-detection confidence. Previously this was
+            # set to lang_res.confidence alone, which reported how sure we were
+            # about the *language* as though it were how sure we were about the
+            # *bias score*, discarding each lens's own confidence entirely.
+            lens_conf = float(np.mean([res[fid].confidence for res in all_lens_results]))
+            combined_conf = lens_conf * mean_lang_confidence
+
+            # Surface any per-text coverage degradation at the framework level
+            # so a caller sees "this lens could only partly measure this
+            # dataset" without having to walk every individual LensScore.
+            mean_coverage = float(
+                np.mean([res[fid].analysis_coverage for res in all_lens_results])
+            )
+            lens_warnings = sorted({
+                w for res in all_lens_results for w in res[fid].warnings
+            })
+
+            # Translation review status (Upgrade 37). Every prototype file's
+            # translations directly determine non-English scores (see the
+            # provenance note in ethiviz/embeddings/prototypes/*.yaml), but
+            # nothing previously told a caller relying on those scores whether
+            # the translation had been reviewed by a fluent speaker or is only
+            # machine-generated (or, for 4 of 7 lenses, undeclared entirely).
+            translation_reviewed: bool | None = True
+            if language != "en":
+                translation_reviewed = is_language_reviewed(fid, language)
+                if translation_reviewed is False:
+                    lens_warnings.append(
+                        f"'{language}' scores for this lens rely on a machine-generated, "
+                        f"unreviewed translation — treat as provisional, not authoritative."
+                    )
+                elif translation_reviewed is None:
+                    lens_warnings.append(
+                        f"'{language}' scores for this lens use a translation whose review "
+                        f"status is undeclared — provenance was never recorded for this lens."
+                    )
+
+            # Severity-aware aggregation. The mean alone dilutes concentrated
+            # harm — one severely biased text in 100 averages to nearly zero,
+            # hiding exactly the case that matters most. peak/p90 are reported
+            # alongside it so a caller can see concentration vs. pervasiveness.
+            peak_score = float(np.max(text_scores))
+            p90_score = float(np.percentile(text_scores, 90))
+
+            avg_framework_scores.append(FrameworkScore(
+                framework_id=fid,
+                framework_name=fid.replace("_", " ").title(),
+                overall_score=avg_score,
+                calibrated_score=calibrated,
+                dimension_scores=dim_scores,
+                confidence=combined_conf,
+                flagged_candidates=[
+                    dataset[i] for i, s in enumerate(text_scores) if s > 0.5
+                ],
+                confidence_interval_95=ci,
+                bootstrap_n=self.n_bootstrap,
+                raw_evidence={
+                    "language": language,
+                    "per_text_scores": text_scores,
+                    "peak_score": peak_score,
+                    "p90_score": p90_score,
+                    "mean_score": avg_score,
+                    "lens_confidence": lens_conf,
+                    "language_confidence": mean_lang_confidence,
+                    "analysis_coverage": mean_coverage,
+                    "warnings": lens_warnings,
+                    "translation_reviewed": translation_reviewed,
+                },
+            ))
+
+            for i, (res, score) in enumerate(zip(all_lens_results, text_scores)):
+                if score > 0.5:
+                    candidates.append(BiasCandidate(
+                        text=dataset[i],
+                        score=score,
+                        lens_id=fid,
+                        metadata={"dimension_scores": res[fid].dimension_scores},
+                    ))
+
+        # 4a. Conflict detection (Upgrade 4)
+        score_map = {fs.framework_id: fs.overall_score for fs in avg_framework_scores}
+        conflicts = ConflictResolver().detect(score_map)
+
+        # 4a-ii. Dimension-level cross-cultural reading (Phase 3). Conflicts
+        # above compare one scalar per lens; this reads the shared moral
+        # constructs underneath them, so a harm only one tradition encodes is
+        # reported rather than averaged into invisibility.
+        construct_readings = CrossCulturalDimensionMap().analyze(
+            {fs.framework_id: fs.dimension_scores for fs in avg_framework_scores}
+        )
+
+        # 4b. Multi-framework aggregation + synergy amplification (Upgrade 14)
+        scorer = MultiFrameworkScorer()
+        effective_weights = weights
+        if not effective_weights and self.deployment_context:
+            effective_weights = get_weights(self.deployment_context)
+
+        consensus, final_scores, synergy = scorer.aggregate(
+            avg_framework_scores, weights=effective_weights
+        )
+
+        # 5. WEAT analysis (Upgrades 3, 17, 20)
+        weat_results: dict[str, WEATTestSuite] | None = None
+        if run_weat:
+            weat_results = self._run_weat(active_ids, language)
+
+        # 6. iWEAT (Upgrade 16) — intersectional WEAT across the 2x2 designs.
+        # `run_iweat=True` previously assigned an empty dict, so the public
+        # parameter silently did nothing while appearing to be supported.
+        iweat_results = None
+        if run_iweat:
+            iweat_results = self._run_iweat(active_ids, language)
+
+        # 7. Reproducibility record (Upgrade 18)
+        repro = ReproducibilityRecord.capture(
+            self.framework_ids,
+            random_seed=self.random_seed,
+            n_bootstrap=self.n_bootstrap,
+        )
+        aggregation_seconds = time.perf_counter() - aggregation_started
+        total_seconds = time.perf_counter() - analysis_started
+
+        result = ScoredResult(
+            candidates=candidates,
+            framework_scores=final_scores,
+            consensus_score=consensus,
+            conflicts=conflicts,
+            synergy_amplifications=synergy,
+            weat_results=weat_results,
+            iweat_results=iweat_results,
+            deployment_context=self.deployment_context,
+            reproducibility=repro,
+            construct_readings=construct_readings,
+            metadata={
+                "language_detected": language,
+                "languages_per_text": languages,
+                "mixed_language_dataset": mixed_language,
+                "language_confidence": mean_lang_confidence,
+                "n_texts": len(dataset),
+                "per_text_scores": per_text_scores,
+                "texts": dataset,
+                "source_type": "text",
+                "performance": {
+                    "text_count": total,
+                    "language_detection_seconds": round(language_detection_seconds, 4),
+                    "embedding_seconds": round(embedding_seconds, 4),
+                    "scoring_seconds": round(scoring_seconds, 4),
+                    "aggregation_seconds": round(aggregation_seconds, 4),
+                    "total_seconds": round(total_seconds, 4),
+                    "texts_per_second": round(total / total_seconds, 2)
+                    if total_seconds > 0 else None,
+                },
+            },
+        )
+        # Attach generate_report to this result instance
+        result.generate_report = lambda: self._make_report(result)
+        return result
+
+    def quick_scan(self, texts: list[str]) -> BiasReport:
+        """Single-call convenience wrapper that returns a BiasReport directly."""
+        result = self.analyze(texts)
+        mapping = None
+        if self.deployment_context:
+            mapping = RegulatoryMapper().map(result, self.deployment_context)
+        return BiasReport(scored_result=result, compliance_mapping=mapping)
+
+    # ------------------------------------------------------------------
+    # Internal helpers
+    # ------------------------------------------------------------------
+
+    def _run_weat(
+        self, lens_ids: list[str], language: str
+    ) -> dict[str, WEATTestSuite]:
+        """Run all WEAT tests defined in weat_lists/ for each active lens."""
+        weat_analyzer = WEATAnalyzer(n_permutations=1000)
+        suites: dict[str, WEATTestSuite] = {}
+
+        for lens_id in lens_ids:
+            tests = load_weat_tests(lens_id, language=language)
+            if not tests:
+                continue
+            results = []
+            flagged = []
+            for t in tests:
+                try:
+                    r = weat_analyzer.run(
+                        test_name=t["test_name"],
+                        lens_id=lens_id,
+                        target_a=t["target_a"],
+                        target_b=t["target_b"],
+                        attribute_x=t["attribute_x"],
+                        attribute_y=t["attribute_y"],
+                    )
+                    results.append(r)
+                    if r.p_value < 0.05:
+                        flagged.append(r.test_name)
+                except Exception as exc:
+                    # Previously a bare `except Exception: pass`, which meant a
+                    # malformed word list or an embedding failure produced an
+                    # empty WEAT section indistinguishable from "no bias found".
+                    logger.warning(
+                        "WEAT test %r failed for lens %r (%s: %s); "
+                        "excluded from results.",
+                        t.get("test_name"), lens_id, type(exc).__name__, exc,
+                    )
+            if results:
+                suites[lens_id] = WEATTestSuite(
+                    lens_id=lens_id,
+                    results=results,
+                    tests_flagged=flagged,
+                )
+        return suites
+
+    def _run_iweat(
+        self, lens_ids: list[str], language: str
+    ) -> dict[str, Any]:
+        """
+        Run intersectional WEAT for each active lens that defines an
+        `iweat_tests` block in its word-list YAML.
+
+        Ordering matters: identity_combinations is a positional 2x2 design
+        (see iWEATAnalyzer.run), so the YAML lists the four cells in the
+        required order and that order is preserved here.
+        """
+        analyzer = iWEATAnalyzer(n_permutations=1000)
+        results: dict[str, Any] = {}
+
+        for lens_id in lens_ids:
+            tests = load_iweat_tests(lens_id, language=language)
+            for t in tests:
+                try:
+                    res = analyzer.run(
+                        test_name=t["test_name"],
+                        lens_id=lens_id,
+                        identity_combinations=t["identity_combinations"],
+                        attribute_x=t["attribute_x"],
+                        attribute_y=t["attribute_y"],
+                    )
+                    results[f"{lens_id}:{t['test_name']}"] = res
+                except Exception as exc:
+                    logger.warning(
+                        "iWEAT test %r failed for lens %r (%s: %s); "
+                        "excluded from results.",
+                        t.get("test_name"), lens_id, type(exc).__name__, exc,
+                    )
+        return results
+
+    def _make_report(self, result: ScoredResult) -> BiasReport:
+        mapping = None
+        if self.deployment_context:
+            try:
+                mapping = RegulatoryMapper().map(result, self.deployment_context)
+            except Exception:
+                pass
+        return BiasReport(scored_result=result, compliance_mapping=mapping)

@@ -2,7 +2,7 @@
 
 ## Governance Model
 
-EthiViz V9 should be governed through a lightweight but formal project structure designed to support timely decisions without sacrificing accountability. Milestone completion does not equal production approval; evidence and risk acceptance must be reviewed separately.
+EthiViz V9.5 should be governed through a lightweight but formal project structure designed to support timely decisions without sacrificing accountability. The evaluator can make review repeatable but does not provide a valid corpus or external assurance. Milestone completion does not equal production approval; evidence and risk acceptance must be reviewed separately.
 
 - Executive Sponsor: final strategic owner and decision authority
 - Steering Committee: monthly/biweekly high-level governance forum
@@ -38,6 +38,7 @@ EthiViz V9 should be governed through a lightweight but formal project structure
 | Discovery & planning | Requirements baseline and plan approved | Functional and non-functional requirements validated |
 | Design & build | Technical design approved and development underway | Architecture decisions and implementation track are stable |
 | Integration & validation | System integrated and test cycle underway | Key defects resolved; performance and quality checks active |
+| Governed analysis evaluation | Protocol and corpus approved | Reviewed labels, dataset provenance, threshold choice, and held-out reporting reviewed independently |
 | Production readiness review | Readiness gate completed | Security, deployment, operations, and support checks closed |
 | Release approval | Go/no-go decision | Final sponsor approval before rollout |
 | Stabilization | Hypercare period | Problems addressed, monitoring tuned, release confirmed |

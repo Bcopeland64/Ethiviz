@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This plan defines how changes to EthiViz V9 and subsequent snapshots will be reviewed, approved, tracked, and communicated. Changes to models, prototypes, thresholds, dependencies, operational limits, or user-facing claims require risk/evidence review proportional to impact; version changes do not bypass approval.
+This plan defines how changes to EthiViz V9.5 and subsequent snapshots will be reviewed, approved, tracked, and communicated. Changes to models, prototypes, evaluation labels, thresholds, dependencies, operational limits, or user-facing claims require risk/evidence review proportional to impact; version changes do not bypass approval. Preserve evaluation configuration and corpus revision metadata for approved comparisons, without retaining source text in reports.
 
 ## Change Control Principles
 

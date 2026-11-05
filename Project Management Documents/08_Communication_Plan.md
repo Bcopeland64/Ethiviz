@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The communication plan ensures that stakeholders receive timely and accurate information about EthiViz V9 implementation, evidence gaps, risks, and release decisions. Communications must not describe a proposed or tested control as production readiness or validated analytical performance.
+The communication plan ensures that stakeholders receive timely and accurate information about EthiViz V9.5 implementation, evidence gaps, risks, and release decisions. Evaluation reports must state dataset provenance, sample count, labels, threshold, and limitations. Communications must not describe a proposed or tested control as production readiness or validated analytical performance.
 
 ## Stakeholder Groups
 

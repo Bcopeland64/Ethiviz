@@ -2,9 +2,9 @@
 
 ## Executive Summary
 
-EthiViz V9 is an exploratory cultural-bias analysis platform that evaluates text and image-based content through multiple ethical traditions. The project remains subject to deployment-specific risk assessment, evidence gathering, and governance review; a new version or technical safeguard is not, by itself, a production approval.
+EthiViz V9.5 is an exploratory cultural-bias analysis platform that evaluates text and image-based content through multiple ethical traditions. The project remains subject to deployment-specific risk assessment, evidence gathering, and governance review; a new version or technical safeguard is not, by itself, a production approval.
 
-The V9 initiative focuses on dependable job handling, retry safety, queued cancellation, health checks, application retention, and API-level measurement. It also requires deployment evidence, data handling review, security controls, accessibility, stakeholder alignment, and operational procedures. V9 does not establish a validated analysis capability or certify production readiness.
+V9.5 adds a repeatable evaluation CLI that compares per-lens scores with supplied binary annotations and can produce an Evidently reference/current drift report. No governed annotation corpus is included. The initiative still requires deployment evidence, data handling review, security controls, accessibility, stakeholder alignment, and operational procedures; V9.5 does not establish a validated analysis capability or certify production readiness.
 
 The objective is to produce a deployment-specific readiness decision and a clear record of what is measured, implemented, and still gated on external evidence. EthiViz outputs remain exploratory decision-support signals.
 
@@ -12,7 +12,7 @@ The objective is to produce a deployment-specific readiness decision and a clear
 
 ### Background
 
-EthiViz V9 builds on prior design iterations and adds service-level lifecycle controls. Its multi-tradition approach is not independently validated for accuracy, fairness, or cultural validity; the limitations and review requirements must remain visible in product use.
+EthiViz V9.5 builds on prior design iterations and adds evaluation tooling alongside V9 service-level lifecycle controls. Its multi-tradition approach is not independently validated for accuracy, fairness, or cultural validity; the limitations and review requirements must remain visible in product use.
 
 This capability is especially valuable in environments where fairness must be assessed across diverse cultural assumptions, social norms, and ethical systems. However, those very capabilities also introduce implementation complexity, especially around model explainability, quality controls, user trust, and operational scalability.
 
@@ -34,7 +34,8 @@ The project explores whether culturally informed analysis can support responsibl
 
 ### Strategic Objectives
 
-- Verify V9 behavior in documented deployment profiles without inventing performance targets.
+- Verify V9.5 behavior in documented deployment profiles without inventing performance targets.
+- Run score evaluation only against consented, qualified, human-reviewed labels and report unresolved evidence gaps.
 - Establish clear governance, ownership, and operating model.
 - Harden core technical, security, and quality controls.
 - Ensure user trust through explainability, quality assurance, and transparent controls.
@@ -66,4 +67,4 @@ The project will be considered successful when:
 
 ### Summary Conclusion
 
-EthiViz V9 implements additional operational safeguards, but representative capacity measurements, external retention controls, complete accessibility evidence, accountable governance, and qualified human/community evaluation remain open. The project should not claim production readiness or validated analytical performance until those gates are met.
+EthiViz V9.5 adds evaluation infrastructure, but representative capacity measurements, external retention controls, complete accessibility evidence, accountable governance, and qualified human/community evaluation remain open. The project should not claim production readiness or validated analytical performance until those gates are met.

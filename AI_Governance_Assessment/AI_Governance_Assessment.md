@@ -37,6 +37,23 @@ validated cultural/fairness performance, regulatory compliance, or readiness for
 consequential use. See the [V9 plan](../VERSION_9_IMPROVEMENT_PLAN.md) and
 [V9 action status](Action_Register.md).
 
+## V9.5 evaluation tooling update — 2026-11-05
+
+V9.5 adds `Scripts/evaluate_system.py` to compare per-lens Analyzer scores against
+user-supplied binary annotations, and an optional Evidently AI report for reference/current
+score-distribution drift. The JSON metrics include thresholded classification measures,
+ROC AUC when both classes are present, Brier score, calibration gap, and confusion
+matrix. The drift report compares numeric score and text-length features.
+
+This is evaluation **infrastructure**, not evaluation evidence: no consented or
+human-reviewed corpus, annotation protocol, held-out result, reviewer record, or validated
+threshold is included. Drift does not establish harm or regression. V9.5 therefore does
+not close A-03 or support accuracy, fairness, cultural-validity, compliance, or
+consequential-use claims. The input text is excluded from reports, but dataset handling
+and report retention remain deployment responsibilities. See the
+[V9.5 evaluation guide](../Ethiviz_V9.5/docs/evaluation.md) and
+[V9.5 implementation plan](../VERSION_9_5_IMPROVEMENT_PLAN.md).
+
 ## 1. Executive summary
 
 EthiViz analyzes text and images using seven ethical-tradition lenses and presents
@@ -83,6 +100,8 @@ review appropriate to the use case.
 - The existing V9 improvement proposal in
   [`VERSION_9_IMPROVEMENT_PLAN.md`](../VERSION_9_IMPROVEMENT_PLAN.md), as contextual
   evidence of acknowledged next-version gaps.
+- V9.5 evaluation tooling, documentation, tests, and CI configuration. No evaluation
+  corpus, annotation process, or deployment evidence was reviewed.
 
 ### Not in scope
 
@@ -417,3 +436,6 @@ evidence.
 - [V9 job-store transitions and retention](../Ethiviz_V9/ethiviz/storage/job_store.py)
 - [V9 API benchmark](../Ethiviz_V9/Scripts/benchmark_api.py)
 - [V9 plan implementation status](../VERSION_9_IMPROVEMENT_PLAN.md)
+- [V9.5 evaluator](../Ethiviz_V9.5/Scripts/evaluate_system.py)
+- [V9.5 evaluation guide](../Ethiviz_V9.5/docs/evaluation.md)
+- [V9.5 improvement plan](../VERSION_9_5_IMPROVEMENT_PLAN.md)

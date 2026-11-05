@@ -17,6 +17,7 @@
 | R-11 | No governed human-reviewed evidence for accuracy, fairness, or cultural validity | AI governance | High | High | Product Owner / Evaluation Lead | validity claims or consequential use proposed without evidence | block such claims; define consented evaluation protocol and qualified review | Active |
 | R-12 | Production capacity and recovery limits are unmeasured | Technical / Operations | Medium | High | Technical Lead / Operations Lead | worker count, queue capacity, or SLO proposed without representative benchmarks | benchmark target topology and run overload/restart tests before publishing limits | Active |
 | R-13 | Deletion expectations exceed application control of backups, logs, or Redis | Privacy / Compliance | Medium | High | Privacy Owner / Operations Lead | deletion request or retention promise includes external copies | map each store, assign retention owner, and disclose unverified infrastructure boundaries | Active |
+| R-14 | Evaluation metrics are misinterpreted as validated cultural or fairness performance without governed labels or representative coverage | AI governance / Quality | High | High | Evaluation Lead / Product Owner | metric or drift report is circulated without corpus provenance, annotation method, or limitations | require consented data, qualified annotation/adjudication, held-out review, uncertainty and coverage notes, and accountable approval; treat drift as a review signal only | Active |
 
 ## Risk Review Notes
 
@@ -24,3 +25,5 @@
 - Risk owners are responsible for monitoring triggers and escalation actions.
 - Changes in risk status must be documented and communicated to governance stakeholders.
 - Critical risks requiring acceptance should be formally logged and signed off by the sponsor.
+- V9.5 evaluation tooling does not reduce R-11 or R-14 until suitable human-reviewed
+  evidence is generated and independently reviewed.

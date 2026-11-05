@@ -4,7 +4,8 @@
 
 ### In Scope
 
-- stabilization and verification of the EthiViz V9 platform, including idempotency, job-state transitions, queued cancellation, readiness, and retention controls
+- stabilization and verification of the EthiViz V9.5 platform, including idempotency, job-state transitions, queued cancellation, readiness, retention controls, and evaluation tooling
+- governed evaluation workflow setup, including annotation protocol, consent/provenance, independent review, and controlled report handling
 - architecture and deployment hardening
 - performance and reliability assessment
 - security and data handling controls
@@ -62,6 +63,8 @@
    5.3 Regression checks
    5.4 User acceptance validation
    5.5 Release readiness sign-off
+   5.6 Evaluator validation using synthetic test fixtures only; no fixture is treated as ground-truth evidence
+   5.7 Separate approval of any real-world corpus, annotation protocol, and evaluation report
 
 6. Evidence-Based Release Decision and Operational Handover
    6.1 Deployment validation

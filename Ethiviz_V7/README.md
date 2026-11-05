@@ -1,5 +1,7 @@
 # EthiViz V7 — Cross-Cultural AI Bias Detection Platform
 
+> Current project release: [EthiViz V9.5](../Ethiviz_V9.5/README.md). This folder is a preserved historical snapshot; its instructions apply to V7.
+
 EthiViz is a pluralistic AI bias detection platform that analyses text and image data
 through **seven ethical traditions simultaneously** — Western, Ubuntu, Confucian, Islamic,
 Buddhist, Hindu/Dharmic, and Indigenous/First Nations — instead of a single, typically
@@ -126,6 +128,7 @@ and its absence elsewhere is not consensus.
 
 - Python 3.10+
 - Node.js 16+ with npm
+- Modern browsers: Safari 16.4+, Chrome 111+, or Firefox 128+ (Tailwind CSS 4)
 
 ### Quick start
 

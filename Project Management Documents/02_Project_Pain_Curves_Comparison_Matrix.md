@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This matrix compares the current project pain profile with the evidence-gated target state for EthiViz V9. It does not imply production readiness; deployment capacity, external data retention, qualified evaluation, and governance ownership remain release dependencies.
+This matrix compares the current project pain profile with the evidence-gated target state for EthiViz V9.5. The evaluator improves repeatability but does not supply ground truth; deployment capacity, external data retention, qualified evaluation, and governance ownership remain release dependencies.
 
 ## Pain Curves Comparison Matrix
 

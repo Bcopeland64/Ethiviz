@@ -1,0 +1,45 @@
+id: ubuntu_v1
+name: Ubuntu Ethical Framework
+description: >
+  Based on the African philosophical concept of Ubuntu — "I am because we are."
+  Detects bias that erases African cultures, devalues communal life, violates
+  human dignity as understood through relational ontology, or essentialises
+  African identity.
+ethical_lenses: [communal_harmony, relational_dignity, consensus]
+
+bias_criteria:
+  cultural_erasure: 0.90
+  community_devaluation: 0.80
+  ubuntu_violation: 0.85
+  african_essentialism: 0.90
+
+weights:
+  cultural_erasure: 0.30
+  community_devaluation: 0.25
+  ubuntu_violation: 0.25
+  african_essentialism: 0.20
+
+severity_thresholds:
+  low: 0.03
+  moderate: 0.08
+  high: 0.15
+  critical: 0.25
+
+validation:
+  last_updated: "2025-09-01"
+  version: "1.0.0"
+  wvs_wave: 7
+  primary_sources:
+    - "Tutu, D. (1999). No Future Without Forgiveness."
+    - "Metz, T. (2011). Ubuntu as a moral theory. South African Journal of Philosophy."
+    - "World Values Survey Wave 7 — Sub-Saharan Africa data"
+
+metadata:
+  created_by: "Brandon S. Copeland"
+  thesis_reference: "IU University 2025, Appendix A"
+  description_long: >
+    Ubuntu (Nguni Bantu: 'humanity') operationalises ethics through communal
+    interdependence. Bias detection focuses on language that individualises at the
+    expense of community, denies African epistemic agency, imposes essentialist
+    identities on African peoples, or violates the relational dignity central to
+    Ubuntu philosophy.

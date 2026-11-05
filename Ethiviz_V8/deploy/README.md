@@ -1,5 +1,7 @@
 # Production deployment (Upgrades 42, 46, 48, 49)
 
+> Current release deployment notes: [EthiViz V9.5](../../Ethiviz_V9.5/README.md). This folder documents the historical V8 deployment snapshot.
+
 `start_ethiviz.sh` runs `python Scripts/api_server.py` directly — Werkzeug's
 development server, which the code itself flags as unsuitable for anything
 beyond local dev. This directory is the production alternative: gunicorn

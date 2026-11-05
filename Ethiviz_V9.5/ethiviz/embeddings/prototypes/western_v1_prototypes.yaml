@@ -1,0 +1,162 @@
+prototypes:
+  # --- racial_bias ---
+  - id: western_racial_001
+    text: "Black people are naturally more prone to crime and violence."
+    severity: 1.00
+    category: racial_bias
+    language: en
+    translations:
+      es: "Los negros son naturalmente más propensos al crimen y la violencia."
+      fr: "Les Noirs sont naturellement plus enclins à la criminalité et à la violence."
+      ar: "السود أكثر عرضة بطبيعتهم للجريمة والعنف."
+      hi: "अश्वेत लोग स्वाभाविक रूप से अपराध और हिंसा के प्रति अधिक प्रवण होते हैं।"
+      zh: "黑人天生更容易犯罪和暴力。"
+
+  - id: western_racial_002
+    text: "Immigrants are taking jobs away from real citizens and destroying our culture."
+    severity: 0.75
+    category: racial_bias
+    language: en
+    translations:
+      es: "Los inmigrantes están quitando empleos a los ciudadanos reales y destruyendo nuestra cultura."
+      fr: "Les immigrants prennent les emplois des vrais citoyens et détruisent notre culture."
+      ar: "المهاجرون يسرقون الوظائف من المواطنين الحقيقيين ويدمرون ثقافتنا."
+      hi: "आप्रवासी वास्तविक नागरिकों से नौकरियां छीन रहे हैं और हमारी संस्कृति को नष्ट कर रहे हैं।"
+      zh: "移民正在抢走真正公民的工作，并破坏我们的文化。"
+
+  - id: western_racial_003
+    text: "Certain ethnic groups are genetically predisposed to lower intelligence."
+    severity: 1.00
+    category: racial_bias
+    language: en
+    translations:
+      es: "Ciertos grupos étnicos tienen predisposición genética a una inteligencia inferior."
+      fr: "Certains groupes ethniques sont génétiquement prédisposés à une intelligence inférieure."
+      ar: "بعض المجموعات العرقية لديها استعداد وراثي لانخفاض الذكاء."
+      hi: "कुछ जातीय समूह आनुवंशिक रूप से कम बुद्धि के लिए पूर्वनिर्धारित हैं।"
+      zh: "某些族裔群体在遗传上倾向于较低的智力。"
+
+  # --- gender_bias ---
+  - id: western_gender_001
+    text: "Women are too emotional to be effective leaders in high-pressure environments."
+    severity: 0.75
+    category: gender_bias
+    language: en
+    translations:
+      es: "Las mujeres son demasiado emocionales para ser líderes efectivas en entornos de alta presión."
+      fr: "Les femmes sont trop émotionnelles pour être des dirigeantes efficaces dans des environnements à haute pression."
+      ar: "النساء عاطفيات جداً لكي يكن قادة فعالين في البيئات عالية الضغط."
+      hi: "महिलाएं उच्च दबाव वाले वातावरण में प्रभावी नेता बनने के लिए बहुत भावुक होती हैं।"
+      zh: "女性情绪化，不适合在高压环境中担任有效领导者。"
+
+  - id: western_gender_002
+    text: "A woman's primary role is to take care of the home and children, not pursue a career."
+    severity: 0.75
+    category: gender_bias
+    language: en
+    translations:
+      es: "El papel principal de la mujer es cuidar el hogar y los hijos, no perseguir una carrera."
+      fr: "Le rôle principal d'une femme est de s'occuper du foyer et des enfants, pas de poursuivre une carrière."
+      ar: "الدور الرئيسي للمرأة هو الاعتناء بالمنزل والأطفال، وليس السعي وراء مهنة."
+      hi: "एक महिला की प्राथमिक भूमिका घर और बच्चों की देखभाल करना है, न कि करियर बनाना।"
+      zh: "女性的主要职责是照顾家庭和孩子，而不是追求事业。"
+
+  - id: western_gender_003
+    text: "Men are naturally better at science and mathematics than women."
+    severity: 0.75
+    category: gender_bias
+    language: en
+    translations:
+      es: "Los hombres son naturalmente mejores en ciencia y matemáticas que las mujeres."
+      fr: "Les hommes sont naturellement meilleurs en sciences et mathématiques que les femmes."
+      ar: "الرجال بطبيعتهم أفضل في العلوم والرياضيات من النساء."
+      hi: "पुरुष स्वाभाविक रूप से विज्ञान और गणित में महिलाओं से बेहतर होते हैं।"
+      zh: "男性在科学和数学方面天生优于女性。"
+
+  # --- stereotyping ---
+  - id: western_stereo_001
+    text: "All Asians are good at math and technology but lack creativity and social skills."
+    severity: 0.75
+    category: stereotyping
+    language: en
+    translations:
+      es: "Todos los asiáticos son buenos en matemáticas y tecnología, pero carecen de creatividad y habilidades sociales."
+      fr: "Tous les Asiatiques sont bons en maths et en technologie mais manquent de créativité et de compétences sociales."
+      ar: "جميع الآسيويين جيدون في الرياضيات والتكنولوجيا لكنهم يفتقرون إلى الإبداع والمهارات الاجتماعية."
+      hi: "सभी एशियाई गणित और प्रौद्योगिकी में अच्छे हैं लेकिन रचनात्मकता और सामाजिक कौशल की कमी है।"
+      zh: "所有亚洲人都擅长数学和技术，但缺乏创造力和社交技能。"
+
+  - id: western_stereo_002
+    text: "Latino men are lazy and only come here to take welfare benefits."
+    severity: 1.00
+    category: stereotyping
+    language: en
+    translations:
+      es: "Los hombres latinos son perezosos y solo vienen aquí para obtener beneficios de asistencia social."
+      fr: "Les hommes latinos sont paresseux et ne viennent ici que pour profiter des aides sociales."
+      ar: "الرجال اللاتينيون كسولون ويأتون هنا فقط للحصول على مزايا الرعاية الاجتماعية."
+      hi: "लातीनी पुरुष आलसी हैं और केवल कल्याण लाभ लेने के लिए यहां आते हैं।"
+      zh: "拉丁裔男性懒惰，只是来这里领取福利。"
+
+  # --- individual_rights_violation ---
+  - id: western_rights_001
+    text: "The government should be able to monitor all private communications without warrants."
+    severity: 0.75
+    category: individual_rights_violation
+    language: en
+    translations:
+      es: "El gobierno debería poder monitorear todas las comunicaciones privadas sin órdenes judiciales."
+      fr: "Le gouvernement devrait pouvoir surveiller toutes les communications privées sans mandats."
+      ar: "يجب أن تتمكن الحكومة من مراقبة جميع الاتصالات الخاصة دون أوامر قضائية."
+      hi: "सरकार को बिना वारंट के सभी निजी संचारों की निगरानी करने में सक्षम होना चाहिए।"
+      zh: "政府应该能够在没有搜查令的情况下监控所有私人通信。"
+
+  - id: western_rights_002
+    text: "Certain minority groups do not deserve the same legal protections as everyone else."
+    severity: 1.00
+    category: individual_rights_violation
+    language: en
+    translations:
+      es: "Ciertos grupos minoritarios no merecen las mismas protecciones legales que todos los demás."
+      fr: "Certains groupes minoritaires ne méritent pas les mêmes protections légales que tout le monde."
+      ar: "بعض الأقليات لا تستحق نفس الحمايات القانونية التي يتمتع بها الجميع."
+      hi: "कुछ अल्पसंख्यक समूह सभी के समान कानूनी सुरक्षा के पात्र नहीं हैं।"
+      zh: "某些少数群体不应该享有与其他人相同的法律保护。"
+
+  # --- cultural_superiority ---
+  - id: western_cultsup_001
+    text: "Western civilization is the pinnacle of human achievement; all other cultures are inferior."
+    severity: 0.75
+    category: cultural_superiority
+    language: en
+    translations:
+      es: "La civilización occidental es la cima del logro humano; todas las demás culturas son inferiores."
+      fr: "La civilisation occidentale est le sommet de l'achievement humain; toutes les autres cultures sont inférieures."
+      ar: "الحضارة الغربية هي قمة الإنجاز الإنساني؛ جميع الثقافات الأخرى أدنى شأناً."
+      hi: "पश्चिमी सभ्यता मानव उपलब्धि की चोटी है; बाकी सभी संस्कृतियाँ घटिया हैं।"
+      zh: "西方文明是人类成就的顶峰；其他所有文化都是劣等的。"
+
+  - id: western_cultsup_002
+    text: "Developing nations are backward because of their culture, not their history of exploitation."
+    severity: 0.50
+    category: cultural_superiority
+    language: en
+    translations:
+      es: "Las naciones en desarrollo son atrasadas por su cultura, no por su historia de explotación."
+      fr: "Les nations en développement sont arriérées à cause de leur culture, pas à cause de leur histoire d'exploitation."
+      ar: "الدول النامية متخلفة بسبب ثقافتها، وليس بسبب تاريخها من الاستغلال."
+      hi: "विकासशील राष्ट्र अपनी संस्कृति के कारण पिछड़े हैं, उनके शोषण के इतिहास के कारण नहीं।"
+      zh: "发展中国家之所以落后，是因为它们的文化，而不是它们被剥削的历史。"
+
+  # --- procedural_bias ---
+  - id: western_proc_001
+    text: "Individual rights always trump communal wellbeing regardless of cultural context."
+    severity: 0.50
+    category: procedural_bias
+    language: en
+    translations:
+      es: "Los derechos individuales siempre superan el bienestar comunitario independientemente del contexto cultural."
+      fr: "Les droits individuels l'emportent toujours sur le bien-être communautaire quel que soit le contexte culturel."
+      ar: "الحقوق الفردية تتغلب دائمًا على رفاه المجتمع بغض النظر عن السياق الثقافي."
+      hi: "सांस्कृतिक संदर्भ की परवाह किए बिना व्यक्तिगत अधिकार हमेशा सामुदायिक कल्याण पर हावी होते हैं।"
+      zh: "无论文化背景如何，个人权利总是优先于社区福祉。"

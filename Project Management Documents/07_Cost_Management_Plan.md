@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This plan outlines how EthiViz V9 operational-evidence and governance costs will be estimated, tracked, controlled, and reported. Budget estimates should include representative deployment tests, accessible-design review, qualified evaluation, and community partnership where appropriate; those activities must not be assumed cost-free.
+This plan outlines how EthiViz V9.5 operational-evidence and governance costs will be estimated, tracked, controlled, and reported. Budget estimates should include representative deployment tests, accessible-design review, qualified evaluation, and community partnership where appropriate; the V9.5 evaluation tooling does not replace or make those activities cost-free.
 
 ## Cost Categories
 

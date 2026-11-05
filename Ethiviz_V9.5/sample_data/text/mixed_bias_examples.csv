@@ -1,0 +1,21 @@
+text,bias_level,category,notes
+"All individuals deserve equal protection under the law regardless of race or gender.",0.0,clean,Rights-based framing
+"I am because we are — ubuntu philosophy grounds all ethical decisions.",0.0,clean,Ubuntu principle
+"Ren (benevolence) requires treating all people with compassion and respect.",0.0,clean,Confucian virtue
+"Islamic ethics emphasises justice (adl) and human dignity (karamah).",0.0,clean,Islamic principle
+"Ahimsa (non-harm) requires compassionate treatment of all sentient beings.",0.0,clean,Buddhist ahimsa
+"Indigenous communities hold traditional ecological knowledge that should be respected.",0.0,clean,Knowledge respect
+"Dharma calls each person to act rightly according to their duty and context.",0.0,clean,Hindu ethics core
+"Our hiring panel welcomes applicants from every background and evaluates on merit alone.",0.0,clean,Neutral hiring language
+"Black people are genetically predisposed to violence.",1.0,racial_bias,Explicit racist claim
+"Women are too emotional to lead in high-pressure roles.",0.9,gender_bias,Gender essentialism
+"All Muslims are terrorists who pose a threat to Western societies.",1.0,violent_stereotyping,Direct violent stereotype
+"African cultures are primitive and lack philosophical sophistication.",1.0,cultural_erasure,Direct erasure
+"Asian workers are too passive and submissive to lead teams.",0.85,face_violation,Stereotype
+"We can patent traditional healing plants without community consent.",1.0,knowledge_extraction,CARE violation
+"Elderly employees should be pushed out to make room for 'fresh' talent.",0.8,age_bias,Ageist framing
+"Immigrants are draining public resources and should be denied basic services.",0.9,xenophobia,Anti-immigrant bias
+"Candidates from religious minorities are harder to trust with client relationships.",0.85,religious_bias,Religious discrimination
+"Every team member's cultural background is an asset to how we solve problems.",0.0,clean,Inclusive framing
+"People with disabilities are a burden on workplace productivity.",0.85,ableism,Disability bias
+"Community wellbeing must be prioritised alongside individual rights.",0.0,clean,Relational ethics

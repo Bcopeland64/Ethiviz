@@ -1,21 +1,22 @@
 # 0. Project Charter
 
 ## Project Title
-EthiViz V9 Operational Evidence and Governance Initiative
+EthiViz V9.5 Evaluation Evidence and Governance Initiative
 
 ## Project Purpose
-The purpose of this initiative is to assess EthiViz V9's operational and governance readiness through tested lifecycle controls, deployment evidence, data-retention validation, and qualified review. Implementation of technical safeguards alone does not authorize production use.
+The purpose of this initiative is to assess EthiViz V9.5's operational and governance readiness through tested lifecycle controls, deployment evidence, governed evaluation, data-retention validation, and qualified review. The V9.5 evaluator is tooling only; implementation of technical safeguards alone does not authorize production use.
 
 ## Project Objective
-To produce an evidence-based deployment decision for EthiViz V9 against agreed technical, privacy, accessibility, AI-governance, and stakeholder requirements, without asserting analytical validity in the absence of independent evidence.
+To produce an evidence-based deployment decision for EthiViz V9.5 against agreed technical, privacy, accessibility, AI-governance, evaluation, and stakeholder requirements, without asserting analytical validity in the absence of independent evidence.
 
 ## Business Need
-EthiViz V9 is an exploratory cultural-bias analysis platform. Its scores are not validated fairness certifications. Any transition beyond controlled exploratory use requires accountable ownership, deployment-specific risk assessment, human oversight, community-informed review, and verified operating controls.
+EthiViz V9.5 is an exploratory cultural-bias analysis platform. Its scores are not validated fairness certifications; no human-reviewed evaluation corpus is bundled. Any transition beyond controlled exploratory use requires accountable ownership, deployment-specific risk assessment, human oversight, community-informed review, and verified operating controls.
 
 ## Project Scope
 
 ### In Scope
-- stabilization and verification of the V9 implementation
+- stabilization and verification of the V9.5 implementation and evaluation tooling
+- governed evaluation-data requirements and review of any results generated with the evaluator
 - architecture, configuration, and deployment hardening
 - quality assurance and testing
 - security control validation and remediation
@@ -100,7 +101,7 @@ The project carries technical, security, quality, and schedule risk associated w
 Project communications will be structured, regular, and decision-oriented. Weekly status reporting, governance reviews, and issue tracking will maintain alignment across the sponsor, delivery team, and operational owners.
 
 ## Approval
-This charter establishes the planning foundation for the EthiViz V9 Operational Evidence and Governance Initiative and should be approved by the Executive Sponsor before execution proceeds beyond initiation.
+This charter establishes the planning foundation for the EthiViz V9.5 Evaluation Evidence and Governance Initiative and should be approved by the Executive Sponsor before execution proceeds beyond initiation.
 
 ## Charter Status
 Draft for approval

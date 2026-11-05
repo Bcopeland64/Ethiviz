@@ -237,4 +237,4 @@ Subject to independent validation and appropriate human review, a future governe
 
 ## Conclusion
 
-The V9 snapshot has not established analytical validity, community authorization, production capacity, or suitability for consequential decisions. Any business opportunity remains exploratory and contingent on qualified evaluation, community partnership, deployment-specific governance, and independently reviewed evidence. EthiViz should not be marketed as validated fairness analysis.
+The V9.5 snapshot adds evaluation tooling but has not established analytical validity, community authorization, production capacity, or suitability for consequential decisions. No labeled corpus or evaluation result is bundled. Any business opportunity remains exploratory and contingent on qualified evaluation, community partnership, deployment-specific governance, and independently reviewed evidence. EthiViz should not be marketed as validated fairness analysis.

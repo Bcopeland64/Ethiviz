@@ -1,5 +1,7 @@
 # EthiViz V9 — Verifiable Operations and Responsible Analysis
 
+> Current project release: [EthiViz V9.5](../Ethiviz_V9.5/README.md). This folder is a preserved V9 snapshot; the V9.5 evaluator is documented in its own version folder.
+
 EthiViz analyses text and images through seven ethical traditions: Western, Ubuntu,
 Confucian, Islamic, Buddhist, Hindu/Dharmic, and Indigenous/First Nations. Results are
 exploratory decision-support signals—not legal determinations, validated fairness

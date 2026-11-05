@@ -1,7 +1,7 @@
 # Project Management Documents
 
 This folder contains the project management package for EthiViz, now aligned with the
-V9 implementation snapshot. These are planning and governance templates; they do not
+V9.5 implementation snapshot. These are planning and governance templates; they do not
 constitute sponsor approval, a production readiness decision, or evidence that named
 roles and operational processes are active.
 
@@ -23,12 +23,12 @@ roles and operational processes are active.
 
 ## Project Context
 
-EthiViz V9 is an exploratory cultural-bias analysis platform that presents signals
+EthiViz V9.5 is an exploratory cultural-bias analysis platform that presents signals
 through multiple ethical frameworks, including Western, Ubuntu, Confucian, Islamic,
-Buddhist, Hindu/Dharmic, and Indigenous perspectives. V9 improves job lifecycle
-controls, idempotency, queued cancellation, health checks, and application retention.
-It does not establish validated analysis quality, community authorization, production
-capacity, or production readiness.
+Buddhist, Hindu/Dharmic, and Indigenous perspectives. V9.5 adds an evaluation CLI for
+reviewed labels and optional Evidently drift reports while retaining V9's operational
+controls. The evaluator does not provide a labeled corpus or establish analysis quality,
+community authorization, production capacity, or readiness.
 
 ## Governance Summary
 
@@ -43,6 +43,5 @@ capacity, or production readiness.
 
 Prepare a deployment-specific readiness decision only after operational evidence,
 qualified human and community review, risk ownership, and applicable legal assessment
-are complete. The [V9 plan](../VERSION_9_IMPROVEMENT_PLAN.md) records implemented and
-deferred work; the [V10 plan](../VERSION_10_IMPROVEMENT_PLAN.md) prioritizes evidence
-gaps.
+are complete. The [V9.5 plan](../VERSION_9_5_IMPROVEMENT_PLAN.md) records evaluator status and evidence
+gaps; the [V10 plan](../VERSION_10_IMPROVEMENT_PLAN.md) prioritizes further work.

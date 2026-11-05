@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This plan describes how risks will be identified, assessed, prioritized, mitigated, monitored, and reported during the EthiViz V9 operational-evidence effort. Key open risks include unmeasured production capacity, incomplete external retention evidence, and absent qualified/community evaluation.
+This plan describes how risks will be identified, assessed, prioritized, mitigated, monitored, and reported during the EthiViz V9.5 operational-evidence effort. Key open risks include unmeasured production capacity, incomplete external retention evidence, and absent qualified/community evaluation; the evaluator does not close the latter risk without reviewed data and evidence.
 
 ## Risk Management Objectives
 

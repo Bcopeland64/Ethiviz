@@ -1,5 +1,7 @@
 # EthiViz V4 — Cross-Cultural AI Bias Detection
 
+> Current project release: [EthiViz V9.5](../Ethiviz_V9.5/README.md). This folder is a preserved historical snapshot; its instructions apply to V4.
+
 EthiViz is a computational framework for multi-perspective ethical analysis of AI systems, rooted in Brandon Scott Copeland's Bachelor's thesis at IU University of Applied Sciences (2025). V4 closes the gap with IBM AI Fairness 360 while preserving a unique advantage AIF360 cannot match: simultaneous analysis through **seven distinct cultural ethical lenses**.
 
 > **Design principle:** Cultural elements are co-equal to statistical elements. Every statistical metric added in V4 carries a cultural-lens extension. A Western fairness threshold is not an Ubuntu fairness threshold — EthiViz honours both simultaneously.

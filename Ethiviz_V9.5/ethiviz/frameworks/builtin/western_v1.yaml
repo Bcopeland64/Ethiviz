@@ -1,0 +1,47 @@
+id: western_v1
+name: Western Ethical Framework
+description: >
+  Based on Western liberal individualism, autonomy, and rights-based ethics.
+  Detects bias rooted in racism, sexism, procedural injustice, cultural
+  supremacy, and violations of individual rights.
+ethical_lenses: [deontology, utilitarianism, virtue_ethics]
+
+bias_criteria:
+  racial_bias: 0.90
+  gender_bias: 0.85
+  stereotyping: 0.80
+  individual_rights_violation: 0.85
+  cultural_superiority: 0.70
+  procedural_bias: 0.65
+
+weights:
+  racial_bias: 0.25
+  gender_bias: 0.20
+  stereotyping: 0.20
+  individual_rights_violation: 0.20
+  cultural_superiority: 0.10
+  procedural_bias: 0.05
+
+severity_thresholds:
+  low: 0.05
+  moderate: 0.10
+  high: 0.20
+  critical: 0.30
+
+validation:
+  last_updated: "2025-09-01"
+  version: "1.0.0"
+  wvs_wave: 7
+  primary_sources:
+    - "Rawls, J. (1971). A Theory of Justice."
+    - "Nussbaum, M. (2011). Creating Capabilities."
+    - "World Values Survey Wave 7 (2017-2022)"
+
+metadata:
+  created_by: "Brandon S. Copeland"
+  thesis_reference: "IU University 2025, Appendix A"
+  description_long: >
+    The Western framework operationalises bias through the lens of liberal political
+    philosophy (Rawls, Nussbaum) and intersectional feminist theory. High scores
+    indicate content that violates principles of equal treatment, individual autonomy,
+    or perpetuates stereotyped group representations dominant in Western media.

@@ -2,11 +2,11 @@
 
 ## Mission Statement
 
-The mission of the EthiViz V9 operational evidence initiative is to strengthen service reliability and governance while preserving the system's exploratory status until independent, qualified evaluation supports any stronger analytical claims.
+The mission of the EthiViz V9.5 evaluation evidence initiative is to strengthen service reliability and governance while preserving the system's exploratory status until independent, qualified evaluation supports any stronger analytical claims.
 
 ## Strategic Mission Outcomes
 
-- Establish whether V9 meets a deployment-specific operational release gate.
+- Establish whether V9.5 meets a deployment-specific operational release gate.
 - Preserve transparency about exploratory analysis and unvalidated outputs.
 - Measure service behavior and document unmeasured capacity and retention boundaries.
 - Define accountable ownership and governance before any broader deployment.
@@ -15,9 +15,9 @@ The mission of the EthiViz V9 operational evidence initiative is to strengthen s
 
 ### Goal 1: Evidence-Based Deployment Decision
 
-- Specific: Assess each supported V9 deployment against technical, privacy, accessibility, and governance criteria.
+- Specific: Assess each supported V9.5 deployment against technical, privacy, accessibility, and governance criteria.
 - Measurable: Every criterion is backed by evidence or explicitly marked open; no open item is silently treated as passed.
-- Achievable: Use the V9 implementation, CI tests, benchmark reports, and deployment-specific reviews.
+- Achievable: Use the V9.5 implementation, CI tests, benchmark and evaluation reports, and deployment-specific reviews.
 - Relevant: Prevents version delivery from being mistaken for production approval.
 - Time-bound: Before any deployment decision.
 
@@ -52,6 +52,14 @@ The mission of the EthiViz V9 operational evidence initiative is to strengthen s
 - Achievable: Supported by PMO processes, RACI, and meeting cadence.
 - Relevant: Enables consistent decision-making and accountability.
 - Time-bound: Implement at project start and maintain throughout lifecycle.
+
+### Goal 6: Governed Evaluation Evidence
+
+- Specific: Use the V9.5 evaluator only with a documented, consented annotation protocol and qualified reviewers.
+- Measurable: Every reported metric identifies its lens, sample count, threshold, corpus, and limitations; missing data is not treated as a pass.
+- Achievable: The evaluator supports per-lens labels and reference/current drift comparison without shipping ground-truth data.
+- Relevant: Separates repeatable measurement infrastructure from evidence of analytical validity.
+- Time-bound: Before publishing performance or validity claims.
 
 ## Success Measures
 

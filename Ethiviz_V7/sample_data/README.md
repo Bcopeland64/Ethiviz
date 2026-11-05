@@ -1,5 +1,7 @@
 # Sample Data
 
+> Current release and evaluation workflow: [EthiViz V9.5](../../Ethiviz_V9.5/README.md). This dataset folder belongs to the historical V7 snapshot.
+
 Ready-to-upload files for trying out EthiViz without needing your own dataset yet.
 Use the **Upload Your Data** option in the sidebar (not "Use Sample Data" — that
 button is currently wired to a single hardcoded example and doesn't support

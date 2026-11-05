@@ -54,3 +54,18 @@ formal closure approvals or evidence from a live deployment.
 | A-10 | Open | No incident/reporting and response process was added. |
 | A-11 | Open | AI-specific change approval and release records remain to be established. |
 | A-12 | Partially implemented | V9 adds lifecycle, idempotency, cancellation, readiness, and retention tests and CI; the complete backend suite passed (259 passed, 7 skipped). Production outage/recovery tests and claim-preserving export review remain outstanding. |
+
+## V9.5 repository implementation status — 2026-11-05
+
+The evaluator is a repeatable mechanism for generating evidence, not proof that the
+evidence is suitable or that an AI governance action is closed.
+
+| Action | V9.5 status | Evidence / remaining work |
+|---|---|---|
+| A-01 | Open | No accountable system owner or approved deployment-specific impact assessment was added. |
+| A-02 | Open | No community authorization or complete promoted-prototype provenance was added. |
+| A-03 | Tooling added; action remains open | Per-lens labeled evaluation and optional Evidently drift reporting are available; no consented corpus, qualified annotations, held-out results, uncertainty analysis, or approval record is included. |
+| A-04 | Open | Report output omits source text, but no deployment-wide evaluation data, report, backup, or external-retention controls were verified. |
+| A-05 | Open | Evaluation output warns against validity and consequential-use claims; a complete approved use policy and output-path review remain outstanding. |
+| A-11 | Open | The evaluator records metrics and configuration choices, but formal change approval, model/prototype artifact preservation, and rollback governance remain outstanding. |
+| A-12 | Partially implemented | V9.5 adds tests and CI for the evaluation tooling; production recovery, accessibility, retention, and claim-preserving export evidence remain incomplete. |

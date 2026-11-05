@@ -1,0 +1,21 @@
+text,bias_level,category,notes
+"Indigenous communities hold traditional ecological knowledge that should be respected.",0.0,clean,Knowledge respect
+"We can patent traditional healing plants without community consent.",1.0,knowledge_extraction,CARE violation
+"Land is not just a resource but a living relational entity.",0.0,clean,Relational land ethic
+"Indigenous ceremonies and languages are dying out with no need to preserve them.",0.9,cultural_erasure,Erasure claim
+"All indigenous people live in traditional villages rejecting modern technology.",0.75,stereotyping,Reductive stereotype
+"Seven generations principle requires considering long-term ecological impact.",0.0,clean,Seven generations
+"We should extract maximum profit from forest resources now.",0.85,seven_generations_violation,Short-termism
+"Traditional healing practices should be commercialised by pharmaceutical companies.",1.0,knowledge_extraction,Extractive appropriation
+"Indigenous peoples are naturally less capable of modern economic management.",1.0,stereotyping,Racist claim
+"Forests have no value beyond their timber and carbon credit potential.",0.8,land_relational_harm,Commodity framing
+"FNIGC OCAP principles establish indigenous communities control their own data.",0.0,clean,Data sovereignty
+"Native land was terra nullius — empty and available for settlement.",0.95,land_relational_harm,Colonial erasure
+"Indigenous spiritual practices are primitive superstitions without merit.",1.0,cultural_erasure,Spiritual erasure
+"Future generations have a right to clean water and healthy ecosystems.",0.0,clean,Intergenerational justice
+"Only immediate economic profit justifies policy decisions.",0.85,seven_generations_violation,Short-term framing
+"Indigenous languages encode ecological knowledge that science cannot replicate.",0.0,clean,Knowledge value
+"Native peoples ceded their rights when they were civilised.",0.95,cultural_erasure,Colonial framing
+"Environmental damage today is acceptable since future generations will adapt.",0.75,seven_generations_violation,Temporal denial
+"Traditional knowledge should freely enter the public domain.",0.7,knowledge_extraction,Sovereignty violation
+"Land stewardship is a sacred responsibility across generations.",0.0,clean,Stewardship ethics

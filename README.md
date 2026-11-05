@@ -15,7 +15,7 @@ Multi-Perspective Ethical Analysis"* (IU University of Applied Sciences, Septemb
 ## Table of Contents
 
 - [What Makes EthiViz Different](#what-makes-ethiviz-different)
-- [Current Version: V9](#current-version-v9)
+- [Current Version: V9.5](#current-version-v95)
 - [Historical V6 Engine Changes](#historical-v6-engine-changes)
 - [Quick Start](#quick-start)
 - [Architecture](#architecture)
@@ -49,14 +49,14 @@ Confucian, Islamic, Buddhist, Hindu/Dharmic, and Indigenous/First Nations.
 
 ## Current Version: V9
 
-**[`Ethiviz_V9/`](Ethiviz_V9/) is the latest project snapshot**, building on V8 with
-retry-safe job submission, enforced job-state transitions, queued cancellation, fail-closed
-Redis configuration, health/readiness endpoints, terminal-job retention, API-level
-benchmarking, and accessible progress announcements. See
-**[Ethiviz_V9/README.md](Ethiviz_V9/README.md)** for setup, API behavior, safety controls,
-validation, and known limitations. V9 is not a production-readiness or analytical-validity
-certification; deployment capacity, external retention, human-reviewed evaluation, and
-community review remain open.
+**[`Ethiviz_V9.5/`](Ethiviz_V9.5/) is the latest project snapshot**, building on V9 with a
+repeatable evaluation workflow for per-lens scores, human-reviewed binary labels, and
+reference/current drift reports through Evidently AI. V9.5 also retains V9's job lifecycle,
+idempotency, readiness, retention, benchmarking, and accessibility controls. See
+**[Ethiviz_V9.5/README.md](Ethiviz_V9.5/README.md)** for setup, evaluation data requirements,
+API behavior, safety controls, validation, and limitations. The evaluation tooling does
+not include a governed ground-truth corpus and does not establish analytical validity,
+production readiness, or community authorization.
 
 `Ethiviz_V2/` through `Ethiviz_V6/` are preserved as historical snapshots and are not
 maintained for new work. Each major version has a distinct contribution:
@@ -69,6 +69,7 @@ maintained for new work. Each major version has a distinct contribution:
 | **V7** | **Added API security, operational scaling, cross-cultural findings, and production deployment paths** |
 | **V8** | **Adds lazy chart loading, performance checks, bounded caching, fail-closed binding, and dependency CI** |
 | **V9** | **Adds idempotency, job lifecycle/cancellation controls, health checks, retention, and API benchmarking** |
+| **V9.5** | **Adds supervised per-lens evaluation and Evidently-based reference/current drift reporting; no labeled corpus is bundled** |
 
 ---
 
@@ -186,12 +187,12 @@ Without `--with-vision`, image analysis still works but degrades to a metadata-o
 
 ```bash
 # Terminal 1 — backend
-cd Ethiviz_V9
+cd Ethiviz_V9.5
 python3 -m pip install --user -e '.[api,semantic]'
 python3 Scripts/api_server.py          # http://localhost:5001
 
 # Terminal 2 — frontend
-cd Ethiviz_V9/project
+cd Ethiviz_V9.5/project
 npm ci
 npm run dev                           # http://localhost:5173
 ```
@@ -347,7 +348,7 @@ A completed job's results include:
 An optional `Idempotency-Key` header makes identical submission retries reuse the original
 job; reusing the key with a different payload returns `409`. Full request/response shapes,
 retention defaults, and benchmark instructions are documented in
-[`Ethiviz_V9/README.md`](Ethiviz_V9/README.md).
+[`Ethiviz_V9.5/README.md`](Ethiviz_V9.5/README.md).
 
 ---
 
@@ -384,7 +385,7 @@ Being direct about this matters for anyone building on top of EthiViz.
 ## Historical V6 Limitations
 
 For current limitations, deployment cautions, and data-retention details, see the
-[V9 documentation](Ethiviz_V9/README.md).
+[V9.5 documentation](Ethiviz_V9.5/README.md).
 
 - **Machine-generated translations.** Prototype translations and non-English WEAT word
   lists have not been reviewed by fluent speakers. They are semantic anchors that directly
@@ -449,16 +450,15 @@ cancellation, readiness, and retention.
 
 ---
 
-## V9 Delivery Status
+## V9.5 Delivery Status
 
-V9 implements the job lifecycle, idempotency, queued-only cancellation, fail-closed Redis
-configuration, readiness checks, application retention defaults, API-level benchmark,
-and accessible status announcements described in
-[Ethiviz_V9/README.md](Ethiviz_V9/README.md). See
-[VERSION_9_IMPROVEMENT_PLAN.md](VERSION_9_IMPROVEMENT_PLAN.md) for what is implemented,
-tested, partial, and still gated. V9 does not establish a measured production capacity
-profile, complete backup/external-log erasure, graceful recovery guarantees for every
-deployment, or validated cultural/fairness performance.
+V9.5 adds an evaluation CLI for consented, human-reviewed per-lens labels and optional
+Evidently drift reports. It requires users to supply their own reviewed dataset and does
+not claim measured accuracy, calibration, fairness, or cultural validity without
+independent review. The snapshot also carries forward V9's operational safeguards. See
+[Ethiviz_V9.5/README.md](Ethiviz_V9.5/README.md) and
+[VERSION_9_5_IMPROVEMENT_PLAN.md](VERSION_9_5_IMPROVEMENT_PLAN.md) for setup, evidence
+requirements, validation status, and open deployment gates.
 
 The V10 proposal is in
 [VERSION_10_IMPROVEMENT_PLAN.md](VERSION_10_IMPROVEMENT_PLAN.md).
@@ -590,11 +590,13 @@ contains the charter, executive summary, WBS, risk and change controls, governan
 framework, communications, and cost/schedule materials. They are planning documents and
 placeholder role assignments—not evidence of sponsor approval or active operational
 ownership. Current delivery status and evidence gates are linked from that folder's
-README and the [V9 improvement plan](VERSION_9_IMPROVEMENT_PLAN.md).
+README and the [V9.5 improvement plan](VERSION_9_5_IMPROVEMENT_PLAN.md).
 
 The [AI Governance Assessment](AI_Governance_Assessment/README.md) retains its V8
-repository assessment and adds a V9 implementation update. It does not assess a live
-deployment or certify compliance, fairness, accuracy, or cultural validity.
+repository assessment and adds V9 and V9.5 implementation supplements. The V9.5
+evaluation harness is tooling only: no reviewed evaluation corpus or results are included.
+The assessment does not assess a live deployment or certify compliance, fairness,
+accuracy, or cultural validity.
 
 ---
 
@@ -613,4 +615,4 @@ Western-centric and proposes a pluralistic alternative. EthiViz is that alternat
 
 ## License
 
-Apache 2.0 — see [`Ethiviz_V9/LICENSE`](Ethiviz_V9/LICENSE).
+Apache 2.0 — see [`Ethiviz_V9.5/LICENSE`](Ethiviz_V9.5/LICENSE).
